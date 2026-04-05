@@ -79,6 +79,35 @@ Renderers live in `src/components/FTable/fields/`.
 - Props typed with explicit interfaces (no `any`).
 - No default exports from utility/hook files; named exports only.
 - File names: `PascalCase` for components, `camelCase` for hooks/utils.
+- **Break UI into the most elementary components that make sense.** Each distinct rendering concern (header row, body row, cell, pagination bar, etc.) lives in its own component file. Avoid monolithic components that render multiple independent UI regions.
+
+---
+
+## Component Styling
+
+FTable is published as an npm package and must be **Tailwind-free**. Do not use Tailwind utility classes anywhere inside `src/components/`. All component styles must be written in plain CSS.
+
+Every component is **self-contained**: a co-located `.css` file lives alongside each `.tsx` file and is imported directly in the component.
+
+```
+src/components/FTable/
+  FTable.tsx
+  FTable.css          # all styles for this component
+  FTable.types.ts
+  filters/
+    Filters.tsx
+    Filters.css
+  ...
+```
+
+Rules:
+- **All component styles go in the co-located `.css` file** — no inline `style` props except for truly dynamic values (e.g. computed widths).
+- Use **CSS custom properties** for every visual token (color, spacing, border-radius, font-size). Define defaults with `var(--ftable-token, <fallback>)` so consumers can override without touching source.
+- Import the CSS file in the component: `import './FTable.css'`.
+- Do **not** scatter component-specific styles across global or shared stylesheets.
+- Global design-system tokens for the demo app live in `src/app/globals.css`. The component itself must not depend on them — use fallback values in `var()` calls instead.
+- The `src/app/` demo pages may use any styling approach (plain CSS, inline styles) — but still **no Tailwind**.
+- **Never style HTML tags directly** (`th`, `td`, `thead`, `tr`, etc.). Every element that needs styling must have an explicit class. Use BEM-style names: `.ftable__header`, `.ftable__cell`, etc.
 
 ---
 
@@ -89,3 +118,12 @@ All tickets for this project live under the Jira epic **ET-5** in the **Fladeed 
 When creating or referencing tickets, always link them to ET-5 as the parent epic.
 
 Jira URL: https://fladeed.atlassian.net/browse/ET-5
+
+### Ticket Memory (`MEMORY.md`)
+
+`MEMORY.md` is the **source of truth for all ticket codes** on this project.
+
+- **Always load `MEMORY.md`** at the start of any session or task that touches Jira tickets.
+- **When a ticket is created:** add its key, type, title, and URL to the Tickets table in `MEMORY.md`.
+- **When a ticket is completed:** update its status to `Done ✓` in `MEMORY.md`.
+- Never create or close a ticket without updating `MEMORY.md`.

@@ -1,0 +1,12 @@
+.ftable__header {
+  background-color: var(--ftable-header-bg, #f9fafb);
+}
+
+.ftable__header-cell {
+  padding: var(--ftable-cell-padding, 0.625rem 0.875rem);
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--ftable-border-color, #e5e7eb);
+  white-space: nowrap;
+  user-select: none;
+}

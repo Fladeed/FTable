@@ -1,0 +1,23 @@
+/* ─────────────────────────────────────────────
+   FTable — root styles
+   Sub-component styles live in their own folders.
+   ───────────────────────────────────────────── */
+
+.ftable-wrapper,
+.ftable-wrapper * {
+  box-sizing: border-box;
+}
+
+.ftable-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  font-family: var(--ftable-font-family, system-ui, sans-serif);
+}
+
+.ftable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ftable-font-size, 0.875rem);
+  background-color: var(--ftable-bg, #ffffff);
+  color: var(--ftable-color, #111827);
+}
