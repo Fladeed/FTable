@@ -8,8 +8,8 @@ Running memory of relevant project context, decisions, and tracking info.
 
 | Key | Type | Title | Status | URL |
 |-----|------|--------|--------|-----|
-| ET-5 | Epic | FTable | To Do | https://fladeed.atlassian.net/browse/ET-5 |
-| ET-7 | Task | Core table scaffold | To Do | https://fladeed.atlassian.net/browse/ET-7 |
+| ET-5 | Epic | FTable | In Progress | https://fladeed.atlassian.net/browse/ET-5 |
+| ET-7 | Task | Core table scaffold | Done ✓ | https://fladeed.atlassian.net/browse/ET-7 |
 | ET-8 | Task | Column field renderers (text, number, date, boolean, badge, currency, link) | To Do | https://fladeed.atlassian.net/browse/ET-8 |
 | ET-9 | Task | Single-column sorting with header indicators | To Do | https://fladeed.atlassian.net/browse/ET-9 |
 | ET-10 | Task | Quick filters (per-column inline header filters) | To Do | https://fladeed.atlassian.net/browse/ET-10 |
