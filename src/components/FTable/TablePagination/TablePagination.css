@@ -1,0 +1,29 @@
+.ftable-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0.5rem 0.25rem;
+  font-size: var(--ftable-pagination-font-size, 0.8125rem);
+  color: var(--ftable-muted-color, #6b7280);
+}
+
+.ftable-pagination__btn {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--ftable-border-color, #e5e7eb);
+  border-radius: var(--ftable-border-radius, 0.375rem);
+  background-color: var(--ftable-bg, #ffffff);
+  color: var(--ftable-color, #111827);
+  font-size: var(--ftable-pagination-font-size, 0.8125rem);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ftable-pagination__btn:hover:not(:disabled) {
+  background-color: var(--ftable-row-hover-bg, #f3f4f6);
+}
+
+.ftable-pagination__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

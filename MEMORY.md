@@ -9,6 +9,17 @@ Running memory of relevant project context, decisions, and tracking info.
 | Key | Type | Title | Status | URL |
 |-----|------|--------|--------|-----|
 | ET-5 | Epic | FTable | To Do | https://fladeed.atlassian.net/browse/ET-5 |
+| ET-7 | Task | Core table scaffold | To Do | https://fladeed.atlassian.net/browse/ET-7 |
+| ET-8 | Task | Column field renderers (text, number, date, boolean, badge, currency, link) | To Do | https://fladeed.atlassian.net/browse/ET-8 |
+| ET-9 | Task | Single-column sorting with header indicators | To Do | https://fladeed.atlassian.net/browse/ET-9 |
+| ET-10 | Task | Quick filters (per-column inline header filters) | To Do | https://fladeed.atlassian.net/browse/ET-10 |
+| ET-11 | Task | Detailed filters panel (multi-condition with operators) | To Do | https://fladeed.atlassian.net/browse/ET-11 |
+| ET-12 | Task | Views — named tabs with create, rename, and delete | To Do | https://fladeed.atlassian.net/browse/ET-12 |
+| ET-13 | Task | Column visibility toggle per view | To Do | https://fladeed.atlassian.net/browse/ET-13 |
+| ET-14 | Task | Demo page with sample data | To Do | https://fladeed.atlassian.net/browse/ET-14 |
+| ET-15 | Task | Multi-column sorting | To Do | https://fladeed.atlassian.net/browse/ET-15 |
+| ET-16 | Task | View persistence via localStorage | To Do | https://fladeed.atlassian.net/browse/ET-16 |
+| ET-17 | Task | Remote persistence adapter (pluggable ViewStorageAdapter interface) | To Do | https://fladeed.atlassian.net/browse/ET-17 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net
@@ -38,6 +49,6 @@ Running memory of relevant project context, decisions, and tracking info.
 
 ## Open Questions / TODO
 
-- [ ] Decide on persistence strategy for views (localStorage vs. prop-passed handler)
+- [x] Decide on persistence strategy for views → localStorage default (ET-16) + pluggable `ViewStorageAdapter` (ET-17)
 - [ ] Define the public API / props interface for `<FTable />`
 - [ ] Decide on virtualization approach for large datasets (must be zero-dependency)

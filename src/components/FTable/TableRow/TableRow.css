@@ -1,0 +1,17 @@
+.ftable__row {
+  border-bottom: 1px solid var(--ftable-border-color, #e5e7eb);
+  transition: background-color 0.15s ease;
+}
+
+.ftable__row:last-child {
+  border-bottom: none;
+}
+
+.ftable__row:hover {
+  background-color: var(--ftable-row-hover-bg, #f3f4f6);
+}
+
+.ftable__cell {
+  padding: var(--ftable-cell-padding, 0.625rem 0.875rem);
+  vertical-align: middle;
+}
