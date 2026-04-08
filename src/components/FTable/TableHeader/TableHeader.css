@@ -10,3 +10,23 @@
   white-space: nowrap;
   user-select: none;
 }
+
+.ftable__header-cell--sortable {
+  cursor: pointer;
+}
+
+.ftable__header-cell--sortable:hover {
+  background-color: var(--ftable-header-hover-bg, #f3f4f6);
+}
+
+.ftable__header-cell--sorted {
+  color: var(--ftable-sort-active-color, #2563eb);
+}
+
+.ftable__header-cell-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+

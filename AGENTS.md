@@ -27,17 +27,39 @@ FTable is an open-source, ERP-focused table component built with **zero external
 ```
 src/
   components/
-    FTable/            # The core table component
+    FTable/            # The core table component — published as an npm package
       FTable.tsx
       FTable.types.ts
+      SortIndicator/   # Sort direction indicator component
       filters/         # Quick filters & detailed filters
-      sorting/         # Sorting logic & UI
       views/           # View management (tabs, persistence)
       fields/          # Field renderers by content type
+  demo/                # Demo/playground code — NOT part of the package
+    Demo.tsx           # The demo component mounted by app/page.tsx
+    demoUtils.ts       # Demo-only helpers (e.g. client-side sort simulation)
   hooks/               # Custom hooks (no external state libs)
   utils/               # Pure utility functions
-  app/                 # Next.js app directory (demo/playground)
+  app/                 # Next.js app directory — entry point only
 ```
+
+---
+
+## Demo vs Core — Strict Separation
+
+**This boundary is critical and must be enforced on every task.**
+
+`src/components/` is the publishable package. `src/demo/` is the playground.
+
+Rules:
+- **`src/components/` must never import from `src/demo/`.**
+- **Demo-only logic (e.g. client-side data simulation, mock data) must live in `src/demo/`, never in `src/components/`.**
+- `src/app/page.tsx` is a thin entry point — it only mounts `<Demo />` and nothing else.
+- When adding a new feature, ask: _"Does this belong in the component (package) or only in the demo?"_ If it only makes sense for local simulation, it goes in `src/demo/`.
+
+Examples of demo-only code:
+- `applySorting` — simulates server-side sort locally; real consumers send `sortState` to their API
+- Mock/seed data arrays
+- Any `useMemo`/`useState` that drives fake API behaviour
 
 ---
 
