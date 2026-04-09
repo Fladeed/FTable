@@ -1,5 +1,7 @@
+export type DateRendererValue = Date | string | number | null | undefined;
+
 interface DateRendererProps {
-  value: unknown;
+  value: DateRendererValue;
   locale?: string;
 }
 

@@ -1,5 +1,7 @@
+export type NumberRendererValue = number | string | null | undefined;
+
 interface NumberRendererProps {
-  value: unknown;
+  value: NumberRendererValue;
   locale?: string;
 }
 

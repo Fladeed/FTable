@@ -1,7 +1,9 @@
 import './BooleanRenderer.css';
 
+export type BooleanRendererValue = boolean | string | number | null | undefined;
+
 interface BooleanRendererProps {
-  value: unknown;
+  value: BooleanRendererValue;
 }
 
 export function BooleanRenderer({ value }: BooleanRendererProps) {

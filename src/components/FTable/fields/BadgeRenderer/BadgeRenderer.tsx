@@ -1,7 +1,9 @@
 import './BadgeRenderer.css';
 
+export type BadgeRendererValue = string | null | undefined;
+
 interface BadgeRendererProps {
-  value: unknown;
+  value: BadgeRendererValue;
   badgeColors?: Record<string, string>;
 }
 

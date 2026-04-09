@@ -1,5 +1,7 @@
+export type CurrencyRendererValue = number | string | null | undefined;
+
 interface CurrencyRendererProps {
-  value: unknown;
+  value: CurrencyRendererValue;
   currency?: string;
   locale?: string;
 }

@@ -31,7 +31,7 @@ export interface ColumnDef<T extends object> {
    * Custom render function — takes precedence over `type`.
    * Mirrors Ant Design's column `render` prop.
    */
-  render?: (value: unknown, row: T) => ReactNode;
+  render?: (value: T[keyof T], row: T) => ReactNode;
 }
 
 export interface FTableProps<T extends object> {

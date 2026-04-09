@@ -1,12 +1,14 @@
 import './LinkRenderer.css';
 
-interface LinkValue {
+export interface LinkValue {
   href: string;
   label?: string;
 }
 
+export type LinkRendererValue = LinkValue | string | null | undefined;
+
 interface LinkRendererProps {
-  value: unknown;
+  value: LinkRendererValue;
 }
 
 export function LinkRenderer({ value }: LinkRendererProps) {
