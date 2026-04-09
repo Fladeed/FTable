@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import type { ColumnDef } from '../FTable.types';
-import { TextRenderer } from './TextRenderer';
-import { NumberRenderer } from './NumberRenderer';
-import { DateRenderer } from './DateRenderer';
-import { BooleanRenderer } from './BooleanRenderer';
-import { BadgeRenderer } from './BadgeRenderer';
-import { CurrencyRenderer } from './CurrencyRenderer';
-import { LinkRenderer } from './LinkRenderer';
+import { TextRenderer } from './TextRenderer/TextRenderer';
+import { NumberRenderer } from './NumberRenderer/NumberRenderer';
+import { DateRenderer } from './DateRenderer/DateRenderer';
+import { BooleanRenderer } from './BooleanRenderer/BooleanRenderer';
+import { BadgeRenderer } from './BadgeRenderer/BadgeRenderer';
+import { CurrencyRenderer } from './CurrencyRenderer/CurrencyRenderer';
+import { LinkRenderer } from './LinkRenderer/LinkRenderer';
 
 export function renderCell<T extends object>(col: ColumnDef<T>, row: T): ReactNode {
   const value = (row as Record<string, unknown>)[col.key];
