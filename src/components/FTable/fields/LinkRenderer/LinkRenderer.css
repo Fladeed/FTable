@@ -1,0 +1,9 @@
+.ftable-link {
+  color: var(--ftable-link-color, #2563eb);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ftable-link:hover {
+  color: var(--ftable-link-hover-color, #1d4ed8);
+}

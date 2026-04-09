@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export type ColumnType =
   | 'text'
   | 'number'
@@ -19,6 +21,17 @@ export interface ColumnDef<T extends object> {
   header: string;
   type?: ColumnType;
   sortable?: boolean;
+  /** Badge type: maps each enum value to a background color. */
+  badgeColors?: Record<string, string>;
+  /** Currency type: ISO 4217 currency code (default: 'USD'). */
+  currency?: string;
+  /** Number / date / currency: BCP 47 locale string (default: browser locale). */
+  locale?: string;
+  /**
+   * Custom render function — takes precedence over `type`.
+   * Mirrors Ant Design's column `render` prop.
+   */
+  render?: (value: T[keyof T], row: T) => ReactNode;
 }
 
 export interface FTableProps<T extends object> {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import FTable from '@/components/FTable/FTable';
 import type { ColumnDef, SortState } from '@/components/FTable/FTable.types';
 import { applySorting } from './demoUtils';
@@ -59,7 +60,12 @@ export function Demo() {
 
   return (
     <main style={{ minHeight: '100vh', padding: '2rem' }}>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1.5rem' }}>FTable — Demo</h1>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1.5rem', marginBottom: '1.5rem' }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>FTable — Demo</h1>
+        <Link href="/field-renderers" style={{ fontSize: '0.875rem', color: '#2563eb' }}>
+          Field Renderers Demo →
+        </Link>
+      </div>
       <FTable
         columns={COLUMNS}
         data={pageData}
