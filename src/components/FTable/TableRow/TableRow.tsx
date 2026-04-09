@@ -1,4 +1,5 @@
 import type { TableRowProps } from '../FTable.types';
+import { renderCell } from '../fields/renderCell';
 import './TableRow.css';
 
 export function TableRow<T extends object>({ row, columns }: TableRowProps<T>) {
@@ -6,7 +7,7 @@ export function TableRow<T extends object>({ row, columns }: TableRowProps<T>) {
     <tr className="ftable__row">
       {columns.map((col) => (
         <td key={col.key} className="ftable__cell">
-          {String((row as Record<string, unknown>)[col.key] ?? '')}
+          {renderCell(col, row)}
         </td>
       ))}
     </tr>

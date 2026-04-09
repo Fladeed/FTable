@@ -1,0 +1,41 @@
+.demo-page {
+  min-height: 100vh;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.demo-nav {
+  margin-bottom: 1.5rem;
+}
+
+.demo-nav__link {
+  font-size: 0.875rem;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.demo-nav__link:hover {
+  text-decoration: underline;
+}
+
+.demo-page__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.demo-page__subtitle {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin: 0 0 1.75rem;
+  line-height: 1.6;
+}
+
+.demo-page__subtitle code {
+  background: #f3f4f6;
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+  color: #1f2937;
+}
