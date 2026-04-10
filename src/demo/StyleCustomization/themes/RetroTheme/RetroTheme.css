@@ -1,0 +1,66 @@
+/* Dark canvas behind the Retro Terminal table */
+.sc-preview--retro {
+  background-color: #050505;
+  padding: 1.5rem;
+  border-radius: 0;
+}
+
+/* Subtle CRT flicker on the root container */
+.theme-retro__root {
+  animation: retro-flicker 4s infinite;
+}
+
+/* Scanline overlay via a pseudo-element on the wrapper.
+   repeating-linear-gradient produces 2px horizontal lines. */
+.theme-retro__wrapper {
+  position: relative;
+}
+
+.theme-retro__wrapper::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: retro-scanline 8s linear infinite;
+}
+
+/* Row hover: green glow */
+.sc-preview--retro .theme-retro__row:hover {
+  background-color: #0f1e0f;
+  box-shadow: inset 0 0 20px rgba(51, 255, 51, 0.06);
+}
+
+/* Button hover: neon border glow */
+.sc-preview--retro .theme-retro__btn:hover:not(:disabled) {
+  background-color: #0f1e0f;
+  border-color: #33ff33;
+  box-shadow: 0 0 6px rgba(51, 255, 51, 0.3);
+}
+
+/* Disabled buttons: dim */
+.sc-preview--retro .theme-retro__btn:disabled {
+  color: #0f3d0f;
+  border-color: #0f1e0f;
+}
+
+/* Keyframes */
+@keyframes retro-flicker {
+  0%, 100% { opacity: 1; }
+  92%      { opacity: 1; }
+  93%      { opacity: 0.96; }
+  94%      { opacity: 1; }
+  96%      { opacity: 0.98; }
+  97%      { opacity: 1; }
+}
+
+@keyframes retro-scanline {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 300px; }
+}

@@ -20,6 +20,11 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-15 | Task | Multi-column sorting | To Do | https://fladeed.atlassian.net/browse/ET-15 |
 | ET-16 | Task | View persistence via localStorage | To Do | https://fladeed.atlassian.net/browse/ET-16 |
 | ET-17 | Task | Remote persistence adapter (pluggable ViewStorageAdapter interface) | To Do | https://fladeed.atlassian.net/browse/ET-17 |
+| ET-21 | Task | Custom classNames and styles API for table slots (antd-style) + shadcn demo | Done ✓ | https://fladeed.atlassian.net/browse/ET-21 |
+| ET-23 | Task | ActionBar — Table-level actions (independent of row selection) | To Do | https://fladeed.atlassian.net/browse/ET-23 |
+| ET-24 | Task | Row selection system (checkboxes, select-all, selectedRows state) | To Do | https://fladeed.atlassian.net/browse/ET-24 |
+| ET-25 | Task | ActionBar — Single-row actions (row context menu / inline actions) | To Do | https://fladeed.atlassian.net/browse/ET-25 |
+| ET-26 | Task | ActionBar — Bulk actions for selected rows (blocked by ET-24) | To Do | https://fladeed.atlassian.net/browse/ET-26 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net

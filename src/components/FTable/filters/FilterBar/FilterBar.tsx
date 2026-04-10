@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import type { CSSProperties } from 'react';
 import type { FilterDef, QuickFilterState } from '../../FTable.types';
+import { cx } from '@/utils/cx';
 import './FilterBar.css';
 
 interface FilterBarProps {
@@ -9,6 +11,8 @@ interface FilterBarProps {
   activeFilters: QuickFilterState;
   onFilterChange: (filters: QuickFilterState) => void;
   showSearch?: boolean;
+  className?: string;
+  style?: CSSProperties;
 }
 
 function formatActiveValue(def: FilterDef, value: string): string {
@@ -16,7 +20,7 @@ function formatActiveValue(def: FilterDef, value: string): string {
   return value;
 }
 
-export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false }: FilterBarProps) {
+export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, className, style }: FilterBarProps) {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [closingKey, setClosingKey] = useState<string | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -85,7 +89,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
   }
 
   return (
-    <div className="ftable-filter-bar" ref={barRef}>
+    <div className={cx('ftable-filter-bar', className)} ref={barRef} style={style}>
         {showSearch && (() => {
           const searchValue = activeFilters[SEARCH_KEY] ?? '';
           const isSearchOpen = openKey === SEARCH_KEY;

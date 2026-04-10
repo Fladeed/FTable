@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import Link from 'next/link';
 import FTable from '@/components/FTable/FTable';
 import type { ColumnDef, SortState, QuickFilterState, FilterDef } from '@/components/FTable/FTable.types';
-import { applySorting, applyFilters } from './demoUtils';
+import { applySorting, applyFilters } from '../demoUtils';
+import { DemoNav } from '../DemoNav/DemoNav';
+import './Demo.css';
 
 interface Employee {
   id: number;
@@ -76,13 +77,9 @@ export function Demo() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', padding: '2rem' }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1.5rem', marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>FTable — Demo</h1>
-        <Link href="/field-renderers" style={{ fontSize: '0.875rem', color: '#2563eb' }}>
-          Field Renderers Demo →
-        </Link>
-      </div>
+    <main className="demo-shell demo-page-shell">
+      <DemoNav />
+      <h1 className="demo-shell__title">FTable &mdash; Demo</h1>
       <FTable
         columns={COLUMNS}
         data={pageData}

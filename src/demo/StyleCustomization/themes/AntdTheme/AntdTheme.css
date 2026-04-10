@@ -1,0 +1,14 @@
+/* Ant Design canvas — light blue-grey background matching antd page backgrounds */
+.sc-preview--antd {
+  background-color: #f0f2f5;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+}
+
+/* Pagination buttons turn blue on hover.
+   Requires a class because color + border-color cannot both be set via inline styles. */
+.sc-preview--antd .theme-antd__btn:hover:not(:disabled) {
+  background-color: #ffffff;
+  border-color: #1677ff;
+  color: #1677ff;
+}
