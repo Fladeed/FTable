@@ -102,6 +102,17 @@ Renderers live in `src/components/FTable/fields/`.
 - No default exports from utility/hook files; named exports only.
 - File names: `PascalCase` for components, `camelCase` for hooks/utils.
 - **Break UI into the most elementary components that make sense.** Each distinct rendering concern (header row, body row, cell, pagination bar, etc.) lives in its own component file. Avoid monolithic components that render multiple independent UI regions.
+- **Every component lives in its own named directory.** A component `Foo` must be at `Foo/Foo.tsx` with its styles at `Foo/Foo.css`. Never place multiple component files flat in a shared folder. Grouping folders (e.g. `filters/`) are allowed as parent directories, but each component inside must still have its own subdirectory.
+
+  ```
+  filters/
+    FilterBar/
+      FilterBar.tsx
+      FilterBar.css
+    FilterPopover/
+      FilterPopover.tsx
+      FilterPopover.css
+  ```
 
 ---
 

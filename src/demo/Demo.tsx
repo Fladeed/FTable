@@ -3,8 +3,8 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import FTable from '@/components/FTable/FTable';
-import type { ColumnDef, SortState } from '@/components/FTable/FTable.types';
-import { applySorting } from './demoUtils';
+import type { ColumnDef, SortState, QuickFilterState, FilterDef } from '@/components/FTable/FTable.types';
+import { applySorting, applyFilters } from './demoUtils';
 
 interface Employee {
   id: number;
@@ -18,12 +18,22 @@ interface Employee {
 
 const COLUMNS: ColumnDef<Employee>[] = [
   { key: 'id', header: 'ID', type: 'number' },
-  { key: 'name', header: 'Name', type: 'text' },
+  { key: 'name', header: 'Name', type: 'text', filterable: true },
   { key: 'role', header: 'Role', type: 'text' },
-  { key: 'department', header: 'Department', type: 'text' },
+  { key: 'department', header: 'Department', type: 'text', filterable: true },
   { key: 'startDate', header: 'Start Date', type: 'date' },
   { key: 'salary', header: 'Salary', type: 'currency' },
-  { key: 'active', header: 'Active', type: 'boolean' },
+  { key: 'active', header: 'Active', type: 'boolean', filterable: true },
+];
+
+// Role uses a select with explicit options — demonstrates consumer-defined filterDefs
+const FILTER_DEFS: FilterDef[] = [
+  {
+    key: 'role',
+    label: 'Role',
+    type: 'select',
+    options: ['Engineer', 'Designer', 'Manager', 'Analyst', 'Sales Rep', 'HR Lead', 'DevOps'],
+  },
 ];
 
 const ALL_DATA: Employee[] = [
@@ -51,12 +61,19 @@ const PAGE_SIZE = 5;
 export function Demo() {
   const [page, setPage] = useState(1);
   const [sortState, setSortState] = useState<SortState<Employee> | null>(null);
+  const [filterState, setFilterState] = useState<QuickFilterState>({});
 
-  const sortedData = useMemo(() => applySorting(ALL_DATA, sortState), [sortState]);
+  const filteredData = useMemo(() => applyFilters(ALL_DATA, filterState), [filterState]);
+  const sortedData = useMemo(() => applySorting(filteredData, sortState), [filteredData, sortState]);
   const pageData = useMemo(
     () => sortedData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
     [sortedData, page],
   );
+
+  function handleFilterChange(filters: QuickFilterState) {
+    setFilterState(filters);
+    setPage(1);
+  }
 
   return (
     <main style={{ minHeight: '100vh', padding: '2rem' }}>
@@ -69,12 +86,17 @@ export function Demo() {
       <FTable
         columns={COLUMNS}
         data={pageData}
-        totalRows={ALL_DATA.length}
+        totalRows={sortedData.length}
         page={page}
         pageSize={PAGE_SIZE}
         onPageChange={setPage}
         sortState={sortState}
         onSortChange={setSortState}
+        filterDefs={FILTER_DEFS}
+        autoFilters={true}
+        showSearch={true}
+        quickFilters={filterState}
+        onFilterChange={handleFilterChange}
       />
     </main>
   );

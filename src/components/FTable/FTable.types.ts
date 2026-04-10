@@ -32,7 +32,22 @@ export interface ColumnDef<T extends object> {
    * Mirrors Ant Design's column `render` prop.
    */
   render?: (value: T[keyof T], row: T) => ReactNode;
+  /** When autoFilters is enabled on FTable, columns with filterable: true get a pill generated automatically. */
+  filterable?: boolean;
 }
+
+export type FilterInputType = 'text' | 'number' | 'date' | 'boolean' | 'select';
+
+export interface FilterDef {
+  key: string;
+  label: string;
+  type: FilterInputType;
+  /** Option values for the 'select' input type. */
+  options?: string[];
+}
+
+/** Flat map of filter key → active string value. An absent key means no filter is applied. */
+export type QuickFilterState = Partial<Record<string, string>>;
 
 export interface FTableProps<T extends object> {
   columns: ColumnDef<T>[];
@@ -49,6 +64,16 @@ export interface FTableProps<T extends object> {
   sortState?: SortState<T> | null;
   /** Called when the user clicks a sortable column header. */
   onSortChange?: (sort: SortState<T> | null) => void;
+  /** Explicit consumer-defined filter pills. Keys can be any string (column keys or server params). */
+  filterDefs?: FilterDef[];
+  /** When true, auto-generates pills from columns that have filterable: true. Merged with filterDefs. */
+  autoFilters?: boolean;
+  /** Active quick filters (controlled). */
+  quickFilters?: QuickFilterState;
+  /** Called when the user changes any filter value. */
+  onFilterChange?: (filters: QuickFilterState) => void;
+  /** When true, renders a global search input at the start of the filter bar. Value stored under the reserved key '__search__'. */
+  showSearch?: boolean;
 }
 
 export interface TableHeaderProps<T extends object> {
