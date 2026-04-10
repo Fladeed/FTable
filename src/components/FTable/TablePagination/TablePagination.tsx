@@ -1,4 +1,5 @@
 import type { TablePaginationProps } from '../FTable.types';
+import { cx } from '@/utils/cx';
 import './TablePagination.css';
 
 export function TablePagination({
@@ -6,11 +7,17 @@ export function TablePagination({
   totalPages,
   onPrev,
   onNext,
+  classNames,
+  styles,
 }: TablePaginationProps) {
   return (
-    <div className="ftable-pagination">
+    <div
+      className={cx('ftable-pagination', classNames?.pagination)}
+      style={styles?.pagination}
+    >
       <button
-        className="ftable-pagination__btn"
+        className={cx('ftable-pagination__btn', classNames?.paginationButton)}
+        style={styles?.paginationButton}
         onClick={onPrev}
         disabled={currentPage <= 1}
       >
@@ -20,7 +27,8 @@ export function TablePagination({
         Page {currentPage} of {totalPages}
       </span>
       <button
-        className="ftable-pagination__btn"
+        className={cx('ftable-pagination__btn', classNames?.paginationButton)}
+        style={styles?.paginationButton}
         onClick={onNext}
         disabled={currentPage >= totalPages}
       >

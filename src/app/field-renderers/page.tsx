@@ -1,5 +1,5 @@
-import { FieldRenderersDemo } from '@/demo/FieldRenderers/FieldRenderersDemo';
+import { FieldRenderers } from '@/demo/FieldRenderers/FieldRenderers';
 
 export default function FieldRenderersPage() {
-  return <FieldRenderersDemo />;
+  return <FieldRenderers />;
 }

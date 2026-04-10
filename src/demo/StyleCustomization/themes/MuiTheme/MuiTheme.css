@@ -1,0 +1,5 @@
+/* Text buttons use a blue-tinted hover background.
+   Requires a class because :hover pseudo-state cannot be driven by inline styles. */
+.sc-preview--mui .theme-mui__btn:hover:not(:disabled) {
+  background-color: rgba(25, 118, 210, 0.04);
+}

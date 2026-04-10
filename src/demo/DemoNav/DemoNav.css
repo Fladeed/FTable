@@ -1,0 +1,32 @@
+.site-nav {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.site-nav__tab {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  /* Pull down so the tab border sits flush on top of the nav border */
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.site-nav__tab:first-child {
+  padding-left: 0;
+}
+
+.site-nav__tab:hover {
+  color: #111827;
+}
+
+.site-nav__tab--active {
+  color: #111827;
+  border-bottom-color: #111827;
+}

@@ -4,6 +4,7 @@ import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
+import { cx } from '@/utils/cx';
 import './FTable.css';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -22,6 +23,8 @@ export default function FTable<T extends object>({
   quickFilters = {},
   onFilterChange,
   showSearch = false,
+  classNames,
+  styles,
 }: FTableProps<T>) {
   const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
@@ -55,17 +58,30 @@ export default function FTable<T extends object>({
   }
 
   return (
-    <div>
+    <div className={classNames?.root} style={styles?.root}>
       <FilterBar
         filterDefs={effectiveFilterDefs}
         activeFilters={quickFilters}
         onFilterChange={handleFilterChange}
         showSearch={showSearch}
+        className={classNames?.filterBar}
+        style={styles?.filterBar}
       />
-      <div className="ftable-wrapper">
-        <table className="ftable">
-          <TableHeader columns={columns} sortState={sortState} onSort={handleSort} />
-          <TableBody columns={columns} rows={data} />
+      <div className={cx('ftable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
+        <table className={cx('ftable', classNames?.table)} style={styles?.table}>
+          <TableHeader
+            columns={columns}
+            sortState={sortState}
+            onSort={handleSort}
+            classNames={classNames}
+            styles={styles}
+          />
+          <TableBody
+            columns={columns}
+            rows={data}
+            classNames={classNames}
+            styles={styles}
+          />
         </table>
       </div>
       <TablePagination
@@ -73,6 +89,8 @@ export default function FTable<T extends object>({
         totalPages={totalPages}
         onPrev={() => onPageChange(page - 1)}
         onNext={() => onPageChange(page + 1)}
+        classNames={classNames}
+        styles={styles}
       />
     </div>
   );

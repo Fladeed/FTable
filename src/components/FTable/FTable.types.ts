@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 export type ColumnType =
   | 'text'
@@ -49,6 +49,59 @@ export interface FilterDef {
 /** Flat map of filter key → active string value. An absent key means no filter is applied. */
 export type QuickFilterState = Partial<Record<string, string>>;
 
+/**
+ * Custom class names for each part of the table.
+ * Passed through to the corresponding DOM elements alongside the built-in classes.
+ */
+export interface FTableClassNames {
+  /** Outermost container `<div>` */
+  root?: string;
+  /** Horizontal-scroll wrapper `<div>` */
+  wrapper?: string;
+  /** `<table>` element */
+  table?: string;
+  /** `<thead>` element */
+  header?: string;
+  /** `<tr>` inside `<thead>` */
+  headerRow?: string;
+  /** Each `<th>` header cell */
+  headerCell?: string;
+  /** `<tbody>` element */
+  body?: string;
+  /** Each `<tr>` row in `<tbody>` */
+  row?: string;
+  /** Each `<td>` data cell */
+  cell?: string;
+  /** Pagination container */
+  pagination?: string;
+  /** Prev / Next buttons */
+  paginationButton?: string;
+  /** Filter bar container `<div>` */
+  filterBar?: string;
+}
+
+/**
+ * Inline styles for each part of the table.
+ * CSS custom properties (e.g. `--ftable-border-color`) are accepted via a cast
+ * and will propagate to all child elements that reference them.
+ */
+export type FTableStyleValue = CSSProperties & { [cssVar: `--${string}`]: string | number };
+
+export interface FTableStyles {
+  root?: FTableStyleValue;
+  wrapper?: FTableStyleValue;
+  table?: FTableStyleValue;
+  header?: FTableStyleValue;
+  headerRow?: FTableStyleValue;
+  headerCell?: FTableStyleValue;
+  body?: FTableStyleValue;
+  row?: FTableStyleValue;
+  cell?: FTableStyleValue;
+  pagination?: FTableStyleValue;
+  paginationButton?: FTableStyleValue;
+  filterBar?: FTableStyleValue;
+}
+
 export interface FTableProps<T extends object> {
   columns: ColumnDef<T>[];
   /** Current page rows only — already paginated by the server (or the consumer). */
@@ -74,22 +127,32 @@ export interface FTableProps<T extends object> {
   onFilterChange?: (filters: QuickFilterState) => void;
   /** When true, renders a global search input at the start of the filter bar. Value stored under the reserved key '__search__'. */
   showSearch?: boolean;
+  /** Custom class names for individual table parts. */
+  classNames?: FTableClassNames;
+  /** Inline styles for individual table parts. CSS custom properties are accepted. */
+  styles?: FTableStyles;
 }
 
 export interface TableHeaderProps<T extends object> {
   columns: ColumnDef<T>[];
   sortState: SortState<T> | null;
   onSort: (key: keyof T & string) => void;
+  classNames?: FTableClassNames;
+  styles?: FTableStyles;
 }
 
 export interface TableRowProps<T extends object> {
   row: T;
   columns: ColumnDef<T>[];
+  classNames?: FTableClassNames;
+  styles?: FTableStyles;
 }
 
 export interface TableBodyProps<T extends object> {
   columns: ColumnDef<T>[];
   rows: T[];
+  classNames?: FTableClassNames;
+  styles?: FTableStyles;
 }
 
 export interface TablePaginationProps {
@@ -97,4 +160,6 @@ export interface TablePaginationProps {
   totalPages: number;
   onPrev: () => void;
   onNext: () => void;
+  classNames?: FTableClassNames;
+  styles?: FTableStyles;
 }
