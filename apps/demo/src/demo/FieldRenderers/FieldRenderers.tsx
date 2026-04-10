@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import FTable from '@/components/FTable/FTable';
-import type { ColumnDef } from '@/components/FTable/FTable.types';
-import Link from 'next/link';
-import './FieldRenderersDemo.css';
+import { FTable } from 'ftable';
+import type { ColumnDef } from 'ftable';
+import { DemoNav } from '../DemoNav/DemoNav';
+import './FieldRenderers.css';
 
 interface Product {
   id: number;
@@ -192,7 +192,7 @@ const DATA: Product[] = [
 
 const PAGE_SIZE = 8;
 
-export function FieldRenderersDemo() {
+export function FieldRenderers() {
   const [page, setPage] = useState(1);
 
   const pageData = useMemo(
@@ -201,10 +201,8 @@ export function FieldRenderersDemo() {
   );
 
   return (
-    <main className="demo-page">
-      <nav className="demo-nav">
-        <Link href="/" className="demo-nav__link">← Back to main demo</Link>
-      </nav>
+    <main className="demo-page demo-page-shell">
+      <DemoNav />
 
       <h1 className="demo-page__title">Field Renderers Demo</h1>
       <p className="demo-page__subtitle">

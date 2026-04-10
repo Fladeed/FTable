@@ -1,24 +1,17 @@
 {
-  "name": "ftable",
-  "version": "0.1.0",
+  "name": "ftable-root",
+  "version": "0.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.2.2",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "dev": "npm run dev --workspace=apps/demo",
+    "build": "npm run build --workspace=apps/demo",
+    "typecheck": "npm run typecheck --workspace=packages/ftable"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.2",
     "typescript": "^5"
   }
 }

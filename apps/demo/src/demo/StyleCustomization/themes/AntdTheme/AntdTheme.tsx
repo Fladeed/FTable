@@ -1,6 +1,6 @@
 'use client';
 
-import type { FTableStyleValue } from '@/components/FTable/FTable.types';
+import type { FTableStyleValue } from 'ftable';
 import type { ThemeConfig } from '../../StyleCustomizationDemoData';
 import { ThemePreview } from '../../ThemePreview/ThemePreview';
 import './AntdTheme.css';

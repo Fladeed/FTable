@@ -1,4 +1,4 @@
-import type { SortState, QuickFilterState } from '@/components/FTable/FTable.types';
+import type { SortState, QuickFilterState } from 'ftable';
 
 /**
  * Client-side sort simulation for the demo app only.

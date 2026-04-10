@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DemoNav } from '@/demo/DemoNav/DemoNav';
+import { DemoNav } from '../DemoNav/DemoNav';
 import type { ThemeConfig } from './StyleCustomizationDemoData';
 import { ShadcnTheme, SHADCN_CONFIG } from './themes/ShadcnTheme/ShadcnTheme';
 import { AntdTheme, ANTD_CONFIG } from './themes/AntdTheme/AntdTheme';

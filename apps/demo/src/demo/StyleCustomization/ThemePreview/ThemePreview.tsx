@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import FTable from '@/components/FTable/FTable';
-import type { SortState, QuickFilterState } from '@/components/FTable/FTable.types';
-import { applySorting, applyFilters } from '@/demo/demoUtils';
+import { FTable } from 'ftable';
+import type { SortState, QuickFilterState } from 'ftable';
+import { applySorting, applyFilters } from '../../demoUtils';
 import type { ThemeConfig, Employee } from '../StyleCustomizationDemoData';
 import { ALL_DATA, COLUMNS, FILTER_DEFS, PAGE_SIZE } from '../StyleCustomizationDemoData';
 import './ThemePreview.css';
