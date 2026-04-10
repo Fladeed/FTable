@@ -1,6 +1,6 @@
 import type { TableRowProps } from '../FTable.types';
 import { renderCell } from '../fields/renderCell';
-import { cx } from '@/utils/cx';
+import { cx } from '../../utils/cx';
 import './TableRow.css';
 
 export function TableRow<T extends object>({

@@ -1,5 +1,5 @@
 import type { TablePaginationProps } from '../FTable.types';
-import { cx } from '@/utils/cx';
+import { cx } from '../../utils/cx';
 import './TablePagination.css';
 
 export function TablePagination({

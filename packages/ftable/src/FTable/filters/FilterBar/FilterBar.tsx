@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import type { FilterDef, QuickFilterState } from '../../FTable.types';
-import { cx } from '@/utils/cx';
+import { cx } from '../../../utils/cx';
 import './FilterBar.css';
 
 interface FilterBarProps {

@@ -1,6 +1,6 @@
 import type { TableBodyProps } from '../FTable.types';
 import { TableRow } from '../TableRow/TableRow';
-import { cx } from '@/utils/cx';
+import { cx } from '../../utils/cx';
 import './TableBody.css';
 
 export function TableBody<T extends object>({

@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { FTable } from 'ftable';
 import type { ColumnDef, SortState, QuickFilterState, FilterDef } from 'ftable';
-import { applySorting, applyFilters } from '../demoUtils';
+import { applySorting, applyFilters } from '../../utils/demoUtils';
 import { DemoNav } from '../DemoNav/DemoNav';
 import './Demo.css';
 

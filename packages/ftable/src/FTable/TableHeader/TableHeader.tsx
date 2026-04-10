@@ -1,6 +1,6 @@
 import type { TableHeaderProps } from '../FTable.types';
 import { SortIndicator } from '../SortIndicator/SortIndicator';
-import { cx } from '@/utils/cx';
+import { cx } from '../../utils/cx';
 import './TableHeader.css';
 
 export function TableHeader<T extends object>({

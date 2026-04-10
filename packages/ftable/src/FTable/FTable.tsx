@@ -4,7 +4,7 @@ import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
-import { cx } from '@/utils/cx';
+import { cx } from '../utils/cx';
 import './FTable.css';
 
 const DEFAULT_PAGE_SIZE = 10;
