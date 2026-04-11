@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import { FTable } from 'ftable';
 import type { ColumnDef, SortState, QuickFilterState, FilterDef } from 'ftable';
 import { applySorting, applyFilters } from '../../utils/demoUtils';
-import { DemoNav } from '../DemoNav/DemoNav';
 import './Demo.css';
 
 interface Employee {
@@ -78,7 +77,6 @@ export function Demo() {
 
   return (
     <main className="demo-shell demo-page-shell">
-      <DemoNav />
       <h1 className="demo-shell__title">FTable &mdash; Demo</h1>
       <FTable
         columns={COLUMNS}

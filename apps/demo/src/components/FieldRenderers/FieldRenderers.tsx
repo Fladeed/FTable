@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import { FTable } from 'ftable';
 import type { ColumnDef } from 'ftable';
-import { DemoNav } from '../DemoNav/DemoNav';
 import './FieldRenderers.css';
 
 interface Product {
@@ -202,8 +201,6 @@ export function FieldRenderers() {
 
   return (
     <main className="demo-page demo-page-shell">
-      <DemoNav />
-
       <h1 className="demo-page__title">Field Renderers Demo</h1>
       <p className="demo-page__subtitle">
         Each column exercises a different renderer:{' '}

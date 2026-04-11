@@ -64,8 +64,8 @@ export default function FTable<T extends object>({
         activeFilters={quickFilters}
         onFilterChange={handleFilterChange}
         showSearch={showSearch}
-        className={classNames?.filterBar}
-        style={styles?.filterBar}
+        classNames={classNames}
+        styles={styles}
       />
       <div className={cx('ftable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
         <table className={cx('ftable', classNames?.table)} style={styles?.table}>

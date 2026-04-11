@@ -1,3 +1,4 @@
+@layer components {
 /* ─────────────────────────────────────────────
    FTable — root styles
    Sub-component styles live in their own folders.
@@ -20,4 +21,5 @@
   font-size: var(--ftable-font-size, 0.875rem);
   background-color: var(--ftable-bg, #ffffff);
   color: var(--ftable-color, #111827);
+}
 }

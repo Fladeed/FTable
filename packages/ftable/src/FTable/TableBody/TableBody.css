@@ -1,3 +1,4 @@
+@layer components {
 .ftable__body {
   /* tbody container */
 }
@@ -11,4 +12,5 @@
   color: var(--ftable-muted-color, #6b7280);
   padding: var(--ftable-cell-padding, 0.625rem 0.875rem);
   height: 6rem;
+}
 }

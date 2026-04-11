@@ -1,3 +1,4 @@
+@layer components {
 .ftable-pagination {
   display: flex;
   align-items: center;
@@ -26,4 +27,5 @@
 .ftable-pagination__btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
 }
