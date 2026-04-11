@@ -111,29 +111,32 @@ export interface FTableStyles {
   filterPillInput?: FTableStyleValue;
 }
 
-export interface FTableProps<T extends object> {
-  columns: ColumnDef<T>[];
-  /** Current page rows only — already paginated by the server (or the consumer). */
-  data: T[];
-  /** Total number of rows across all pages (used to compute page count). */
-  totalRows: number;
-  /** Currently active page (1-based, controlled). */
+/** Parameters passed to the `request` function on each fetch. */
+export interface FTableRequestParams<T extends object> {
   page: number;
+  pageSize: number;
+  sortState: SortState<T> | null;
+  quickFilters: QuickFilterState;
+}
+
+/** The object the `request` function must resolve with. */
+export interface FTableRequestResult<T extends object> {
+  data: T[];
+  totalRows: number;
+}
+
+/** Async function signature for the `request` prop. */
+export type FTableRequestFn<T extends object> = (
+  params: FTableRequestParams<T>,
+) => Promise<FTableRequestResult<T>>;
+
+interface FTableBaseProps<T extends object> {
+  columns: ColumnDef<T>[];
   pageSize?: number;
-  /** Called when the user navigates to a different page. */
-  onPageChange: (page: number) => void;
-  /** Currently active sort (controlled). Pass null for unsorted. */
-  sortState?: SortState<T> | null;
-  /** Called when the user clicks a sortable column header. */
-  onSortChange?: (sort: SortState<T> | null) => void;
   /** Explicit consumer-defined filter pills. Keys can be any string (column keys or server params). */
   filterDefs?: FilterDef[];
   /** When true, auto-generates pills from columns that have filterable: true. Merged with filterDefs. */
   autoFilters?: boolean;
-  /** Active quick filters (controlled). */
-  quickFilters?: QuickFilterState;
-  /** Called when the user changes any filter value. */
-  onFilterChange?: (filters: QuickFilterState) => void;
   /** When true, renders a global search input at the start of the filter bar. Value stored under the reserved key '__search__'. */
   showSearch?: boolean;
   /** Custom class names for individual table parts. */
@@ -141,6 +144,51 @@ export interface FTableProps<T extends object> {
   /** Inline styles for individual table parts. CSS custom properties are accepted. */
   styles?: FTableStyles;
 }
+
+/**
+ * Controlled (data) mode — the consumer supplies pre-fetched rows, pagination, sort, and filters.
+ * Cannot be combined with `request`.
+ */
+export interface FTableDataProps<T extends object> extends FTableBaseProps<T> {
+  /** Current page rows only — already paginated by the server (or the consumer). */
+  data: T[];
+  /** Total number of rows across all pages (used to compute page count). */
+  totalRows: number;
+  /** Currently active page (1-based, controlled). */
+  page: number;
+  /** Called when the user navigates to a different page. */
+  onPageChange: (page: number) => void;
+  /** Currently active sort (controlled). Pass null for unsorted. */
+  sortState?: SortState<T> | null;
+  /** Called when the user clicks a sortable column header. */
+  onSortChange?: (sort: SortState<T> | null) => void;
+  /** Active quick filters (controlled). */
+  quickFilters?: QuickFilterState;
+  /** Called when the user changes any filter value. */
+  onFilterChange?: (filters: QuickFilterState) => void;
+  request?: never;
+}
+
+/**
+ * Request mode — FTable manages its own page / sort / filter state and calls
+ * the provided async function whenever those change.
+ * Cannot be combined with `data`.
+ */
+export interface FTableRequestProps<T extends object> extends FTableBaseProps<T> {
+  /** Async function called on mount and on every sort / filter / pagination change. */
+  request: FTableRequestFn<T>;
+  data?: never;
+  totalRows?: never;
+  page?: never;
+  onPageChange?: never;
+  sortState?: never;
+  onSortChange?: never;
+  quickFilters?: never;
+  onFilterChange?: never;
+}
+
+/** Props for `<FTable />`. Use either `data` (controlled) or `request` (self-managed) — not both. */
+export type FTableProps<T extends object> = FTableDataProps<T> | FTableRequestProps<T>;
 
 export interface TableHeaderProps<T extends object> {
   columns: ColumnDef<T>[];
@@ -162,6 +210,14 @@ export interface TableBodyProps<T extends object> {
   rows: T[];
   classNames?: FTableClassNames;
   styles?: FTableStyles;
+  /** When true, renders animated skeleton rows instead of data. */
+  isLoading?: boolean;
+  /** Number of skeleton rows to render while loading. Defaults to 5. */
+  loadingRowCount?: number;
+  /** Error message to display in place of rows. */
+  error?: string | null;
+  /** Called when the user clicks the Retry button shown in the error state. */
+  onRetry?: () => void;
 }
 
 export interface TablePaginationProps {

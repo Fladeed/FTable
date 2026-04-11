@@ -2,6 +2,11 @@
 export { default as FTable } from './FTable/FTable';
 export type {
   FTableProps,
+  FTableDataProps,
+  FTableRequestProps,
+  FTableRequestParams,
+  FTableRequestResult,
+  FTableRequestFn,
   ColumnDef,
   ColumnType,
   SortState,
