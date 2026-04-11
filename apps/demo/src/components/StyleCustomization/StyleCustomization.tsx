@@ -1,24 +1,25 @@
 'use client';
 
 import { useState } from 'react';
-import { DemoNav } from '../DemoNav/DemoNav';
 import type { ThemeConfig } from './StyleCustomizationDemoData';
 import { ShadcnTheme, SHADCN_CONFIG } from './themes/ShadcnTheme/ShadcnTheme';
 import { AntdTheme, ANTD_CONFIG } from './themes/AntdTheme/AntdTheme';
 import { MuiTheme, MUI_CONFIG } from './themes/MuiTheme/MuiTheme';
 import { RetroTheme, RETRO_CONFIG } from './themes/RetroTheme/RetroTheme';
+import { TailwindTheme, TAILWIND_CONFIG } from './themes/TailwindTheme/TailwindTheme';
 import './StyleCustomization.css';
 
-type ThemeId = 'shadcn' | 'antd' | 'mui' | 'retro';
+type ThemeId = 'shadcn' | 'antd' | 'mui' | 'retro' | 'tailwind';
 
 const THEMES: Record<ThemeId, ThemeConfig> = {
   shadcn: SHADCN_CONFIG,
   antd: ANTD_CONFIG,
   mui: MUI_CONFIG,
   retro: RETRO_CONFIG,
+  tailwind: TAILWIND_CONFIG,
 };
 
-const THEME_IDS: ThemeId[] = ['shadcn', 'antd', 'mui', 'retro'];
+const THEME_IDS: ThemeId[] = ['shadcn', 'antd', 'mui', 'retro', 'tailwind'];
 
 export function StyleCustomization() {
   const [activeTheme, setActiveTheme] = useState<ThemeId>('shadcn');
@@ -26,7 +27,6 @@ export function StyleCustomization() {
 
   return (
     <main className="sc-page demo-page-shell">
-      <DemoNav />
       <h1 className="sc-title">Style Customization</h1>
 
       <p className="sc-intro">
@@ -73,6 +73,7 @@ export function StyleCustomization() {
       {activeTheme === 'antd' && <AntdTheme />}
       {activeTheme === 'mui' && <MuiTheme />}
       {activeTheme === 'retro' && <RetroTheme />}
+      {activeTheme === 'tailwind' && <TailwindTheme />}
     </main>
   );
 }

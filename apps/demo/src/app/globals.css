@@ -1,3 +1,6 @@
+@layer theme, base, ftable, components, utilities;
+@import "tailwindcss";
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -9,10 +12,20 @@ body {
   color: #111827;
 }
 
+/* App shell: sidebar + scrollable content */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-shell__content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
 /* Shared page shell used by every demo page */
 .demo-page-shell {
-  min-height: 100vh;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1160px;
   padding: 2rem;
 }

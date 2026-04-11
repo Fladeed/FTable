@@ -1,3 +1,4 @@
+@layer ftable {
 .ftable-link {
   color: var(--ftable-link-color, #2563eb);
   text-decoration: underline;
@@ -6,4 +7,5 @@
 
 .ftable-link:hover {
   color: var(--ftable-link-hover-color, #1d4ed8);
+}
 }

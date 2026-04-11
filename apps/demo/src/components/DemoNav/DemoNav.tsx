@@ -14,20 +14,30 @@ export function DemoNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="site-nav" role="navigation" aria-label="Demo pages">
-      {TABS.map(({ href, label }) => {
-        const isActive = pathname === href;
-        return (
-          <Link
-            key={href}
-            href={href}
-            className={`site-nav__tab${isActive ? ' site-nav__tab--active' : ''}`}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            {label}
-          </Link>
-        );
-      })}
-    </nav>
+    <aside className="site-sidebar" aria-label="Demo navigation">
+      <div className="site-sidebar__logo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo/FTable-logo.svg"
+          alt="FTable"
+          className="site-sidebar__logo-img"
+        />
+      </div>
+      <nav className="site-nav" role="navigation">
+        {TABS.map(({ href, label }) => {
+          const isActive = pathname === href;
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`site-nav__link${isActive ? ' site-nav__link--active' : ''}`}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
   );
 }

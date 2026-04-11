@@ -1,32 +1,50 @@
-.site-nav {
+.site-sidebar {
+  width: 220px;
+  min-width: 220px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
   display: flex;
-  align-items: center;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 2rem;
+  flex-direction: column;
+  flex-shrink: 0;
 }
 
-.site-nav__tab {
-  padding: 0.75rem 1.25rem;
+.site-sidebar__logo {
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+}
+
+.site-sidebar__logo-img {
+  height: 32px;
+  width: auto;
+}
+
+.site-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 0;
+}
+
+.site-nav__link {
+  padding: 0.625rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   color: #6b7280;
   text-decoration: none;
-  border-bottom: 2px solid transparent;
-  /* Pull down so the tab border sits flush on top of the nav border */
-  margin-bottom: -1px;
+  border-left: 2px solid transparent;
   white-space: nowrap;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.site-nav__tab:first-child {
-  padding-left: 0;
-}
-
-.site-nav__tab:hover {
+.site-nav__link:hover {
   color: #111827;
+  background-color: #f9fafb;
 }
 
-.site-nav__tab--active {
+.site-nav__link--active {
   color: #111827;
-  border-bottom-color: #111827;
+  border-left-color: #111827;
+  background-color: #f3f4f6;
 }
