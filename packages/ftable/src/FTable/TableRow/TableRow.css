@@ -1,4 +1,4 @@
-@layer components {
+@layer ftable {
 .ftable__row {
   border-bottom: 1px solid var(--ftable-border-color, #e5e7eb);
   transition: background-color 0.15s ease;
