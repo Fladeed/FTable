@@ -1,0 +1,20 @@
+@layer ftable {
+.ftable-filter-pill__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0 0.125rem;
+  margin-left: 0.125rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--ftable-pill-clear-color, #93c5fd);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.ftable-filter-pill__clear:hover {
+  color: var(--ftable-pill-clear-hover-color, #1d4ed8);
+}
+}

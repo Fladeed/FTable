@@ -1,0 +1,28 @@
+@layer ftable {
+.ftable-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: var(--ftable-pill-padding, 0.3125rem 0.625rem);
+  min-height: var(--ftable-pill-height, 2rem);
+  font-size: var(--ftable-pill-font-size, 0.875rem);
+  font-family: inherit;
+  color: var(--ftable-pill-color, #374151);
+  background-color: var(--ftable-pill-bg, #ffffff);
+  border: 1px solid var(--ftable-pill-border-color, #d1d5db);
+  border-radius: var(--ftable-pill-radius, 6px);
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ftable-filter-pill--active {
+  color: var(--ftable-pill-active-color, #1d4ed8);
+  background-color: var(--ftable-pill-active-bg, #eff6ff);
+  border-color: var(--ftable-pill-active-border-color, #93c5fd);
+}
+
+.ftable-filter-pill--open {
+  border-color: var(--ftable-pill-open-border-color, #9ca3af);
+  box-shadow: 0 0 0 3px var(--ftable-focus-ring, rgba(0, 0, 0, 0.06));
+}
+}
