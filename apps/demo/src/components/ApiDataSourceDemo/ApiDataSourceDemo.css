@@ -1,0 +1,24 @@
+.api-demo__section {
+  margin-top: 2.5rem;
+}
+
+.api-demo__section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.api-demo__description {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.api-demo__description code {
+  font-family: ui-monospace, monospace;
+  background: #f3f4f6;
+  padding: 0.1em 0.35em;
+  border-radius: 0.2rem;
+  font-size: 0.85em;
+}

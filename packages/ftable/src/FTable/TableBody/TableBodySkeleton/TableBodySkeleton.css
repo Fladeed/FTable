@@ -1,0 +1,30 @@
+@layer ftable {
+
+@keyframes ftable-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.ftable__row--skeleton {
+  /* inherits row border from TableRow styles */
+}
+
+.ftable__cell--skeleton {
+  padding: var(--ftable-cell-padding, 0.625rem 0.875rem);
+}
+
+.ftable__skeleton-shimmer {
+  display: block;
+  height: 0.875rem;
+  border-radius: var(--ftable-skeleton-radius, 0.25rem);
+  background: linear-gradient(
+    90deg,
+    var(--ftable-skeleton-base, #e5e7eb) 25%,
+    var(--ftable-skeleton-highlight, #f3f4f6) 50%,
+    var(--ftable-skeleton-base, #e5e7eb) 75%
+  );
+  background-size: 200% 100%;
+  animation: ftable-shimmer 1.4s ease-in-out infinite;
+}
+
+}

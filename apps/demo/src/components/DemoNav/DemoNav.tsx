@@ -8,6 +8,7 @@ const TABS = [
   { href: '/', label: 'Demo' },
   { href: '/field-renderers', label: 'Field Renderers' },
   { href: '/style-customization', label: 'Style Customization' },
+  { href: '/api-data-source', label: 'API Data Source' },
 ] as const;
 
 export function DemoNav() {

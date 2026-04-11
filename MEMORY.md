@@ -1,4 +1,4 @@
-# MEMORY.md — FTable Project Memory
+    # MEMORY.md — FTable Project Memory
 
 Running memory of relevant project context, decisions, and tracking info.
 
@@ -26,6 +26,7 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-25 | Task | ActionBar — Single-row actions (row context menu / inline actions) | To Do | https://fladeed.atlassian.net/browse/ET-25 |
 | ET-26 | Task | ActionBar — Bulk actions for selected rows (blocked by ET-24) | To Do | https://fladeed.atlassian.net/browse/ET-26 |
 | ET-30 | Task | Tailwind CSS theme demo for style customization page | Done ✓ | https://fladeed.atlassian.net/browse/ET-30 |
+| ET-29 | Task | API data source — accept a request prop to fetch data | In Progress | https://fladeed.atlassian.net/browse/ET-29 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net
