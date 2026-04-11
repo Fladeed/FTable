@@ -1,4 +1,4 @@
-@layer components {
+@layer ftable {
 .ftable__header {
   background-color: var(--ftable-header-bg, #f9fafb);
 }

@@ -1,4 +1,4 @@
-@layer components {
+@layer ftable {
 .ftable-filter-bar {
   display: flex;
   flex-wrap: wrap;

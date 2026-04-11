@@ -1,4 +1,4 @@
-@layer components {
+@layer ftable {
 .ftable-link {
   color: var(--ftable-link-color, #2563eb);
   text-decoration: underline;
