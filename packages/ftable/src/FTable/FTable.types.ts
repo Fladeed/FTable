@@ -78,6 +78,12 @@ export interface FTableClassNames {
   paginationButton?: string;
   /** Filter bar container `<div>` */
   filterBar?: string;
+  /** Each filter pill container `<div>` */
+  filterPill?: string;
+  /** Filter pill trigger `<button>` */
+  filterPillTrigger?: string;
+  /** Filter pill `<input>` or `<select>` */
+  filterPillInput?: string;
 }
 
 /**
@@ -100,6 +106,9 @@ export interface FTableStyles {
   pagination?: FTableStyleValue;
   paginationButton?: FTableStyleValue;
   filterBar?: FTableStyleValue;
+  filterPill?: FTableStyleValue;
+  filterPillTrigger?: FTableStyleValue;
+  filterPillInput?: FTableStyleValue;
 }
 
 export interface FTableProps<T extends object> {

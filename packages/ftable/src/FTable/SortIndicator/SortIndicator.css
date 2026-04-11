@@ -1,3 +1,4 @@
+@layer components {
 .ftable__sort-icon {
   font-size: 0.75rem;
   line-height: 1;
@@ -10,4 +11,5 @@
 .ftable__sort-icon--asc,
 .ftable__sort-icon--desc {
   opacity: 1;
+}
 }

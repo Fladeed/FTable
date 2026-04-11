@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DemoNav } from "@/components/DemoNav/DemoNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div className="app-shell">
+          <DemoNav />
+          <div className="app-shell__content">{children}</div>
+        </div>
+      </body>
     </html>
   );
 }

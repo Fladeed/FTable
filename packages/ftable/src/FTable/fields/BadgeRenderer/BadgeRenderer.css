@@ -1,3 +1,4 @@
+@layer components {
 .ftable-badge {
   display: inline-flex;
   align-items: center;
@@ -8,4 +9,5 @@
   line-height: 1.4;
   white-space: nowrap;
   color: var(--ftable-badge-color, #111827);
+}
 }

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import type { CSSProperties } from 'react';
-import type { FilterDef, QuickFilterState } from '../../FTable.types';
+import type { FilterDef, QuickFilterState, FTableClassNames, FTableStyles } from '../../FTable.types';
 import { cx } from '../../../utils/cx';
 import './FilterBar.css';
 
@@ -11,8 +10,8 @@ interface FilterBarProps {
   activeFilters: QuickFilterState;
   onFilterChange: (filters: QuickFilterState) => void;
   showSearch?: boolean;
-  className?: string;
-  style?: CSSProperties;
+  classNames?: FTableClassNames;
+  styles?: FTableStyles;
 }
 
 function formatActiveValue(def: FilterDef, value: string): string {
@@ -20,7 +19,7 @@ function formatActiveValue(def: FilterDef, value: string): string {
   return value;
 }
 
-export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, className, style }: FilterBarProps) {
+export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, classNames, styles }: FilterBarProps) {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [closingKey, setClosingKey] = useState<string | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -89,7 +88,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
   }
 
   return (
-    <div className={cx('ftable-filter-bar', className)} ref={barRef} style={style}>
+    <div className={cx('ftable-filter-bar', classNames?.filterBar)} ref={barRef} style={styles?.filterBar}>
         {showSearch && (() => {
           const searchValue = activeFilters[SEARCH_KEY] ?? '';
           const isSearchOpen = openKey === SEARCH_KEY;
@@ -97,13 +96,18 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
           const isSearchActive = searchValue !== '';
           return (
             <div
-              className={`ftable-filter-pill ftable-filter-pill--search${
-                isSearchActive ? ' ftable-filter-pill--active' : ''
-              }${isSearchOpen || isSearchClosing ? ' ftable-filter-pill--open' : ''}`}
+              className={cx(
+                'ftable-filter-pill ftable-filter-pill--search',
+                classNames?.filterPill,
+                isSearchActive && 'ftable-filter-pill--active',
+                (isSearchOpen || isSearchClosing) && 'ftable-filter-pill--open',
+              )}
+              style={styles?.filterPill}
             >
               <button
                 type="button"
-                className="ftable-filter-pill__trigger"
+                className={cx('ftable-filter-pill__trigger', classNames?.filterPillTrigger)}
+                style={styles?.filterPillTrigger}
                 onClick={() => handlePillClick(SEARCH_KEY)}
                 aria-expanded={isSearchOpen}
                 aria-label="Search"
@@ -117,7 +121,8 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
               {(isSearchOpen || isSearchClosing) && (
                 <span className={`ftable-filter-pill__field${isSearchClosing ? ' ftable-filter-pill__field--closing' : ''}`}>
                   <input
-                    className="ftable-filter-pill__input"
+                    className={cx('ftable-filter-pill__input', classNames?.filterPillInput)}
+                    style={styles?.filterPillInput}
                     type="text"
                     value={searchValue}
                     onChange={(e) => handleValueChange(SEARCH_KEY, e.target.value)}
@@ -157,13 +162,18 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
         return (
           <div
             key={def.key}
-            className={`ftable-filter-pill${
-              isActive ? ' ftable-filter-pill--active' : ''
-            }${isOpen || isClosing ? ' ftable-filter-pill--open' : ''}`}
+            className={cx(
+              'ftable-filter-pill',
+              classNames?.filterPill,
+              isActive && 'ftable-filter-pill--active',
+              (isOpen || isClosing) && 'ftable-filter-pill--open',
+            )}
+            style={styles?.filterPill}
           >
             <button
               type="button"
-              className="ftable-filter-pill__trigger"
+              className={cx('ftable-filter-pill__trigger', classNames?.filterPillTrigger)}
+              style={styles?.filterPillTrigger}
               onClick={() => handlePillClick(def.key)}
               aria-expanded={isOpen}
             >
@@ -179,7 +189,8 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
 
                 {def.type === 'boolean' && (
                   <select
-                    className="ftable-filter-pill__input"
+                    className={cx('ftable-filter-pill__input', classNames?.filterPillInput)}
+                    style={styles?.filterPillInput}
                     value={value}
                     onChange={(e) => handleValueChange(def.key, e.target.value)}
                     autoFocus={isOpen && !isClosing}
@@ -192,7 +203,8 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
 
                 {def.type === 'select' && (
                   <select
-                    className="ftable-filter-pill__input"
+                    className={cx('ftable-filter-pill__input', classNames?.filterPillInput)}
+                    style={styles?.filterPillInput}
                     value={value}
                     onChange={(e) => handleValueChange(def.key, e.target.value)}
                     autoFocus={isOpen && !isClosing}
@@ -206,7 +218,8 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
 
                 {(def.type === 'text' || def.type === 'number' || def.type === 'date') && (
                   <input
-                    className="ftable-filter-pill__input"
+                    className={cx('ftable-filter-pill__input', classNames?.filterPillInput)}
+                    style={styles?.filterPillInput}
                     type={def.type}
                     value={value}
                     onChange={(e) => handleValueChange(def.key, e.target.value)}

@@ -1,3 +1,4 @@
+@layer components {
 .ftable__header {
   background-color: var(--ftable-header-bg, #f9fafb);
 }
@@ -28,5 +29,4 @@
   align-items: center;
   gap: 0.25rem;
 }
-
-
+}

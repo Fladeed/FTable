@@ -1,3 +1,4 @@
+@layer components {
 .ftable__row {
   border-bottom: 1px solid var(--ftable-border-color, #e5e7eb);
   transition: background-color 0.15s ease;
@@ -14,4 +15,5 @@
 .ftable__cell {
   padding: var(--ftable-cell-padding, 0.625rem 0.875rem);
   vertical-align: middle;
+}
 }

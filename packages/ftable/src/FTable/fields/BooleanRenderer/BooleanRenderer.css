@@ -1,3 +1,4 @@
+@layer components {
 .ftable-boolean {
   font-size: var(--ftable-font-size-sm, 0.8125rem);
   font-weight: 500;
@@ -9,4 +10,5 @@
 
 .ftable-boolean--false {
   color: var(--ftable-boolean-false-color, #dc2626);
+}
 }
