@@ -1,0 +1,21 @@
+.pill-value-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.pill-value-badge--active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.pill-value-badge--inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
