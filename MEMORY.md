@@ -1,4 +1,4 @@
-    # MEMORY.md — FTable Project Memory
+    # MEMORY.md — FloTable Project Memory
 
 Running memory of relevant project context, decisions, and tracking info.
 
@@ -8,7 +8,7 @@ Running memory of relevant project context, decisions, and tracking info.
 
 | Key | Type | Title | Status | URL |
 |-----|------|--------|--------|-----|
-| ET-5 | Epic | FTable | In Progress | https://fladeed.atlassian.net/browse/ET-5 |
+| ET-5 | Epic | FloTable | In Progress | https://fladeed.atlassian.net/browse/ET-5 |
 | ET-7 | Task | Core table scaffold | Done ✓ | https://fladeed.atlassian.net/browse/ET-7 |
 | ET-8 | Task | Column field renderers (text, number, date, boolean, badge, currency, link) | In Progress | https://fladeed.atlassian.net/browse/ET-8 |
 | ET-9 | Task | Single-column sorting with header indicators | Done ✓ | https://fladeed.atlassian.net/browse/ET-9 |
@@ -27,10 +27,15 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-26 | Task | ActionBar — Bulk actions for selected rows (blocked by ET-24) | To Do | https://fladeed.atlassian.net/browse/ET-26 |
 | ET-30 | Task | Tailwind CSS theme demo for style customization page | Done ✓ | https://fladeed.atlassian.net/browse/ET-30 |
 | ET-29 | Task | API data source — accept a request prop to fetch data | In Progress | https://fladeed.atlassian.net/browse/ET-29 |
+| ET-32 | Task | Add MIT LICENSE file | Done ✓ | https://fladeed.atlassian.net/browse/ET-32 |
+| ET-33 | Task | Create CONTRIBUTING.md for open-source contributors | Done ✓ | https://fladeed.atlassian.net/browse/ET-33 |
+| ET-34 | Task | Cloudflare Pages deployment config for demo app | Done ✓ | https://fladeed.atlassian.net/browse/ET-34 |
+| ET-35 | Task | Rewrite README.md for public release | Done ✓ | https://fladeed.atlassian.net/browse/ET-35 |
+| ET-36 | Task | npm package publishing setup for flotable | Done ✓ | https://fladeed.atlassian.net/browse/ET-36 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net
-- **All FTable tickets must be children of epic ET-5.**
+- **All FloTable tickets must be children of epic ET-5.**
 
 ---
 
@@ -47,7 +52,7 @@ Running memory of relevant project context, decisions, and tracking info.
 
 ## Architecture Notes
 
-- Table component lives in `src/components/FTable/`
+- Table component lives in `src/components/FloTable/`
 - Field renderers are separate files under `fields/` subdirectory
 - Views are plain JSON — no external state lib
 - Quick filters = header-inline; Detailed filters = panel/drawer
@@ -57,5 +62,5 @@ Running memory of relevant project context, decisions, and tracking info.
 ## Open Questions / TODO
 
 - [x] Decide on persistence strategy for views → localStorage default (ET-16) + pluggable `ViewStorageAdapter` (ET-17)
-- [ ] Define the public API / props interface for `<FTable />`
+- [ ] Define the public API / props interface for `<FloTable />`
 - [ ] Decide on virtualization approach for large datasets (must be zero-dependency)

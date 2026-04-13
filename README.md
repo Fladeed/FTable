@@ -1,71 +1,199 @@
-# FTable
+# FloTable
 
-An open-source, zero-dependency table component built for ERP-style use cases.
+[![npm version](https://img.shields.io/npm/v/flotable.svg)](https://www.npmjs.com/package/flotable)
+[![license](https://img.shields.io/npm/l/flotable.svg)](./LICENSE)
+[![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 
-## Overview
+An open-source, **zero-dependency** table component built for ERP-style applications. Handles sorting, filtering, pagination, and rich column types out of the box — with full style customization and no runtime baggage.
 
-FTable is a highly capable table component designed to handle the complex data display and interaction needs of enterprise resource planning (ERP) applications. It provides a rich set of features out of the box while remaining lightweight and free of external dependencies.
+**[Live Demo](https://flotable.fladeed.com)**
+
+---
 
 ## Features
 
-### Filtering
-- **Quick Filters** — Inline, fast-access filters for common column operations
-- **Detailed Filters** — Advanced filter panel for complex, multi-condition filtering
+- **Zero runtime dependencies** — only React as a peer dependency
+- **7 built-in column types** — text, number, date, boolean, badge, currency, link
+- **Quick filters** — inline per-column filter pills in the header
+- **Sorting** — single-column sorting with visual indicators
+- **Pagination** — built-in page controls with configurable page size
+- **Custom renderers** — override any column with a `render` function
+- **Two data modes** — controlled (`data` prop) or self-managed (`request` prop for async fetching)
+- **Full style control** — CSS custom properties, `classNames` API, and `styles` prop for every table slot
+- **Framework-agnostic styling** — ships plain CSS in `@layer flotable`, works with Tailwind, CSS Modules, or vanilla CSS
 
-### Sorting
-- Single and multi-column sorting
-- Easy-to-use sort controls per column
+---
 
-### Field Display
-- Multiple content types per field (text, number, date, boolean, badge, etc.)
-- Configurable styling per column
+## Installation
 
-### Views
-- Save useful combinations of filters and sorting as named views
-- Views are displayed as tabs for quick switching
-- Views persist user-defined configurations
+```bash
+npm install flotable
+```
+
+FloTable requires **React 18+** as a peer dependency.
+
+---
+
+## Quick Start
+
+```tsx
+import { FloTable } from 'flotable';
+import 'flotable/dist/flotable.css';
+
+const columns = [
+  { key: 'name',   header: 'Name',   type: 'text' as const },
+  { key: 'email',  header: 'Email',  type: 'text' as const },
+  { key: 'role',   header: 'Role',   type: 'badge' as const, badgeColors: { Admin: '#e0f2fe', User: '#f0fdf4' } },
+  { key: 'salary', header: 'Salary', type: 'currency' as const, currency: 'USD' },
+];
+
+const data = [
+  { name: 'Alice', email: 'alice@example.com', role: 'Admin', salary: 95000 },
+  { name: 'Bob',   email: 'bob@example.com',   role: 'User',  salary: 72000 },
+];
+
+function App() {
+  return (
+    <FloTable
+      columns={columns}
+      data={data}
+      totalRows={data.length}
+      page={1}
+      onPageChange={(p) => console.log('Page:', p)}
+    />
+  );
+}
+```
+
+### Request Mode (Async Data Fetching)
+
+```tsx
+<FloTable
+  columns={columns}
+  pageSize={20}
+  request={async ({ page, pageSize, sortState, quickFilters }) => {
+    const res = await fetch(`/api/users?page=${page}&size=${pageSize}`);
+    const json = await res.json();
+    return { data: json.rows, totalRows: json.total };
+  }}
+/>
+```
+
+---
+
+## Column Types
+
+| Type | Description | Extra Props |
+|------|-------------|-------------|
+| `text` | Plain text | — |
+| `number` | Formatted number | `locale` |
+| `date` | Formatted date string | `locale` |
+| `boolean` | Checkmark / cross icon | — |
+| `badge` | Colored pill for enum values | `badgeColors` |
+| `currency` | Formatted money value | `currency`, `locale` |
+| `link` | Clickable URL | — |
+
+Any column can use a custom `render` function to override the default renderer.
+
+---
 
 ## Styling & Customization
 
-FTable ships plain CSS wrapped in `@layer ftable`. This means:
+FloTable ships plain CSS wrapped in `@layer flotable`. Every visual token uses a CSS custom property with a fallback, so you can theme the entire table without touching source files.
 
-- **CSS custom properties** — every visual token (`--ftable-border-color`, `--ftable-header-bg`, etc.) can be overridden via the `styles` prop without touching source.
-- **`classNames` prop** — pass your own class names to any table slot (wrapper, header, row, cell, pagination, filter pills, etc.) for full structural control.
-- **No Tailwind dependency** — the component works in any environment. Tailwind CSS is only used in the demo.
+### CSS Custom Properties
 
-### Tailwind CSS integration
+Override tokens on the root element or via the `styles` prop:
 
-If your app uses Tailwind and you want utility classes passed via `classNames` to reliably override component defaults, declare the `ftable` layer **before** your Tailwind import:
+```css
+.my-table {
+  --flotable-border-color: #e5e7eb;
+  --flotable-header-bg: #f9fafb;
+  --flotable-row-hover-bg: #f3f4f6;
+  --flotable-font-size: 14px;
+}
+```
+
+### classNames API
+
+Pass custom class names to any table slot:
+
+```tsx
+<FloTable
+  classNames={{
+    root: 'my-table',
+    header: 'my-header',
+    row: 'my-row',
+    cell: 'my-cell',
+    pagination: 'my-pagination',
+    filterBar: 'my-filters',
+  }}
+  // ...
+/>
+```
+
+### Tailwind CSS Integration
+
+If your app uses Tailwind, declare the `flotable` layer before your Tailwind import so utility classes passed via `classNames` reliably override component defaults:
 
 ```css
 /* globals.css */
-@layer ftable;        /* lowest priority — component defaults */
-@import "tailwindcss"; /* utilities layer beats ftable */
+@layer flotable;         /* lowest priority — component defaults */
+@import "tailwindcss"; /* utilities layer beats flotable */
 ```
 
-This one line ensures Tailwind's `utilities` layer always wins over `@layer ftable`, so classes like `bg-indigo-50` or `rounded-xl` passed to `classNames` work as expected.
+---
 
-Consumers who do not use Tailwind can ignore this entirely — the layer declaration is optional.
+## Props Reference
 
-## Design Philosophy
+### Common Props
 
-- **No external dependencies** — the entire component is built with vanilla TypeScript/React primitives
-- **ERP-first** — designed for dense, data-heavy interfaces common in enterprise applications
-- **Open source** — free to use, modify, and contribute to
+| Prop | Type | Description |
+|------|------|-------------|
+| `columns` | `ColumnDef<T>[]` | Column definitions (required) |
+| `pageSize` | `number` | Rows per page (default: 10) |
+| `filterDefs` | `FilterDef[]` | Explicit filter pill definitions |
+| `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
+| `showSearch` | `boolean` | Show a global search input in the filter bar |
+| `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
+| `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |
 
-## Project Tracking
+### Data Mode Props
 
-This project is tracked under the **Fladeed Engineering Toolkit** Jira project.
+| Prop | Type | Description |
+|------|------|-------------|
+| `data` | `T[]` | Current page rows |
+| `totalRows` | `number` | Total row count across all pages |
+| `page` | `number` | Active page (1-based) |
+| `onPageChange` | `(page: number) => void` | Page navigation callback |
+| `sortState` | `SortState<T> \| null` | Current sort state |
+| `onSortChange` | `(sort: SortState<T> \| null) => void` | Sort change callback |
+| `quickFilters` | `QuickFilterState` | Active filter values |
+| `onFilterChange` | `(filters: QuickFilterState) => void` | Filter change callback |
 
-- **Epic:** [ET-5 — FTable](https://fladeed.atlassian.net/browse/ET-5)
+### Request Mode Props
 
-## Getting Started
+| Prop | Type | Description |
+|------|------|-------------|
+| `request` | `FloTableRequestFn<T>` | Async function called on mount and on every state change |
 
-```bash
-npm install
-npm run dev
+---
+
+## Project Structure
+
 ```
+packages/flotable/     # The published npm package
+apps/demo/           # Next.js demo app (not published)
+```
+
+---
 
 ## Contributing
 
-Contributions are welcome. Please open an issue or PR under the ET-5 epic in the project tracker.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions, code style rules, and the PR workflow.
+
+---
+
+## License
+
+[MIT](./LICENSE) — Copyright (c) 2026 Fladeed
