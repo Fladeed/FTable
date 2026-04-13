@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { FTable } from 'ftable';
-import type { ColumnDef } from 'ftable';
+import { FloTable } from 'flotable';
+import type { ColumnDef } from 'flotable';
 import Link from 'next/link';
 import './FieldRenderersDemo.css';
 
@@ -214,7 +214,7 @@ export function FieldRenderersDemo() {
         <code>link</code>, and a <strong>custom render</strong> function (star rating).
       </p>
 
-      <FTable
+      <FloTable
         columns={COLUMNS}
         data={pageData}
         totalRows={DATA.length}

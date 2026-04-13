@@ -1,4 +1,4 @@
-import type { SortState, QuickFilterState, FTableRequestFn, FTableRequestParams } from 'ftable';
+import type { SortState, QuickFilterState, FloTableRequestFn, FloTableRequestParams } from 'flotable';
 
 /**
  * Client-side sort simulation for the demo app only.
@@ -62,17 +62,17 @@ export function applyFilters<T extends object>(
 }
 
 /**
- * Creates a stable `FTableRequestFn` that simulates a remote API call with a
+ * Creates a stable `FloTableRequestFn` that simulates a remote API call with a
  * configurable network delay. Demo only — real consumers make actual HTTP requests.
  *
  * Define the returned function OUTSIDE your component (or with `useCallback`) so
- * its reference stays stable and FTable doesn't re-fetch on every render.
+ * its reference stays stable and FloTable doesn't re-fetch on every render.
  */
 export function simulateFetch<T extends object>(
   allData: T[],
   delayMs = 800,
-): FTableRequestFn<T> {
-  return async (params: FTableRequestParams<T>) => {
+): FloTableRequestFn<T> {
+  return async (params: FloTableRequestParams<T>) => {
     await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
     const filtered = applyFilters(allData, params.quickFilters);
     const sorted = applySorting(filtered, params.sortState);

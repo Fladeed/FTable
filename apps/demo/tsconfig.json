@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "flotable": ["../../packages/flotable/src/index.ts"],
+      "flotable/*": ["../../packages/flotable/src/*"]
     }
   },
   "include": [

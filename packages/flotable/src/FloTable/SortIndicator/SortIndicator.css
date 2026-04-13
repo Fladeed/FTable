@@ -1,0 +1,15 @@
+@layer flotable {
+.flotable__sort-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.flotable__sort-icon--none {
+  opacity: 0.35;
+}
+
+.flotable__sort-icon--asc,
+.flotable__sort-icon--desc {
+  opacity: 1;
+}
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import type { FTableStyleValue } from 'ftable';
+import type { FloTableStyleValue } from 'flotable';
 import type { ThemeConfig } from '../../StyleCustomizationDemoData';
 import { ThemePreview } from '../../ThemePreview/ThemePreview';
 import './MuiTheme.css';
@@ -12,18 +12,18 @@ export const MUI_CONFIG: ThemeConfig = {
     'the wrapper and 1px row dividers (rgba(224,224,224,1)). ' +
     'Column headers are bold. The MUI primary blue (#1976d2) highlights sorted columns and active filters. ' +
     'Filter pills use MUI chip style: filled #e0e0e0 background, pill-shaped (border-radius 1rem), ' +
-    'blue active state — all via --ftable-pill-* on styles.root.',
+    'blue active state — all via --flotable-pill-* on styles.root.',
   overrides: [
     'wrapper: boxShadow (MUI elevation-1)',
-    '--ftable-border-color: rgba(224,224,224,1)',
-    '--ftable-sort-active-color: #1976d2',
-    '--ftable-row-hover-bg: rgba(0,0,0,0.04)',
+    '--flotable-border-color: rgba(224,224,224,1)',
+    '--flotable-sort-active-color: #1976d2',
+    '--flotable-row-hover-bg: rgba(0,0,0,0.04)',
     'headerCell: fontWeight 700',
     'classNames.paginationButton: theme-mui__btn',
-    '--ftable-pill-bg: #e0e0e0',
-    '--ftable-pill-radius: 1rem',
-    '--ftable-pill-active-color: #1976d2',
-    '--ftable-pill-active-bg: rgba(25,118,210,0.1)',
+    '--flotable-pill-bg: #e0e0e0',
+    '--flotable-pill-radius: 1rem',
+    '--flotable-pill-active-color: #1976d2',
+    '--flotable-pill-active-bg: rgba(25,118,210,0.1)',
   ],
   classNames: {
     wrapper: 'theme-mui__wrapper',
@@ -31,15 +31,15 @@ export const MUI_CONFIG: ThemeConfig = {
   },
   styles: {
     root: {
-      '--ftable-pill-bg': '#e0e0e0',
-      '--ftable-pill-border-color': 'transparent',
-      '--ftable-pill-color': 'rgba(0,0,0,0.87)',
-      '--ftable-pill-radius': '1rem',
-      '--ftable-pill-active-color': '#1976d2',
-      '--ftable-pill-active-bg': 'rgba(25,118,210,0.1)',
-      '--ftable-pill-active-border-color': 'transparent',
-      '--ftable-focus-ring': 'rgba(25,118,210,0.12)',
-    } as FTableStyleValue,
+      '--flotable-pill-bg': '#e0e0e0',
+      '--flotable-pill-border-color': 'transparent',
+      '--flotable-pill-color': 'rgba(0,0,0,0.87)',
+      '--flotable-pill-radius': '1rem',
+      '--flotable-pill-active-color': '#1976d2',
+      '--flotable-pill-active-bg': 'rgba(25,118,210,0.1)',
+      '--flotable-pill-active-border-color': 'transparent',
+      '--flotable-focus-ring': 'rgba(25,118,210,0.12)',
+    } as FloTableStyleValue,
     wrapper: {
       boxShadow:
         '0px 2px 1px -1px rgba(0,0,0,0.2),' +
@@ -47,16 +47,16 @@ export const MUI_CONFIG: ThemeConfig = {
         '0px 1px 3px 0px rgba(0,0,0,0.12)',
       borderRadius: '0.25rem',
       overflow: 'hidden',
-      '--ftable-border-color': 'rgba(224,224,224,1)',
-      '--ftable-header-bg': '#ffffff',
-      '--ftable-header-hover-bg': 'rgba(0,0,0,0.04)',
-      '--ftable-bg': '#ffffff',
-      '--ftable-color': 'rgba(0,0,0,0.87)',
-      '--ftable-muted-color': 'rgba(0,0,0,0.6)',
-      '--ftable-font-size': '0.875rem',
-      '--ftable-sort-active-color': '#1976d2',
-      '--ftable-row-hover-bg': 'rgba(0,0,0,0.04)',
-    } as FTableStyleValue,
+      '--flotable-border-color': 'rgba(224,224,224,1)',
+      '--flotable-header-bg': '#ffffff',
+      '--flotable-header-hover-bg': 'rgba(0,0,0,0.04)',
+      '--flotable-bg': '#ffffff',
+      '--flotable-color': 'rgba(0,0,0,0.87)',
+      '--flotable-muted-color': 'rgba(0,0,0,0.6)',
+      '--flotable-font-size': '0.875rem',
+      '--flotable-sort-active-color': '#1976d2',
+      '--flotable-row-hover-bg': 'rgba(0,0,0,0.04)',
+    } as FloTableStyleValue,
     headerCell: {
       padding: '1rem',
       fontWeight: '700',

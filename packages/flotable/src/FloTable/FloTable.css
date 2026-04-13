@@ -1,0 +1,25 @@
+@layer flotable {
+/* ─────────────────────────────────────────────
+   FloTable — root styles
+   Sub-component styles live in their own folders.
+   ───────────────────────────────────────────── */
+
+.flotable-wrapper,
+.flotable-wrapper * {
+  box-sizing: border-box;
+}
+
+.flotable-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  font-family: var(--flotable-font-family, system-ui, sans-serif);
+}
+
+.flotable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--flotable-font-size, 0.875rem);
+  background-color: var(--flotable-bg, #ffffff);
+  color: var(--flotable-color, #111827);
+}
+}

@@ -1,0 +1,24 @@
+// Public API of the flotable package
+export { default as FloTable } from './FloTable/FloTable';
+export type {
+  FloTableProps,
+  FloTableDataProps,
+  FloTableRequestProps,
+  FloTableRequestParams,
+  FloTableRequestResult,
+  FloTableRequestFn,
+  ColumnDef,
+  ColumnType,
+  SortState,
+  SortDirection,
+  QuickFilterState,
+  FilterDef,
+  FilterInputType,
+  FloTableClassNames,
+  FloTableStyleValue,
+  FloTableStyles,
+  TableHeaderProps,
+  TableBodyProps,
+  TableRowProps,
+  TablePaginationProps,
+} from './FloTable/FloTable.types';

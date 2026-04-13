@@ -1,0 +1,11 @@
+@layer flotable {
+.flotable-link {
+  color: var(--flotable-link-color, #2563eb);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.flotable-link:hover {
+  color: var(--flotable-link-hover-color, #1d4ed8);
+}
+}

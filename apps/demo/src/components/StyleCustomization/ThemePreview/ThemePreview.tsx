@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { FTable } from 'ftable';
-import type { SortState, QuickFilterState } from 'ftable';
+import { FloTable } from 'flotable';
+import type { SortState, QuickFilterState } from 'flotable';
 import { applySorting, applyFilters } from '../../../utils/demoUtils';
 import type { ThemeConfig, Employee } from '../StyleCustomizationDemoData';
 import { ALL_DATA, COLUMNS, FILTER_DEFS, PAGE_SIZE } from '../StyleCustomizationDemoData';
@@ -33,7 +33,7 @@ export function ThemePreview({ config, previewClass }: ThemePreviewProps) {
 
   return (
     <div className={previewClass}>
-      <FTable
+      <FloTable
         columns={COLUMNS}
         data={pageData}
         totalRows={filteredData.length}
