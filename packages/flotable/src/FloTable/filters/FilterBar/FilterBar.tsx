@@ -28,7 +28,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
     setTimeout(() => {
       setOpenKey(null);
       setClosingKey(null);
-    }, 180); // matches flotable-pill-collapse duration
+    }, 400); // matches flotable-pill-collapse duration
   }
 
   useEffect(() => {

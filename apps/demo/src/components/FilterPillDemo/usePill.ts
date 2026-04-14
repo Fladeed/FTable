@@ -18,7 +18,7 @@ export function usePill(): PillState {
   function open() { setIsOpen(true); setIsClosing(false); }
   function close() {
     setIsClosing(true);
-    setTimeout(() => { setIsOpen(false); setIsClosing(false); }, 180);
+    setTimeout(() => { setIsOpen(false); setIsClosing(false); }, 400);
   }
 
   function handlePillClick(_key: string) { isOpen ? close() : open(); }

@@ -1,3 +1,4 @@
+import { useRef, useLayoutEffect } from 'react';
 import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import './FilterPillField.css';
@@ -27,8 +28,21 @@ export function FilterPillField({
   classNames,
   styles,
 }: FilterPillFieldProps) {
+  const fieldRef = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    if (!isClosing || !fieldRef.current) return;
+    const el = fieldRef.current;
+    el.style.animation = 'none';
+    void el.offsetWidth; // force reflow so collapse animation restarts immediately
+    el.style.animation = '';
+  }, [isClosing]);
+
   return (
-    <span className={`flotable-filter-pill__field${isClosing ? ' flotable-filter-pill__field--closing' : ''}`}>
+    <span
+      ref={fieldRef}
+      className={`flotable-filter-pill__field${isClosing ? ' flotable-filter-pill__field--closing' : ''}`}
+    >
       {!hideSeparator && (
         <span className="flotable-filter-pill__separator" aria-hidden="true">:</span>
       )}
