@@ -1,0 +1,24 @@
+@layer flotable {
+.flotable-filter-pill__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.flotable-filter-pill__label {
+  font-weight: 500;
+}
+
+.flotable-filter-pill__active-value {
+  font-weight: 400;
+  color: var(--flotable-pill-active-color, #1d4ed8);
+}
+}

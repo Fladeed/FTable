@@ -1,0 +1,29 @@
+@layer flotable {
+.flotable-filter-pill {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: var(--flotable-pill-padding, 0.3125rem 0.625rem);
+  min-height: var(--flotable-pill-height, 2rem);
+  font-size: var(--flotable-pill-font-size, 0.875rem);
+  font-family: inherit;
+  color: var(--flotable-pill-color, #374151);
+  background-color: var(--flotable-pill-bg, #ffffff);
+  border: 1px solid var(--flotable-pill-border-color, #d1d5db);
+  border-radius: var(--flotable-pill-radius, 6px);
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.flotable-filter-pill--active {
+  color: var(--flotable-pill-active-color, #1d4ed8);
+  background-color: var(--flotable-pill-active-bg, #eff6ff);
+  border-color: var(--flotable-pill-active-border-color, #93c5fd);
+}
+
+.flotable-filter-pill--open {
+  border-color: var(--flotable-pill-open-border-color, #9ca3af);
+  box-shadow: 0 0 0 3px var(--flotable-focus-ring, rgba(0, 0, 0, 0.06));
+}
+}
