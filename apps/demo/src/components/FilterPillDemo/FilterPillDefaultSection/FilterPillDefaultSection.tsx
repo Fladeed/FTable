@@ -2,7 +2,7 @@
 
 import { FilterPill } from 'flotable';
 import type { FilterDef } from 'flotable';
-import { usePill } from '../usePill';
+import { useFilterPill } from '../useFilterPill';
 import './FilterPillDefaultSection.css';
 
 const DEF_TEXT: FilterDef = { key: 'name', label: 'Name', type: 'text' };
@@ -14,8 +14,8 @@ const DEF_SELECT: FilterDef = {
 };
 
 export function FilterPillDefaultSection() {
-  const text = usePill();
-  const select = usePill();
+  const text = useFilterPill();
+  const select = useFilterPill();
 
   return (
     <section className="filter-pill-demo__section">

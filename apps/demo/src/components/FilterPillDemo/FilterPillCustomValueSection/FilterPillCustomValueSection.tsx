@@ -2,7 +2,7 @@
 
 import { FilterPill } from 'flotable';
 import type { FilterDef } from 'flotable';
-import { usePill } from '../usePill';
+import { useFilterPill } from '../useFilterPill';
 import './FilterPillCustomValueSection.css';
 
 const DEF_BOOLEAN: FilterDef = { key: 'active', label: 'Active', type: 'boolean' };
@@ -14,8 +14,8 @@ const DEF_SELECT: FilterDef = {
 };
 
 export function FilterPillCustomValueSection() {
-  const bool = usePill();
-  const select = usePill();
+  const bool = useFilterPill();
+  const select = useFilterPill();
 
   return (
     <section className="filter-pill-demo__section">

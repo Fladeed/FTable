@@ -10,7 +10,7 @@ export interface PillState {
   handleClose: (key: string) => void;
 }
 
-export function usePill(): PillState {
+export function useFilterPill(): PillState {
   const [value, setValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);

@@ -2,7 +2,7 @@
 
 import { FilterPill } from 'flotable';
 import type { FilterDef } from 'flotable';
-import { usePill } from '../usePill';
+import { useFilterPill } from '../useFilterPill';
 import './FilterPillCustomTriggerSection.css';
 
 const DEF_DATE: FilterDef = { key: 'date', label: 'Date', type: 'date' };
@@ -34,8 +34,8 @@ function TagIcon() {
 }
 
 export function FilterPillCustomTriggerSection() {
-  const date = usePill();
-  const select = usePill();
+  const date = useFilterPill();
+  const select = useFilterPill();
 
   return (
     <section className="filter-pill-demo__section">
