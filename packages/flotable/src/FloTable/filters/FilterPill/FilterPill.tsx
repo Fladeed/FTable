@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { FilterDef, FTableClassNames, FTableStyles } from '../../FTable.types';
+import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
 import { cx } from '../../../utils/cx';
 import { FilterPillTrigger } from './FilterPillTrigger/FilterPillTrigger';
 import { FilterPillField } from './FilterPillField/FilterPillField';
@@ -15,8 +15,8 @@ export interface FilterPillProps {
   onValueChange: (key: string, value: string) => void;
   onClear: (key: string) => void;
   onClose: (key: string) => void;
-  classNames?: FTableClassNames;
-  styles?: FTableStyles;
+  classNames?: FloTableClassNames;
+  styles?: FloTableStyles;
   /** Replaces the default label span inside the trigger button. */
   renderTriggerLabel?: ReactNode;
   /** Overrides the active-value display when the pill is closed and active. */
@@ -25,7 +25,7 @@ export interface FilterPillProps {
   hideSeparator?: boolean;
   /** Placeholder text for text/number/date inputs. Defaults to "…". */
   placeholder?: string;
-  /** Adds an `ftable-filter-pill--{variant}` modifier class to the root element. */
+  /** Adds an `flotable-filter-pill--{variant}` modifier class to the root element. */
   variant?: string;
   /** aria-label for the trigger button. Defaults to undefined (no aria-label). */
   triggerAriaLabel?: string;
@@ -54,13 +54,14 @@ export function FilterPill({
   return (
     <div
       className={cx(
-        'ftable-filter-pill',
-        variant && `ftable-filter-pill--${variant}`,
+        'flotable-filter-pill',
+        variant && `flotable-filter-pill--${variant}`,
         classNames?.filterPill,
-        isActive && 'ftable-filter-pill--active',
-        (isOpen || isClosing) && 'ftable-filter-pill--open',
+        isActive && 'flotable-filter-pill--active',
+        (isOpen || isClosing) && 'flotable-filter-pill--open',
       )}
       style={styles?.filterPill}
+      onClick={!isOpen && !isClosing ? () => onPillClick(def.key) : undefined}
     >
       <FilterPillTrigger
         def={def}

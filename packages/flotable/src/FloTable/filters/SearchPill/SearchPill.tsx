@@ -1,4 +1,4 @@
-import type { FilterDef, FTableClassNames, FTableStyles } from '../../FTable.types';
+import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
 import { FilterPill } from '../FilterPill/FilterPill';
 import './SearchPill.css';
 
@@ -6,7 +6,7 @@ const SEARCH_DEF: FilterDef = { key: '__search__', label: '', type: 'text' };
 
 function SearchIcon() {
   return (
-    <svg className="ftable-filter-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <svg className="flotable-filter-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5" />
       <line x1="10" y1="10" x2="14" y2="14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
@@ -21,8 +21,8 @@ interface SearchPillProps {
   onValueChange: (value: string) => void;
   onClear: () => void;
   onClose: () => void;
-  classNames?: FTableClassNames;
-  styles?: FTableStyles;
+  classNames?: FloTableClassNames;
+  styles?: FloTableStyles;
 }
 
 export function SearchPill({
@@ -49,7 +49,7 @@ export function SearchPill({
       classNames={classNames}
       styles={styles}
       renderTriggerLabel={<SearchIcon />}
-      renderActiveValue={(v) => <span className="ftable-filter-pill__active-value">{v}</span>}
+      renderActiveValue={(v) => <span className="flotable-filter-pill__active-value">{v}</span>}
       hideSeparator
       placeholder="Search…"
       variant="search"

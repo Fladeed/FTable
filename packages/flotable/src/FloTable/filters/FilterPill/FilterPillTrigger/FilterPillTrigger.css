@@ -1,5 +1,5 @@
-@layer ftable {
-.ftable-filter-pill__trigger {
+@layer flotable {
+.flotable-filter-pill__trigger {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -13,12 +13,12 @@
   cursor: pointer;
 }
 
-.ftable-filter-pill__label {
+.flotable-filter-pill__label {
   font-weight: 500;
 }
 
-.ftable-filter-pill__active-value {
+.flotable-filter-pill__active-value {
   font-weight: 400;
-  color: var(--ftable-pill-active-color, #1d4ed8);
+  color: var(--flotable-pill-active-color, #1d4ed8);
 }
 }

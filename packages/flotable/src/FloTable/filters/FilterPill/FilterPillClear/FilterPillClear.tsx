@@ -10,7 +10,7 @@ export function FilterPillClear({ filterKey, label, onClear }: FilterPillClearPr
   return (
     <button
       type="button"
-      className="ftable-filter-pill__clear"
+      className="flotable-filter-pill__clear"
       onClick={(e) => { e.stopPropagation(); onClear(filterKey); }}
       aria-label={`Clear ${label || 'filter'}`}
     >

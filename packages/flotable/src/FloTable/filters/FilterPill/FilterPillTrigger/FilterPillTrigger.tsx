@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { FilterDef, FTableClassNames, FTableStyles } from '../../../FTable.types';
+import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import './FilterPillTrigger.css';
 
@@ -16,8 +16,8 @@ interface FilterPillTriggerProps {
   onClick: (key: string) => void;
   renderTriggerLabel?: ReactNode;
   renderActiveValue?: (value: string) => ReactNode;
-  classNames?: FTableClassNames;
-  styles?: FTableStyles;
+  classNames?: FloTableClassNames;
+  styles?: FloTableStyles;
   ariaLabel?: string;
 }
 
@@ -38,17 +38,17 @@ export function FilterPillTrigger({
   return (
     <button
       type="button"
-      className={cx('ftable-filter-pill__trigger', classNames?.filterPillTrigger)}
+      className={cx('flotable-filter-pill__trigger', classNames?.filterPillTrigger)}
       style={styles?.filterPillTrigger}
-      onClick={() => onClick(def.key)}
+      onClick={(e) => { e.stopPropagation(); onClick(def.key); }}
       aria-expanded={isOpen}
       aria-label={ariaLabel}
     >
-      {renderTriggerLabel ?? <span className="ftable-filter-pill__label">{def.label}</span>}
+      {renderTriggerLabel ?? <span className="flotable-filter-pill__label">{def.label}</span>}
       {isActive && !isOpen && !isClosing && (
         renderActiveValue
           ? renderActiveValue(value)
-          : <span className="ftable-filter-pill__active-value">: {formatActiveValue(def, value)}</span>
+          : <span className="flotable-filter-pill__active-value">: {formatActiveValue(def, value)}</span>
       )}
     </button>
   );

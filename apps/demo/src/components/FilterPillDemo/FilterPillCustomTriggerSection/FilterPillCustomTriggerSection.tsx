@@ -1,7 +1,7 @@
 'use client';
 
-import { FilterPill } from 'ftable';
-import type { FilterDef } from 'ftable';
+import { FilterPill } from 'flotable';
+import type { FilterDef } from 'flotable';
 import { usePill } from '../usePill';
 import './FilterPillCustomTriggerSection.css';
 

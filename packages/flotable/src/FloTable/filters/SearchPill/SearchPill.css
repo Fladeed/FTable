@@ -1,11 +1,11 @@
-@layer ftable {
-.ftable-filter-search__icon {
+@layer flotable {
+.flotable-filter-search__icon {
   width: 0.9375rem;
   height: 0.9375rem;
   flex-shrink: 0;
 }
 
-.ftable-filter-pill--search .ftable-filter-pill__trigger {
+.flotable-filter-pill--search .flotable-filter-pill__trigger {
   gap: 0.375rem;
 }
 }

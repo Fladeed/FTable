@@ -76,7 +76,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
   if (!showSearch && filterDefs.length === 0) return null;
 
   return (
-    <div className={cx('ftable-filter-bar', classNames?.filterBar)} ref={barRef} style={styles?.filterBar}>
+    <div className={cx('flotable-filter-bar', classNames?.filterBar)} ref={barRef} style={styles?.filterBar}>
       {showSearch && (
         <SearchPill
           value={activeFilters[SEARCH_KEY] ?? ''}
