@@ -1,4 +1,4 @@
-import type { ColumnDef, FTableClassNames, FTableStyles, FilterDef } from 'ftable';
+import type { ColumnDef, FloTableClassNames, FloTableStyles, FilterDef } from 'flotable';
 
 export interface Employee {
   id: number;
@@ -52,6 +52,6 @@ export interface ThemeConfig {
   description: string;
   /** Short labels shown as override badges in the info panel. */
   overrides: string[];
-  classNames: FTableClassNames;
-  styles: FTableStyles;
+  classNames: FloTableClassNames;
+  styles: FloTableStyles;
 }

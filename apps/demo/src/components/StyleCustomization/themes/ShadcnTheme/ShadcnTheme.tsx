@@ -1,6 +1,6 @@
 'use client';
 
-import type { FTableStyleValue } from 'ftable';
+import type { FloTableStyleValue } from 'flotable';
 import type { ThemeConfig } from '../../StyleCustomizationDemoData';
 import { ThemePreview } from '../../ThemePreview/ThemePreview';
 import './ShadcnTheme.css';
@@ -10,46 +10,46 @@ export const SHADCN_CONFIG: ThemeConfig = {
   description:
     'Clean and minimal. A rounded border wraps the whole table, the header text is muted, ' +
     'and row hover is a soft translucent blue-grey. ' +
-    'Filter pills inherit the same slate palette via --ftable-pill-* CSS custom properties on styles.root — ' +
+    'Filter pills inherit the same slate palette via --flotable-pill-* CSS custom properties on styles.root — ' +
     'indigo active state, soft focus ring, and rounded corners that match the wrapper.',
   overrides: [
     'wrapper: border + borderRadius',
-    '--ftable-border-color: #e2e8f0',
-    '--ftable-header-bg: transparent',
-    '--ftable-row-hover-bg: rgba(241,245,249,0.5)',
+    '--flotable-border-color: #e2e8f0',
+    '--flotable-header-bg: transparent',
+    '--flotable-row-hover-bg: rgba(241,245,249,0.5)',
     'headerCell: fontWeight 500, muted color',
     'paginationButton: outline style',
-    '--ftable-pill-active-color: #2563eb',
-    '--ftable-pill-active-bg: #eff6ff',
-    '--ftable-pill-radius: 0.375rem',
+    '--flotable-pill-active-color: #2563eb',
+    '--flotable-pill-active-bg: #eff6ff',
+    '--flotable-pill-radius: 0.375rem',
   ],
   classNames: {
     wrapper: 'theme-shadcn__wrapper',
   },
   styles: {
     root: {
-      '--ftable-pill-bg': '#ffffff',
-      '--ftable-pill-border-color': '#e2e8f0',
-      '--ftable-pill-color': '#374151',
-      '--ftable-pill-radius': '0.375rem',
-      '--ftable-pill-active-color': '#2563eb',
-      '--ftable-pill-active-bg': '#eff6ff',
-      '--ftable-pill-active-border-color': '#bfdbfe',
-      '--ftable-focus-ring': 'rgba(37,99,235,0.15)',
-    } as FTableStyleValue,
+      '--flotable-pill-bg': '#ffffff',
+      '--flotable-pill-border-color': '#e2e8f0',
+      '--flotable-pill-color': '#374151',
+      '--flotable-pill-radius': '0.375rem',
+      '--flotable-pill-active-color': '#2563eb',
+      '--flotable-pill-active-bg': '#eff6ff',
+      '--flotable-pill-active-border-color': '#bfdbfe',
+      '--flotable-focus-ring': 'rgba(37,99,235,0.15)',
+    } as FloTableStyleValue,
     wrapper: {
       border: '1px solid #e2e8f0',
       borderRadius: '0.5rem',
       overflow: 'hidden',
-      '--ftable-border-color': '#e2e8f0',
-      '--ftable-header-bg': 'transparent',
-      '--ftable-header-hover-bg': 'rgba(241,245,249,0.4)',
-      '--ftable-bg': '#ffffff',
-      '--ftable-color': '#0f172a',
-      '--ftable-muted-color': '#64748b',
-      '--ftable-font-size': '0.875rem',
-      '--ftable-row-hover-bg': 'rgba(241,245,249,0.5)',
-    } as FTableStyleValue,
+      '--flotable-border-color': '#e2e8f0',
+      '--flotable-header-bg': 'transparent',
+      '--flotable-header-hover-bg': 'rgba(241,245,249,0.4)',
+      '--flotable-bg': '#ffffff',
+      '--flotable-color': '#0f172a',
+      '--flotable-muted-color': '#64748b',
+      '--flotable-font-size': '0.875rem',
+      '--flotable-row-hover-bg': 'rgba(241,245,249,0.5)',
+    } as FloTableStyleValue,
     headerCell: {
       height: '2.75rem',
       padding: '0 1rem',

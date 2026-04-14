@@ -19,8 +19,8 @@ export function DemoNav() {
       <div className="site-sidebar__logo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/logo/FTable-logo.svg"
-          alt="FTable"
+          src="/logo/FloTable-logo.svg"
+          alt="FloTable"
           className="site-sidebar__logo-img"
         />
       </div>

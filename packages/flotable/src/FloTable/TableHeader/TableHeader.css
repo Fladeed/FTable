@@ -1,0 +1,32 @@
+@layer flotable {
+.flotable__header {
+  background-color: var(--flotable-header-bg, #f9fafb);
+}
+
+.flotable__header-cell {
+  padding: var(--flotable-cell-padding, 0.625rem 0.875rem);
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--flotable-border-color, #e5e7eb);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.flotable__header-cell--sortable {
+  cursor: pointer;
+}
+
+.flotable__header-cell--sortable:hover {
+  background-color: var(--flotable-header-hover-bg, #f3f4f6);
+}
+
+.flotable__header-cell--sorted {
+  color: var(--flotable-sort-active-color, #2563eb);
+}
+
+.flotable__header-cell-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+}

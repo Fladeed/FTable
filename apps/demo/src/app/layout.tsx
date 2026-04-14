@@ -3,7 +3,7 @@ import { DemoNav } from "@/components/DemoNav/DemoNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FTable",
+  title: "FloTable",
   description: "Open-source ERP-style table component",
 };
 

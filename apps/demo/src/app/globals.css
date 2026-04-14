@@ -1,4 +1,4 @@
-@layer theme, base, ftable, components, utilities;
+@layer theme, base, flotable, components, utilities;
 @import "tailwindcss";
 
 *, *::before, *::after {

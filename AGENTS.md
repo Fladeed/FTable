@@ -1,4 +1,4 @@
-# AGENTS.md — FTable
+# AGENTS.md — FloTable
 
 Instructions for AI agents working on this project.
 
@@ -6,7 +6,7 @@ Instructions for AI agents working on this project.
 
 ## Project Overview
 
-FTable is an open-source, ERP-focused table component built with **zero external dependencies**. All functionality must be implemented using only the standard library of the chosen runtime (TypeScript/React built-ins, browser APIs, Node.js built-ins). Do not introduce third-party packages.
+FloTable is an open-source, ERP-focused table component built with **zero external dependencies**. All functionality must be implemented using only the standard library of the chosen runtime (TypeScript/React built-ins, browser APIs, Node.js built-ins). Do not introduce third-party packages.
 
 ---
 
@@ -27,9 +27,9 @@ FTable is an open-source, ERP-focused table component built with **zero external
 ```
 src/
   components/
-    FTable/            # The core table component — published as an npm package
-      FTable.tsx
-      FTable.types.ts
+    FloTable/            # The core table component — published as an npm package
+      FloTable.tsx
+      FloTable.types.ts
       SortIndicator/   # Sort direction indicator component
       filters/         # Quick filters & detailed filters
       views/           # View management (tabs, persistence)
@@ -84,7 +84,7 @@ Each column can declare a content type. Supported types should include:
 - `badge` (enum value with a color)
 - `currency`
 - `link`
-Renderers live in `src/components/FTable/fields/`.
+Renderers live in `src/components/FloTable/fields/`.
 
 ### Views
 - A view is a named snapshot of: active filters, sort configuration, and visible columns.
@@ -118,15 +118,15 @@ Renderers live in `src/components/FTable/fields/`.
 
 ## Component Styling
 
-FTable is published as an npm package and must be **Tailwind-free**. Do not use Tailwind utility classes anywhere inside `src/components/`. All component styles must be written in plain CSS.
+FloTable is published as an npm package and must be **Tailwind-free**. Do not use Tailwind utility classes anywhere inside `src/components/`. All component styles must be written in plain CSS.
 
 Every component is **self-contained**: a co-located `.css` file lives alongside each `.tsx` file and is imported directly in the component.
 
 ```
-src/components/FTable/
-  FTable.tsx
-  FTable.css          # all styles for this component
-  FTable.types.ts
+src/components/FloTable/
+  FloTable.tsx
+  FloTable.css          # all styles for this component
+  FloTable.types.ts
   filters/
     Filters.tsx
     Filters.css
@@ -135,12 +135,12 @@ src/components/FTable/
 
 Rules:
 - **All component styles go in the co-located `.css` file** — no inline `style` props except for truly dynamic values (e.g. computed widths).
-- Use **CSS custom properties** for every visual token (color, spacing, border-radius, font-size). Define defaults with `var(--ftable-token, <fallback>)` so consumers can override without touching source.
-- Import the CSS file in the component: `import './FTable.css'`.
+- Use **CSS custom properties** for every visual token (color, spacing, border-radius, font-size). Define defaults with `var(--flotable-token, <fallback>)` so consumers can override without touching source.
+- Import the CSS file in the component: `import './FloTable.css'`.
 - Do **not** scatter component-specific styles across global or shared stylesheets.
 - Global design-system tokens for the demo app live in `src/app/globals.css`. The component itself must not depend on them — use fallback values in `var()` calls instead.
 - The `src/app/` demo pages may use any styling approach (plain CSS, inline styles) — but still **no Tailwind**.
-- **Never style HTML tags directly** (`th`, `td`, `thead`, `tr`, etc.). Every element that needs styling must have an explicit class. Use BEM-style names: `.ftable__header`, `.ftable__cell`, etc.
+- **Never style HTML tags directly** (`th`, `td`, `thead`, `tr`, etc.). Every element that needs styling must have an explicit class. Use BEM-style names: `.flotable__header`, `.flotable__cell`, etc.
 
 ---
 

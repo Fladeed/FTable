@@ -1,7 +1,7 @@
 'use client';
 
-import { FTable } from 'ftable';
-import type { ColumnDef, FTableRequestFn } from 'ftable';
+import { FloTable } from 'flotable';
+import type { ColumnDef, FloTableRequestFn } from 'flotable';
 import { simulateFetch } from '../../utils/demoUtils';
 import './ApiDataSourceDemo.css';
 
@@ -45,11 +45,11 @@ const ALL_PRODUCTS: Product[] = [
 ];
 
 // Defined outside the component so the reference is stable
-// (prevents FTable from re-fetching on every render).
-const fetchProducts: FTableRequestFn<Product> = simulateFetch(ALL_PRODUCTS, 1000);
+// (prevents FloTable from re-fetching on every render).
+const fetchProducts: FloTableRequestFn<Product> = simulateFetch(ALL_PRODUCTS, 1000);
 
 // A request that always rejects — used to demonstrate the error + retry UI.
-const fetchWithError: FTableRequestFn<Product> = async () => {
+const fetchWithError: FloTableRequestFn<Product> = async () => {
   await new Promise<void>((resolve) => setTimeout(resolve, 800));
   throw new Error('Network error: connection refused');
 };
@@ -57,16 +57,16 @@ const fetchWithError: FTableRequestFn<Product> = async () => {
 export function ApiDataSourceDemo() {
   return (
     <main className="demo-shell demo-page-shell">
-      <h1 className="demo-shell__title">FTable — API Data Source</h1>
+      <h1 className="demo-shell__title">FloTable — API Data Source</h1>
 
       <section className="api-demo__section">
         <h2 className="api-demo__section-title">Request mode</h2>
         <p className="api-demo__description">
-          Pass a <code>request</code> prop instead of <code>data</code>. FTable manages its own
+          Pass a <code>request</code> prop instead of <code>data</code>. FloTable manages its own
           page, sort, and filter state and calls the async function automatically — including on
           mount. Sorting, filtering, and pagination all trigger a new call.
         </p>
-        <FTable
+        <FloTable
           columns={COLUMNS}
           request={fetchProducts}
           pageSize={5}
@@ -78,10 +78,10 @@ export function ApiDataSourceDemo() {
       <section className="api-demo__section">
         <h2 className="api-demo__section-title">Error state</h2>
         <p className="api-demo__description">
-          When the <code>request</code> promise rejects, FTable displays the error message and a
+          When the <code>request</code> promise rejects, FloTable displays the error message and a
           <strong> Retry</strong> button that re-invokes the function.
         </p>
-        <FTable columns={COLUMNS} request={fetchWithError} pageSize={5} />
+        <FloTable columns={COLUMNS} request={fetchWithError} pageSize={5} />
       </section>
     </main>
   );

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { FTable } from 'ftable';
-import type { ColumnDef, SortState, QuickFilterState, FilterDef } from 'ftable';
+import { FloTable } from 'flotable';
+import type { ColumnDef, SortState, QuickFilterState, FilterDef } from 'flotable';
 import { applySorting, applyFilters } from '../../utils/demoUtils';
 import './Demo.css';
 
@@ -77,8 +77,8 @@ export function Demo() {
 
   return (
     <main className="demo-shell demo-page-shell">
-      <h1 className="demo-shell__title">FTable &mdash; Demo</h1>
-      <FTable
+      <h1 className="demo-shell__title">FloTable &mdash; Demo</h1>
+      <FloTable
         columns={COLUMNS}
         data={pageData}
         totalRows={sortedData.length}

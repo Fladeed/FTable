@@ -2,13 +2,13 @@
 
 ## Overview
 
-Add inline quick filters to each column header in FTable. Each column gets a filter input rendered in a second `<tr>` directly below the header label row. Filter state is controlled (owned by the consumer, like `sortState`), enabling real API consumers to send `quickFilters` as query params while the demo simulates filtering client-side.
+Add inline quick filters to each column header in FloTable. Each column gets a filter input rendered in a second `<tr>` directly below the header label row. Filter state is controlled (owned by the consumer, like `sortState`), enabling real API consumers to send `quickFilters` as query params while the demo simulates filtering client-side.
 
 Jira: https://fladeed.atlassian.net/browse/ET-10
 
 ## Problem
 
-FTable currently has no filtering. The header renders label + sort indicator only. ET-10 requires per-column, inline filter inputs that adapt to the column's field type:
+FloTable currently has no filtering. The header renders label + sort indicator only. ET-10 requires per-column, inline filter inputs that adapt to the column's field type:
 
 - `text`, `link` → `<input type="text">` (contains match)
 - `number`, `currency` → `<input type="number">` (equals match)
@@ -20,10 +20,10 @@ FTable currently has no filtering. The header renders label + sort indicator onl
 
 Follow the **controlled state pattern** already established by `sortState`:
 
-1. Add `QuickFilterState<T>` to `FTable.types.ts` — a `Partial<Record<keyof T & string, string>>` where string values are always strings regardless of column type (boolean gets `"true"/"false"/""`, number gets its string representation). This keeps the state serialisable and uniform.
-2. Create `QuickFilterRow` in `src/components/FTable/filters/` — a sibling `<tr>` rendered inside `<thead>`, one `<td>` per column containing the appropriate input.
+1. Add `QuickFilterState<T>` to `FloTable.types.ts` — a `Partial<Record<keyof T & string, string>>` where string values are always strings regardless of column type (boolean gets `"true"/"false"/""`, number gets its string representation). This keeps the state serialisable and uniform.
+2. Create `QuickFilterRow` in `src/components/FloTable/filters/` — a sibling `<tr>` rendered inside `<thead>`, one `<td>` per column containing the appropriate input.
 3. Update `TableHeader` to accept filter props and render `QuickFilterRow` as a second row in `<thead>`.
-4. Update `FTable` to accept `quickFilters` and `onFilterChange` and pass them down.
+4. Update `FloTable` to accept `quickFilters` and `onFilterChange` and pass them down.
 5. Update the Demo to manage filter state and apply client-side filtering (via a new `applyFilters` helper in `demoUtils`). Filter changes reset the page to 1.
 
 ## Task Checklist
@@ -33,15 +33,15 @@ Follow the **controlled state pattern** already established by `sortState`:
 #### Task 1.1: Add QuickFilterState type and update props interfaces — ⬜ TODO
 
 **Files to create or modify:**
-- `src/components/FTable/FTable.types.ts` — add `QuickFilterState<T>`, update `FTableProps<T>` and `TableHeaderProps<T>`
+- `src/components/FloTable/FloTable.types.ts` — add `QuickFilterState<T>`, update `FloTableProps<T>` and `TableHeaderProps<T>`
 
 **References:**
-- Existing `SortState<T>` and `sortState`/`onSortChange` pattern in `FTable.types.ts`
+- Existing `SortState<T>` and `sortState`/`onSortChange` pattern in `FloTable.types.ts`
 
 **Subtasks:**
-- Add `export type QuickFilterState<T extends object> = Partial<Record<keyof T & string, string>>` to `FTable.types.ts`
-- Add `quickFilters?: QuickFilterState<T>` to `FTableProps<T>`
-- Add `onFilterChange?: (filters: QuickFilterState<T>) => void` to `FTableProps<T>`
+- Add `export type QuickFilterState<T extends object> = Partial<Record<keyof T & string, string>>` to `FloTable.types.ts`
+- Add `quickFilters?: QuickFilterState<T>` to `FloTableProps<T>`
+- Add `onFilterChange?: (filters: QuickFilterState<T>) => void` to `FloTableProps<T>`
 - Add `quickFilters: QuickFilterState<T>` to `TableHeaderProps<T>`
 - Add `onFilterChange: (filters: QuickFilterState<T>) => void` to `TableHeaderProps<T>`
 
@@ -52,13 +52,13 @@ Follow the **controlled state pattern** already established by `sortState`:
 #### Task 2.1: Create QuickFilterRow component — ⬜ TODO
 
 **Files to create or modify:**
-- `src/components/FTable/filters/QuickFilterRow.tsx` — new component
-- `src/components/FTable/filters/QuickFilterRow.css` — new styles
+- `src/components/FloTable/filters/QuickFilterRow.tsx` — new component
+- `src/components/FloTable/filters/QuickFilterRow.css` — new styles
 
 **References:**
 - `TableHeader.tsx` for the `<tr>` / `<th>` structure pattern
-- `FTable.types.ts` for `ColumnDef<T>`, `ColumnType`, `QuickFilterState<T>`
-- `TableHeader.css` for existing BEM naming conventions (`ftable__*`)
+- `FloTable.types.ts` for `ColumnDef<T>`, `ColumnType`, `QuickFilterState<T>`
+- `TableHeader.css` for existing BEM naming conventions (`flotable__*`)
 
 **Subtasks:**
 - Create `QuickFilterRowProps<T extends object>` interface with `columns: ColumnDef<T>[]`, `filters: QuickFilterState<T>`, `onChange: (key: keyof T & string, value: string) => void`
@@ -68,7 +68,7 @@ Follow the **controlled state pattern** already established by `sortState`:
   - `date` → `<input type="date" />`
   - all others (text, badge, link, undefined) → `<input type="text" />`
 - Each input's `value` comes from `filters[col.key] ?? ""` and `onChange` calls the `onChange` prop
-- Create `QuickFilterRow.css` with BEM class `.ftable__filter-row`, `.ftable__filter-cell`, `.ftable__filter-input`, `.ftable__filter-select` using `var(--ftable-*)` tokens with fallbacks
+- Create `QuickFilterRow.css` with BEM class `.flotable__filter-row`, `.flotable__filter-cell`, `.flotable__filter-input`, `.flotable__filter-select` using `var(--flotable-*)` tokens with fallbacks
 - Import `QuickFilterRow.css` in `QuickFilterRow.tsx`
 
 ---
@@ -78,8 +78,8 @@ Follow the **controlled state pattern** already established by `sortState`:
 #### Task 3.1: Render QuickFilterRow inside TableHeader — ⬜ TODO
 
 **Files to create or modify:**
-- `src/components/FTable/TableHeader/TableHeader.tsx` — add filter row rendering
-- `src/components/FTable/TableHeader/TableHeader.css` — no changes expected (styles live in `QuickFilterRow.css`)
+- `src/components/FloTable/TableHeader/TableHeader.tsx` — add filter row rendering
+- `src/components/FloTable/TableHeader/TableHeader.css` — no changes expected (styles live in `QuickFilterRow.css`)
 
 **References:**
 - `QuickFilterRow.tsx` just created
@@ -93,20 +93,20 @@ Follow the **controlled state pattern** already established by `sortState`:
 
 ---
 
-### Phase 4: FTable integration
+### Phase 4: FloTable integration
 
-#### Task 4.1: Pass filter props through FTable — ⬜ TODO
+#### Task 4.1: Pass filter props through FloTable — ⬜ TODO
 
 **Files to create or modify:**
-- `src/components/FTable/FTable.tsx` — accept and pass `quickFilters` + `onFilterChange`
+- `src/components/FloTable/FloTable.tsx` — accept and pass `quickFilters` + `onFilterChange`
 
 **References:**
-- Existing `sortState`/`onSortChange` pattern in `FTable.tsx`
+- Existing `sortState`/`onSortChange` pattern in `FloTable.tsx`
 
 **Subtasks:**
-- Destructure `quickFilters = {}` and `onFilterChange` from `FTableProps<T>` in `FTable.tsx`
+- Destructure `quickFilters = {}` and `onFilterChange` from `FloTableProps<T>` in `FloTable.tsx`
 - Pass `quickFilters` and `onFilterChange` to `<TableHeader />`
-- When `onFilterChange` fires inside `FTable` (via the header callback), call `onPageChange(1)` to reset pagination — implement a `handleFilterChange` wrapper in `FTable.tsx` that calls `onFilterChange` then `onPageChange(1)`
+- When `onFilterChange` fires inside `FloTable` (via the header callback), call `onPageChange(1)` to reset pagination — implement a `handleFilterChange` wrapper in `FloTable.tsx` that calls `onFilterChange` then `onPageChange(1)`
 
 ---
 
@@ -119,7 +119,7 @@ Follow the **controlled state pattern** already established by `sortState`:
 
 **References:**
 - `demoUtils.ts` existing `applySorting` helper
-- `QuickFilterState<T>` type from `FTable.types.ts`
+- `QuickFilterState<T>` type from `FloTable.types.ts`
 
 **Subtasks:**
 - Add `export function applyFilters<T extends object>(data: T[], filters: QuickFilterState<T>): T[]`
@@ -129,7 +129,7 @@ Follow the **controlled state pattern** already established by `sortState`:
 #### Task 5.2: Wire filter state into Demo — ⬜ TODO
 
 **Files to create or modify:**
-- `src/demo/Demo.tsx` — add filter state, wire `applyFilters`, pass props to FTable
+- `src/demo/Demo.tsx` — add filter state, wire `applyFilters`, pass props to FloTable
 
 **References:**
 - Existing `sortState` / `setSortState` / `applySorting` pattern in `Demo.tsx`
@@ -137,9 +137,9 @@ Follow the **controlled state pattern** already established by `sortState`:
 
 **Subtasks:**
 - Import `applyFilters` from `./demoUtils`
-- Import `QuickFilterState` type from `@/components/FTable/FTable.types`
+- Import `QuickFilterState` type from `@/components/FloTable/FloTable.types`
 - Add `const [filterState, setFilterState] = useState<QuickFilterState<Employee>>({})` 
 - Update the `useMemo` for `sortedData` to also apply `applyFilters` first: `applyFilters(ALL_DATA, filterState)` → then sort
 - Reset `page` to 1 inside `handleFilterChange`: `setPage(1); setFilterState(f)`  
   (or use `onFilterChange={(f) => { setFilterState(f); setPage(1); }}` inline)
-- Pass `quickFilters={filterState}` and `onFilterChange` to `<FTable />`
+- Pass `quickFilters={filterState}` and `onFilterChange` to `<FloTable />`

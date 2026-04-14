@@ -1,0 +1,14 @@
+@layer flotable {
+.flotable-boolean {
+  font-size: var(--flotable-font-size-sm, 0.8125rem);
+  font-weight: 500;
+}
+
+.flotable-boolean--true {
+  color: var(--flotable-boolean-true-color, #16a34a);
+}
+
+.flotable-boolean--false {
+  color: var(--flotable-boolean-false-color, #dc2626);
+}
+}

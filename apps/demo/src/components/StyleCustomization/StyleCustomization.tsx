@@ -30,7 +30,7 @@ export function StyleCustomization() {
       <h1 className="sc-title">Style Customization</h1>
 
       <p className="sc-intro">
-        FTable exposes two props &mdash;{' '}
+        FloTable exposes two props &mdash;{' '}
         <code className="sc-code">classNames</code> and{' '}
         <code className="sc-code">styles</code> &mdash; that let you restyle every part of
         the table without touching the component source. The examples below recreate

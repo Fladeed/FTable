@@ -1,0 +1,14 @@
+@layer flotable {
+
+.flotable__row--empty {
+  /* no special row styles needed beyond the cell */
+}
+
+.flotable__empty-cell {
+  text-align: center;
+  color: var(--flotable-muted-color, #6b7280);
+  padding: var(--flotable-cell-padding, 0.625rem 0.875rem);
+  height: 6rem;
+}
+
+}
