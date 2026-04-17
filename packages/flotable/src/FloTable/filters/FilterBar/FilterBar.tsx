@@ -14,16 +14,35 @@ interface FilterBarProps {
   activeFilters: QuickFilterState;
   onFilterChange: (filters: QuickFilterState) => void;
   showSearch?: boolean;
+  filterMode?: 'live' | 'commit';
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
 
-export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, classNames, styles }: FilterBarProps) {
+export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, filterMode, classNames, styles }: FilterBarProps) {
+  const resolvedMode = filterMode ?? 'commit';
+
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [closingKey, setClosingKey] = useState<string | null>(null);
+  const [localFilters, setLocalFilters] = useState<QuickFilterState>(() => ({ ...activeFilters }));
+  const localFiltersRef = useRef<QuickFilterState>(localFilters);
   const barRef = useRef<HTMLDivElement>(null);
+  const liveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const synced = { ...activeFilters };
+    localFiltersRef.current = synced;
+    setLocalFilters(synced);
+  }, [activeFilters]);
 
   function closeKey(key: string) {
+    if (resolvedMode === 'commit' && key !== SEARCH_KEY) {
+      const prevValue = activeFilters[key] ?? '';
+      const nextValue = localFiltersRef.current[key] ?? '';
+      if (prevValue !== nextValue) {
+        onFilterChange({ ...localFiltersRef.current });
+      }
+    }
     setClosingKey(key);
     setTimeout(() => {
       setOpenKey(null);
@@ -46,7 +65,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
       document.removeEventListener('mousedown', handleOutsideClick);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [openKey]);
+  }, [openKey, localFilters, resolvedMode]);
 
   function handlePillClick(key: string) {
     if (openKey === key) {
@@ -58,18 +77,30 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
   }
 
   function handleValueChange(key: string, value: string) {
-    const next = { ...activeFilters };
+    const next = { ...localFiltersRef.current };
     if (value === '') {
       delete next[key];
     } else {
       next[key] = value;
     }
-    onFilterChange(next);
+    localFiltersRef.current = next;
+    setLocalFilters(next);
+    if (key === SEARCH_KEY) {
+      onFilterChange(next);
+    } else if (resolvedMode === 'live') {
+      if (liveDebounceRef.current !== null) clearTimeout(liveDebounceRef.current);
+      liveDebounceRef.current = setTimeout(() => {
+        liveDebounceRef.current = null;
+        onFilterChange(next);
+      }, 300);
+    }
   }
 
   function handleClear(key: string) {
-    const next = { ...activeFilters };
+    const next = { ...localFiltersRef.current };
     delete next[key];
+    localFiltersRef.current = next;
+    setLocalFilters(next);
     onFilterChange(next);
   }
 
@@ -94,7 +125,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
         <FilterPill
           key={def.key}
           def={def}
-          value={activeFilters[def.key] ?? ''}
+          value={localFilters[def.key] ?? ''}
           isOpen={openKey === def.key}
           isClosing={closingKey === def.key}
           onPillClick={handlePillClick}

@@ -160,3 +160,24 @@ Jira URL: https://fladeed.atlassian.net/browse/ET-5
 - **When a ticket is created:** add its key, type, title, and URL to the Tickets table in `MEMORY.md`.
 - **When a ticket is completed:** update its status to `Done ✓` in `MEMORY.md`.
 - Never create or close a ticket without updating `MEMORY.md`.
+
+### Skill Update Ticket (after every PR)
+
+**After opening a PR for any task, you must create a follow-up Jira ticket** to keep the `flotable` skill up to date.
+
+Rules:
+- Parent epic: **ET-1**
+- Label: **`flotable-skill`**
+- Issue type: **Task**
+- The ticket must be **self-contained**: reading it should be enough to update the skill without looking at the commit or PR.
+
+**Required ticket content:**
+- A clear summary of what changed in the component (new props, removed props, new behaviour, changed defaults, new components, removed components, etc.).
+- The exact file paths that were added, modified, or removed.
+- Any new conventions or constraints introduced by the task (e.g., new CSS token names, new field types, new prop shapes).
+- Specific instructions on what section(s) of the skill file need to be updated and how (e.g., "Add a new row to the Field Types table for `rating`", "Update the `FilterPill` prop table to include `defaultOpen`").
+- A link to the PR for reference.
+
+**Ticket title format:** `[Skill] Update flotable skill — <short description of the feature>`
+
+Example title: `[Skill] Update flotable skill — FilterPill defaultOpen prop`

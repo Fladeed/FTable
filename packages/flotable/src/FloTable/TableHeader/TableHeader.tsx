@@ -7,6 +7,7 @@ export function TableHeader<T extends object>({
   columns,
   sortState,
   onSort,
+  rowActions,
   classNames,
   styles,
 }: TableHeaderProps<T>) {
@@ -36,6 +37,14 @@ export function TableHeader<T extends object>({
             </th>
           );
         })}
+        {rowActions && rowActions.length > 0 && (
+          <th
+            className={cx('flotable__header-cell flotable__header-cell--actions', classNames?.headerCell)}
+            style={styles?.headerCell}
+          >
+            <span className="flotable__header-cell-content">Actions</span>
+          </th>
+        )}
       </tr>
     </thead>
   );

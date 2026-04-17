@@ -41,10 +41,14 @@
         "default": "./dist/index.js"
       }
     },
-    "./styles": "./dist/index.css"
+    "./styles": {
+      "types": "./styles.d.ts",
+      "default": "./dist/index.css"
+    }
   },
   "files": [
-    "dist"
+    "dist",
+    "styles.d.ts"
   ],
   "peerDependencies": {
     "react": ">=18",

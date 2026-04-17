@@ -1,5 +1,21 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+/** A single per-row action rendered in the trailing Actions column. */
+export interface RowAction<T = Record<string, unknown>> {
+  /** Unique key for this action. */
+  key: string;
+  /** Label shown in the button or dropdown item. */
+  label: string;
+  /** Optional icon rendered before the label. */
+  icon?: ReactNode;
+  /** Called when the user clicks this action. Receives the full row data object. */
+  onClick: (row: T) => void;
+  /** When provided, the action button is disabled for rows where this returns true. */
+  disabled?: (row: T) => boolean;
+  /** When true, the action is rendered with a destructive (red) style. */
+  danger?: boolean;
+}
+
 export type ColumnType =
   | 'text'
   | 'number'
@@ -139,6 +155,17 @@ interface FloTableBaseProps<T extends object> {
   autoFilters?: boolean;
   /** When true, renders a global search input at the start of the filter bar. Value stored under the reserved key '__search__'. */
   showSearch?: boolean;
+  /**
+   * Controls when onFilterChange (and in request mode, the request function) is fired.
+   * - 'commit' (default) — fires only when the pill is closed (Enter key, Escape, outside click, or clear button).
+   * - 'live' — fires on every keystroke (previous behaviour).
+   * The global search pill is always live regardless of this setting.
+   */
+  filterMode?: 'live' | 'commit';
+  /** Per-row action buttons rendered in a trailing "Actions" column. */
+  rowActions?: RowAction<T>[];
+  /** Custom icon for the overflow (⋯) button when more than 3 actions are provided. */
+  rowActionsMoreIcon?: ReactNode;
   /** Custom class names for individual table parts. */
   classNames?: FloTableClassNames;
   /** Inline styles for individual table parts. CSS custom properties are accepted. */
@@ -194,6 +221,7 @@ export interface TableHeaderProps<T extends object> {
   columns: ColumnDef<T>[];
   sortState: SortState<T> | null;
   onSort: (key: keyof T & string) => void;
+  rowActions?: RowAction<T>[];
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -201,6 +229,8 @@ export interface TableHeaderProps<T extends object> {
 export interface TableRowProps<T extends object> {
   row: T;
   columns: ColumnDef<T>[];
+  rowActions?: RowAction<T>[];
+  rowActionsMoreIcon?: ReactNode;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -208,6 +238,8 @@ export interface TableRowProps<T extends object> {
 export interface TableBodyProps<T extends object> {
   columns: ColumnDef<T>[];
   rows: T[];
+  rowActions?: RowAction<T>[];
+  rowActionsMoreIcon?: ReactNode;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
   /** When true, renders animated skeleton rows instead of data. */

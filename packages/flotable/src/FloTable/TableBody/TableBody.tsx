@@ -9,6 +9,8 @@ import './TableBody.css';
 export function TableBody<T extends object>({
   columns,
   rows,
+  rowActions,
+  rowActionsMoreIcon,
   classNames,
   styles,
   isLoading = false,
@@ -16,6 +18,9 @@ export function TableBody<T extends object>({
   error = null,
   onRetry,
 }: TableBodyProps<T>) {
+  const hasActions = (rowActions?.length ?? 0) > 0;
+  const colCount = columns.length + (hasActions ? 1 : 0);
+
   if (isLoading) {
     return (
       <TableBodySkeleton
@@ -30,7 +35,7 @@ export function TableBody<T extends object>({
   if (error) {
     return (
       <TableBodyError
-        columns={columns.length}
+        columns={colCount}
         message={error}
         classNames={classNames}
         styles={styles}
@@ -42,7 +47,7 @@ export function TableBody<T extends object>({
   if (rows.length === 0) {
     return (
       <TableBodyEmpty
-        columns={columns.length}
+        columns={colCount}
         classNames={classNames}
         styles={styles}
       />
@@ -56,6 +61,8 @@ export function TableBody<T extends object>({
           key={index}
           row={row}
           columns={columns}
+          rowActions={rowActions}
+          rowActionsMoreIcon={rowActionsMoreIcon}
           classNames={classNames}
           styles={styles}
         />

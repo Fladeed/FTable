@@ -1,4 +1,3 @@
-import { useRef, useLayoutEffect } from 'react';
 import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import './FilterPillField.css';
@@ -28,21 +27,8 @@ export function FilterPillField({
   classNames,
   styles,
 }: FilterPillFieldProps) {
-  const fieldRef = useRef<HTMLSpanElement>(null);
-
-  useLayoutEffect(() => {
-    if (!isClosing || !fieldRef.current) return;
-    const el = fieldRef.current;
-    el.style.animation = 'none';
-    void el.offsetWidth; // force reflow so collapse animation restarts immediately
-    el.style.animation = '';
-  }, [isClosing]);
-
   return (
-    <span
-      ref={fieldRef}
-      className={`flotable-filter-pill__field${isClosing ? ' flotable-filter-pill__field--closing' : ''}`}
-    >
+    <span className={`flotable-filter-pill__field${isClosing ? ' flotable-filter-pill__field--closing' : ''}`}>
       {!hideSeparator && (
         <span className="flotable-filter-pill__separator" aria-hidden="true">:</span>
       )}
@@ -52,7 +38,7 @@ export function FilterPillField({
           className={cx('flotable-filter-pill__input', classNames?.filterPillInput)}
           style={styles?.filterPillInput}
           value={value}
-          onChange={(e) => onValueChange(def.key, e.target.value)}
+          onChange={(e) => { onValueChange(def.key, e.target.value); onClose(def.key); }}
           autoFocus={isOpen && !isClosing}
         >
           <option value="">All</option>
@@ -66,7 +52,7 @@ export function FilterPillField({
           className={cx('flotable-filter-pill__input', classNames?.filterPillInput)}
           style={styles?.filterPillInput}
           value={value}
-          onChange={(e) => onValueChange(def.key, e.target.value)}
+          onChange={(e) => { onValueChange(def.key, e.target.value); onClose(def.key); }}
           autoFocus={isOpen && !isClosing}
         >
           <option value="">All</option>
@@ -83,6 +69,7 @@ export function FilterPillField({
           type={def.type}
           value={value}
           onChange={(e) => onValueChange(def.key, e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') onClose(def.key); }}
           placeholder={placeholder}
           autoFocus={isOpen && !isClosing}
         />

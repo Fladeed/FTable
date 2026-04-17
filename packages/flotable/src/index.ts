@@ -16,6 +16,7 @@ export type {
   QuickFilterState,
   FilterDef,
   FilterInputType,
+  RowAction,
   FloTableClassNames,
   FloTableStyleValue,
   FloTableStyles,
