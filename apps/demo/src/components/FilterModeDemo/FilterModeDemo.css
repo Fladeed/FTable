@@ -1,0 +1,60 @@
+.fmd-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--color-text-primary, #111827);
+}
+
+.fmd-subtitle {
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+}
+
+.fmd-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--color-border, #e5e7eb);
+  margin-bottom: 1.25rem;
+}
+
+.fmd-tab {
+  padding: 8px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+  transition: color 0.15s;
+}
+
+.fmd-tab:hover {
+  color: var(--color-text-primary, #111827);
+}
+
+.fmd-tab--active {
+  color: var(--color-accent, #2563eb);
+  border-bottom-color: var(--color-accent, #2563eb);
+}
+
+.fmd-tab-desc {
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 0.875rem;
+  margin: 0 0 1rem;
+  line-height: 1.6;
+}
+
+.fmd-request-counter {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 5px 12px;
+  background: var(--color-surface-2, #eff6ff);
+  border: 1px solid var(--color-border, #bfdbfe);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #1e40af;
+}

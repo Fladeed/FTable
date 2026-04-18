@@ -10,6 +10,8 @@ const TABS = [
   { href: '/style-customization', label: 'Style Customization' },
   { href: '/api-data-source', label: 'API Data Source' },
   { href: '/filter-pills', label: 'Filter Pills' },
+  { href: '/filter-mode', label: 'Filter Mode' },
+  { href: '/row-actions', label: 'Row Actions' },
 ] as const;
 
 export function DemoNav() {

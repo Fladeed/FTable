@@ -32,6 +32,8 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-34 | Task | Cloudflare Pages deployment config for demo app | Done ✓ | https://fladeed.atlassian.net/browse/ET-34 |
 | ET-35 | Task | Rewrite README.md for public release | Done ✓ | https://fladeed.atlassian.net/browse/ET-35 |
 | ET-36 | Task | npm package publishing setup for flotable | Done ✓ | https://fladeed.atlassian.net/browse/ET-36 |
+| ET-51 | Task | Add "Skill Update Ticket" workflow to AGENTS.md | To Do | https://fladeed.atlassian.net/browse/ET-51 |
+| ET-52 | Task | Fix flotable/styles export — add TypeScript type declaration for CSS entry point | To Do | https://fladeed.atlassian.net/browse/ET-52 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net

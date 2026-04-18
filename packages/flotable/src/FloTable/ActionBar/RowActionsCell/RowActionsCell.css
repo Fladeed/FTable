@@ -1,0 +1,5 @@
+.flotable__row-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--flotable-row-actions-gap, 4px);
+}

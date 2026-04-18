@@ -1,0 +1,36 @@
+.flotable__row-actions-cell__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  background: none;
+  border: none;
+  border-radius: var(--flotable-row-action-radius, 4px);
+  font-size: var(--flotable-font-size, 0.875rem);
+  color: var(--flotable-row-action-color, #374151);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.12s, background 0.12s;
+}
+
+.flotable__row-actions-cell__btn:hover:not(:disabled) {
+  background: var(--flotable-row-action-hover-bg, #f3f4f6);
+  color: var(--flotable-row-action-hover-color, #111827);
+  text-decoration: underline;
+}
+
+.flotable__row-actions-cell__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.flotable__row-actions-cell__btn--danger {
+  color: var(--flotable-danger-color, #dc2626);
+}
+
+.flotable__row-actions-cell__btn--danger:hover:not(:disabled) {
+  background: var(--flotable-danger-hover-bg, #fef2f2);
+  color: var(--flotable-danger-hover-color, #b91c1c);
+  text-decoration: underline;
+}

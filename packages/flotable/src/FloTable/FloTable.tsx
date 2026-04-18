@@ -17,6 +17,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     filterDefs = [],
     autoFilters = false,
     showSearch = false,
+    filterMode,
+    rowActions,
+    rowActionsMoreIcon,
     classNames,
     styles,
   } = props;
@@ -148,6 +151,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
         activeFilters={quickFilters}
         onFilterChange={handleFilterChange}
         showSearch={showSearch}
+        filterMode={filterMode}
         classNames={classNames}
         styles={styles}
       />
@@ -157,12 +161,15 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             columns={columns}
             sortState={sortState}
             onSort={handleSort}
+            rowActions={rowActions}
             classNames={classNames}
             styles={styles}
           />
           <TableBody
             columns={columns}
             rows={data}
+            rowActions={rowActions}
+            rowActionsMoreIcon={rowActionsMoreIcon}
             classNames={classNames}
             styles={styles}
             isLoading={isLoading}
