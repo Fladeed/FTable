@@ -92,6 +92,7 @@ export function RtlDemo() {
           filterDefs={FILTER_DEFS_LTR}
           showSearch={true}
           rowActions={ROW_ACTIONS_LTR}
+          showPageInput={true}
         />
       </section>
 
@@ -115,7 +116,9 @@ export function RtlDemo() {
             prev: 'السابق',
             next: 'التالي',
             pageInfo: (c, t) => `صفحة ${c} من ${t}`,
+            goToPage: 'انتقل إلى صفحة',
           }}
+          showPageInput={true}
           direction="rtl"
         />
       </section>

@@ -25,6 +25,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     direction,
     rowActionsLabel,
     paginationLabels,
+    showPageInput,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
@@ -190,6 +191,8 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
         totalPages={totalPages}
         onPrev={() => handlePageChange(page - 1)}
         onNext={() => handlePageChange(page + 1)}
+        onGoToPage={handlePageChange}
+        showPageInput={showPageInput}
         labels={paginationLabels}
         classNames={classNames}
         styles={styles}

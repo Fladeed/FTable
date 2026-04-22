@@ -71,6 +71,10 @@ export interface PaginationLabels {
   next?: string;
   /** Render the "Page X of Y" string. Defaults to `(c, t) => \`Page ${c} of ${t}\``. */
   pageInfo?: (current: number, total: number) => string;
+  /** Label text rendered before the page number input. Defaults to `'Go to page'`. */
+  goToPage?: string;
+  /** Text for the Go button next to the page input. Defaults to `'Go'`. */
+  goBtn?: string;
 }
 
 /**
@@ -184,6 +188,8 @@ interface FloTableBaseProps<T extends object> {
   rowActionsLabel?: string;
   /** Labels for the pagination controls. Override any or all to translate or customise. */
   paginationLabels?: PaginationLabels;
+  /** When true, renders a page number input that lets users jump directly to any page. Defaults to `false`. */
+  showPageInput?: boolean;
 }
 
 /**
@@ -274,6 +280,8 @@ export interface TablePaginationProps {
   totalPages: number;
   onPrev: () => void;
   onNext: () => void;
+  onGoToPage: (page: number) => void;
+  showPageInput?: boolean;
   labels?: PaginationLabels;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;

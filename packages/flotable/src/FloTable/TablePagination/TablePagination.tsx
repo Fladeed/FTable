@@ -1,4 +1,5 @@
 import type { TablePaginationProps } from '../FloTable.types';
+import { GoToPage } from './GoToPage/GoToPage';
 import { cx } from '../../utils/cx';
 import './TablePagination.css';
 
@@ -7,6 +8,8 @@ export function TablePagination({
   totalPages,
   onPrev,
   onNext,
+  onGoToPage,
+  showPageInput = false,
   labels,
   classNames,
   styles,
@@ -37,6 +40,15 @@ export function TablePagination({
       >
         {nextLabel}
       </button>
+      {showPageInput && (
+        <GoToPage
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onGoToPage={onGoToPage}
+          label={labels?.goToPage}
+          buttonLabel={labels?.goBtn}
+        />
+      )}
     </div>
   );
 }
