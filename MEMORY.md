@@ -34,6 +34,11 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-36 | Task | npm package publishing setup for flotable | Done ✓ | https://fladeed.atlassian.net/browse/ET-36 |
 | ET-51 | Task | Add "Skill Update Ticket" workflow to AGENTS.md | To Do | https://fladeed.atlassian.net/browse/ET-51 |
 | ET-52 | Task | Fix flotable/styles export — add TypeScript type declaration for CSS entry point | To Do | https://fladeed.atlassian.net/browse/ET-52 |
+| ET-55 | Task | Debounce search/filter input — trigger request after typing pause, not on every keystroke | To Do | https://fladeed.atlassian.net/browse/ET-55 |
+| ET-75 | Bug | Loading spinner stays forever when request function throws a synchronous error | To Do | https://fladeed.atlassian.net/browse/ET-75 |
+| ET-76 | Task | RTL support — add `direction` prop to FloTable | Done ✓ | https://fladeed.atlassian.net/browse/ET-76 |
+| ET-77 | Enhancement | FloTable request mode: add initialQuickFilters prop | Done ✓ | https://fladeed.atlassian.net/browse/ET-77 |
+| ET-78 | Task | FloTable pagination: add optional page number input for direct page navigation | In Progress | https://fladeed.atlassian.net/browse/ET-78 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net

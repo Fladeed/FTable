@@ -1,7 +1,7 @@
 'use client';
 
 import { FloTable } from 'flotable';
-import type { ColumnDef, FloTableRequestFn } from 'flotable';
+import type { ColumnDef, FilterDef, FloTableRequestFn } from 'flotable';
 import { simulateFetch } from '../../utils/demoUtils';
 import './ApiDataSourceDemo.css';
 
@@ -44,6 +44,10 @@ const ALL_PRODUCTS: Product[] = [
   { id: 20, name: 'Bookshelf',               category: 'Furniture',     price: 119.00, inStock: true  },
 ];
 
+const FILTER_DEFS: FilterDef[] = [
+  { key: 'inStock', label: 'In Stock', type: 'boolean', options: ['true', 'false'] },
+];
+
 // Defined outside the component so the reference is stable
 // (prevents FloTable from re-fetching on every render).
 const fetchProducts: FloTableRequestFn<Product> = simulateFetch(ALL_PRODUCTS, 1000);
@@ -82,6 +86,23 @@ export function ApiDataSourceDemo() {
           <strong> Retry</strong> button that re-invokes the function.
         </p>
         <FloTable columns={COLUMNS} request={fetchWithError} pageSize={5} />
+      </section>
+
+      <section className="api-demo__section">
+        <h2 className="api-demo__section-title">Initial filters</h2>
+        <p className="api-demo__description">
+          Pass <code>initialQuickFilters</code> to seed the internal filter state on mount.
+          The first request fires with those filters already applied and the pill renders
+          pre-populated. The user can change or clear it freely, and the state resets back
+          to the initial value if the component is remounted via a <code>key</code> change.
+        </p>
+        <FloTable
+          columns={COLUMNS}
+          request={fetchProducts}
+          pageSize={5}
+          filterDefs={FILTER_DEFS}
+          initialQuickFilters={{ inStock: 'true' }}
+        />
       </section>
     </main>
   );

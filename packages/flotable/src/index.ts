@@ -24,4 +24,5 @@ export type {
   TableBodyProps,
   TableRowProps,
   TablePaginationProps,
+  PaginationLabels,
 } from './FloTable/FloTable.types';

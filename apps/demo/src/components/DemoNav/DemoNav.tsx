@@ -12,6 +12,7 @@ const TABS = [
   { href: '/filter-pills', label: 'Filter Pills' },
   { href: '/filter-mode', label: 'Filter Mode' },
   { href: '/row-actions', label: 'Row Actions' },
+  { href: '/rtl-support', label: 'RTL Support' },
 ] as const;
 
 export function DemoNav() {

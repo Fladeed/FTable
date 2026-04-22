@@ -22,13 +22,19 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     rowActionsMoreIcon,
     classNames,
     styles,
+    direction,
+    rowActionsLabel,
+    paginationLabels,
+    showPageInput,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(null);
-  const [internalFilters, setInternalFilters] = useState<QuickFilterState>({});
+  const [internalFilters, setInternalFilters] = useState<QuickFilterState>(
+    () => (props as FloTableRequestProps<T>).initialQuickFilters ?? {},
+  );
   const [internalData, setInternalData] = useState<T[]>([]);
   const [internalTotalRows, setInternalTotalRows] = useState(0);
   const [isLoading, setIsLoading] = useState(isReqMode);
@@ -145,7 +151,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   }
 
   return (
-    <div className={classNames?.root} style={styles?.root}>
+    <div className={classNames?.root} style={styles?.root} dir={direction}>
       <FilterBar
         filterDefs={effectiveFilterDefs}
         activeFilters={quickFilters}
@@ -162,6 +168,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             sortState={sortState}
             onSort={handleSort}
             rowActions={rowActions}
+            rowActionsLabel={rowActionsLabel}
             classNames={classNames}
             styles={styles}
           />
@@ -184,6 +191,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
         totalPages={totalPages}
         onPrev={() => handlePageChange(page - 1)}
         onNext={() => handlePageChange(page + 1)}
+        onGoToPage={handlePageChange}
+        showPageInput={showPageInput}
+        labels={paginationLabels}
         classNames={classNames}
         styles={styles}
       />

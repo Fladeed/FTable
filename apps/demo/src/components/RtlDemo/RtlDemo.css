@@ -1,0 +1,17 @@
+.rtl-demo__section {
+  margin-bottom: 3rem;
+}
+
+.rtl-demo__section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.rtl-demo__description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}

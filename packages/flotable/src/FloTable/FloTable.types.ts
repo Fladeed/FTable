@@ -65,6 +65,18 @@ export interface FilterDef {
 /** Flat map of filter key → active string value. An absent key means no filter is applied. */
 export type QuickFilterState = Partial<Record<string, string>>;
 
+/** Labels for the pagination controls. Override any or all to translate or customise. */
+export interface PaginationLabels {
+  prev?: string;
+  next?: string;
+  /** Render the "Page X of Y" string. Defaults to `(c, t) => \`Page ${c} of ${t}\``. */
+  pageInfo?: (current: number, total: number) => string;
+  /** Label text rendered before the page number input. Defaults to `'Go to page'`. */
+  goToPage?: string;
+  /** Text for the Go button next to the page input. Defaults to `'Go'`. */
+  goBtn?: string;
+}
+
 /**
  * Custom class names for each part of the table.
  * Passed through to the corresponding DOM elements alongside the built-in classes.
@@ -170,6 +182,14 @@ interface FloTableBaseProps<T extends object> {
   classNames?: FloTableClassNames;
   /** Inline styles for individual table parts. CSS custom properties are accepted. */
   styles?: FloTableStyles;
+  /** Text direction for the table. Defaults to `'ltr'`. Set to `'rtl'` for right-to-left languages. */
+  direction?: 'ltr' | 'rtl';
+  /** Label for the trailing Actions column header. Defaults to `'Actions'`. */
+  rowActionsLabel?: string;
+  /** Labels for the pagination controls. Override any or all to translate or customise. */
+  paginationLabels?: PaginationLabels;
+  /** When true, renders a page number input that lets users jump directly to any page. Defaults to `false`. */
+  showPageInput?: boolean;
 }
 
 /**
@@ -204,6 +224,8 @@ export interface FloTableDataProps<T extends object> extends FloTableBaseProps<T
 export interface FloTableRequestProps<T extends object> extends FloTableBaseProps<T> {
   /** Async function called on mount and on every sort / filter / pagination change. */
   request: FloTableRequestFn<T>;
+  /** Seeds the internal quick-filter state on mount. Resets to this value on remount (e.g. via a `key` change). */
+  initialQuickFilters?: QuickFilterState;
   data?: never;
   totalRows?: never;
   page?: never;
@@ -222,6 +244,7 @@ export interface TableHeaderProps<T extends object> {
   sortState: SortState<T> | null;
   onSort: (key: keyof T & string) => void;
   rowActions?: RowAction<T>[];
+  rowActionsLabel?: string;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -257,6 +280,9 @@ export interface TablePaginationProps {
   totalPages: number;
   onPrev: () => void;
   onNext: () => void;
+  onGoToPage: (page: number) => void;
+  showPageInput?: boolean;
+  labels?: PaginationLabels;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
