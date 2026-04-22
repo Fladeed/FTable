@@ -92,6 +92,21 @@ Renderers live in `src/components/FloTable/fields/`.
 - Views can be created, renamed, and deleted by the user.
 - View state is serializable (plain JSON) — no external state management library.
 
+### Customization & Translation
+
+**Every piece of user-visible text in the component must be customizable.**
+
+FloTable is used in multilingual and multi-locale products. Hardcoded English strings are a bug, not a default. When adding any user-facing label, button text, or status string:
+
+- Expose it as an optional prop with a sensible English default.
+- Group related strings into a single `*Labels` prop object (e.g. `paginationLabels`, `rowActionsLabel`) rather than scattering individual string props.
+- For strings that embed dynamic values (e.g. "Page 3 of 10"), accept a render function `(…args) => string` so consumers can handle any word order.
+- Document the default value explicitly in the JSDoc so consumers know what they are overriding.
+
+Examples of text that **must** be customizable: pagination buttons, column headers (including the Actions column), filter pill labels, empty-state messages, error messages, retry button text, loading indicators.
+
+When reviewing or implementing a feature, always ask: _"Does this render any text the user will see? If yes, is it overridable?"_
+
 ---
 
 ## Code Style

@@ -7,9 +7,14 @@ export function TablePagination({
   totalPages,
   onPrev,
   onNext,
+  labels,
   classNames,
   styles,
 }: TablePaginationProps) {
+  const prevLabel = labels?.prev ?? 'Prev';
+  const nextLabel = labels?.next ?? 'Next';
+  const pageInfo = labels?.pageInfo ?? ((c, t) => `Page ${c} of ${t}`);
+
   return (
     <div
       className={cx('flotable-pagination', classNames?.pagination)}
@@ -21,18 +26,16 @@ export function TablePagination({
         onClick={onPrev}
         disabled={currentPage <= 1}
       >
-        Prev
+        {prevLabel}
       </button>
-      <span>
-        Page {currentPage} of {totalPages}
-      </span>
+      <span>{pageInfo(currentPage, totalPages)}</span>
       <button
         className={cx('flotable-pagination__btn', classNames?.paginationButton)}
         style={styles?.paginationButton}
         onClick={onNext}
         disabled={currentPage >= totalPages}
       >
-        Next
+        {nextLabel}
       </button>
     </div>
   );

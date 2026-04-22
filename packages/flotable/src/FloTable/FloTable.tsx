@@ -22,6 +22,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     rowActionsMoreIcon,
     classNames,
     styles,
+    direction,
+    rowActionsLabel,
+    paginationLabels,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
@@ -147,7 +150,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   }
 
   return (
-    <div className={classNames?.root} style={styles?.root}>
+    <div className={classNames?.root} style={styles?.root} dir={direction}>
       <FilterBar
         filterDefs={effectiveFilterDefs}
         activeFilters={quickFilters}
@@ -164,6 +167,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             sortState={sortState}
             onSort={handleSort}
             rowActions={rowActions}
+            rowActionsLabel={rowActionsLabel}
             classNames={classNames}
             styles={styles}
           />
@@ -186,6 +190,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
         totalPages={totalPages}
         onPrev={() => handlePageChange(page - 1)}
         onNext={() => handlePageChange(page + 1)}
+        labels={paginationLabels}
         classNames={classNames}
         styles={styles}
       />

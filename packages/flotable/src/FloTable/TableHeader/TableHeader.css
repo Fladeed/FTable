@@ -5,7 +5,7 @@
 
 .flotable__header-cell {
   padding: var(--flotable-cell-padding, 0.625rem 0.875rem);
-  text-align: left;
+  text-align: start;
   font-weight: 600;
   border-bottom: 2px solid var(--flotable-border-color, #e5e7eb);
   white-space: nowrap;
