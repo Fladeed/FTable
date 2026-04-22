@@ -28,7 +28,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(null);
-  const [internalFilters, setInternalFilters] = useState<QuickFilterState>({});
+  const [internalFilters, setInternalFilters] = useState<QuickFilterState>(
+    () => (props as FloTableRequestProps<T>).initialQuickFilters ?? {},
+  );
   const [internalData, setInternalData] = useState<T[]>([]);
   const [internalTotalRows, setInternalTotalRows] = useState(0);
   const [isLoading, setIsLoading] = useState(isReqMode);

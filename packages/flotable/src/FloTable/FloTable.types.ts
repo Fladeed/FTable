@@ -204,6 +204,8 @@ export interface FloTableDataProps<T extends object> extends FloTableBaseProps<T
 export interface FloTableRequestProps<T extends object> extends FloTableBaseProps<T> {
   /** Async function called on mount and on every sort / filter / pagination change. */
   request: FloTableRequestFn<T>;
+  /** Seeds the internal quick-filter state on mount. Resets to this value on remount (e.g. via a `key` change). */
+  initialQuickFilters?: QuickFilterState;
   data?: never;
   totalRows?: never;
   page?: never;
