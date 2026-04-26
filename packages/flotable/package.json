@@ -1,6 +1,6 @@
 {
   "name": "flotable",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Open-source, ERP-focused table component — zero runtime dependencies",
   "license": "MIT",
   "author": "Fladeed",
