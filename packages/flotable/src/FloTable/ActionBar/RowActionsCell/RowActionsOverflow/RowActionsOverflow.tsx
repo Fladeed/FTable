@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { RowAction } from '../../../FloTable.types';
 import { RowActionsDropdown } from '../../RowActionsDropdown/RowActionsDropdown';
 import '../RowActionsInline/RowActionsInline.css';
@@ -13,10 +13,21 @@ interface RowActionsOverflowProps<T> {
 
 export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOverflowProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownStyle, setDropdownStyle] = useState<CSSProperties | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const overflowBtnRef = useRef<HTMLButtonElement>(null);
 
   const inlineActions = actions.slice(0, 2);
   const overflowActions = actions.slice(2);
+
+  function computePosition() {
+    if (!overflowBtnRef.current) return;
+    const rect = overflowBtnRef.current.getBoundingClientRect();
+    setDropdownStyle({
+      top: rect.bottom + 4,
+      right: window.innerWidth - rect.right,
+    });
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -29,47 +40,63 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    function reposition() {
+      if (!overflowBtnRef.current) return;
+      const rect = overflowBtnRef.current.getBoundingClientRect();
+      setDropdownStyle({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+    }
+    window.addEventListener('scroll', reposition, true);
+    window.addEventListener('resize', reposition);
+    return () => {
+      window.removeEventListener('scroll', reposition, true);
+      window.removeEventListener('resize', reposition);
+    };
+  }, [isOpen]);
+
   return (
     <div
       ref={containerRef}
       className="flotable__row-actions-cell flotable__row-actions-cell--overflow"
     >
-      {inlineActions.map((action) => {
-        const isDisabled = action.disabled?.(row) ?? false;
-        return (
-          <button
-            key={action.key}
-            type="button"
-            className={[
-              'flotable__row-actions-cell__btn',
-              action.danger ? 'flotable__row-actions-cell__btn--danger' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            disabled={isDisabled}
-            aria-label={action.label}
-            title={action.label}
-            onClick={() => action.onClick(row)}
-          >
-            {action.icon ? <span aria-hidden="true">{action.icon}</span> : action.label}
-          </button>
-        );
-      })}
+      {inlineActions.map((action) => (
+        <button
+          key={action.key}
+          type="button"
+          className={[
+            'flotable__row-actions-cell__btn',
+            action.danger ? 'flotable__row-actions-cell__btn--danger' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          aria-label={action.label}
+          title={action.label}
+          onClick={() => action.onClick(row)}
+        >
+          {action.icon ? <span aria-hidden="true">{action.icon}</span> : action.label}
+        </button>
+      ))}
       <button
+        ref={overflowBtnRef}
         type="button"
         className="flotable__row-actions-cell__overflow-btn"
         aria-label="More actions"
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        onClick={() => setIsOpen((o) => !o)}
+        onClick={() => {
+          if (!isOpen) computePosition();
+          setIsOpen((o) => !o);
+        }}
       >
         {moreIcon ?? <>&#8943;</>}
       </button>
-      {isOpen && (
+      {isOpen && dropdownStyle && (
         <RowActionsDropdown
           actions={overflowActions}
           row={row}
           onClose={() => setIsOpen(false)}
+          style={dropdownStyle}
         />
       )}
     </div>

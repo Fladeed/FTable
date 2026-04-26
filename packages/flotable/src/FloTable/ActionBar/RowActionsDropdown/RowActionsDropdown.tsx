@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import type { CSSProperties } from 'react';
 import type { RowAction } from '../../FloTable.types';
 import './RowActionsDropdown.css';
 
@@ -6,9 +8,10 @@ interface RowActionsDropdownProps<T> {
   actions: RowAction<T>[];
   row: T;
   onClose: () => void;
+  style?: CSSProperties;
 }
 
-export function RowActionsDropdown<T>({ actions, row, onClose }: RowActionsDropdownProps<T>) {
+export function RowActionsDropdown<T>({ actions, row, onClose, style }: RowActionsDropdownProps<T>) {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -39,11 +42,9 @@ export function RowActionsDropdown<T>({ actions, row, onClose }: RowActionsDropd
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [actions.length, onClose]);
 
-  return (
-    <div role="menu" className="flotable__row-actions-dropdown">
-      {actions.map((action, index) => {
-        const isDisabled = action.disabled?.(row) ?? false;
-        return (
+  return createPortal(
+    <div role="menu" className="flotable__row-actions-dropdown" style={style}>
+      {actions.map((action, index) => (
           <button
             key={action.key}
             ref={(el) => { itemRefs.current[index] = el; }}
@@ -55,7 +56,6 @@ export function RowActionsDropdown<T>({ actions, row, onClose }: RowActionsDropd
             ]
               .filter(Boolean)
               .join(' ')}
-            disabled={isDisabled}
             onFocus={() => setFocusedIndex(index)}
             onClick={() => {
               action.onClick(row);
@@ -69,8 +69,8 @@ export function RowActionsDropdown<T>({ actions, row, onClose }: RowActionsDropd
             )}
             {action.label}
           </button>
-        );
-      })}
-    </div>
+      ))}
+    </div>,
+    document.body,
   );
 }
