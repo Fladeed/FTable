@@ -10,8 +10,10 @@ export interface RowAction<T = Record<string, unknown>> {
   icon?: ReactNode;
   /** Called when the user clicks this action. Receives the full row data object. */
   onClick: (row: T) => void;
-  /** When provided, the action button is disabled for rows where this returns true. */
+  /** When provided, the action button is rendered as disabled (greyed-out, not clickable) for rows where this returns true. */
   disabled?: (row: T) => boolean;
+  /** When provided, the action is completely hidden for rows where this returns false. Defaults to always visible. */
+  visible?: (row: T) => boolean;
   /** When true, the action is rendered with a destructive (red) style. */
   danger?: boolean;
 }

@@ -1,7 +1,5 @@
 .flotable__row-actions-dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  inset-inline-end: 0;
+  position: fixed;
   z-index: var(--flotable-dropdown-z, 100);
   min-width: 140px;
   background: var(--flotable-dropdown-bg, #ffffff);

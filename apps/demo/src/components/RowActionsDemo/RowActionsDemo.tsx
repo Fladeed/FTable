@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { RowActionsInlineSection } from './RowActionsInlineSection/RowActionsInlineSection';
 import { RowActionsIconSection } from './RowActionsIconSection/RowActionsIconSection';
 import { RowActionsOverflowSection } from './RowActionsOverflowSection/RowActionsOverflowSection';
+import { RowActionsDisabledSection } from './RowActionsDisabledSection/RowActionsDisabledSection';
 import './RowActionsDemo.css';
 
 export function RowActionsDemo() {
@@ -26,6 +27,7 @@ export function RowActionsDemo() {
 
       <RowActionsInlineSection onAction={setLastAction} />
       <RowActionsIconSection onAction={setLastAction} />
+      <RowActionsDisabledSection onAction={setLastAction} />
       <RowActionsOverflowSection onAction={setLastAction} />
     </main>
   );

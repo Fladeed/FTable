@@ -58,6 +58,13 @@ export const IconView = (
   </svg>
 );
 
+export const IconRestore = (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path d="M3 8a5 5 0 1 0 1.5-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+    <path d="M3 4.5V8h3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 export const IconArchive = (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
     <rect x="2" y="2" width="12" height="3" rx="1" stroke="currentColor" strokeWidth="1.4"/>

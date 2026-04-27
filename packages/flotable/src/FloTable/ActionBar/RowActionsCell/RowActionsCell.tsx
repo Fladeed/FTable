@@ -11,8 +11,9 @@ interface RowActionsCellProps<T> {
 }
 
 export function RowActionsCell<T>({ actions, row, moreIcon }: RowActionsCellProps<T>) {
-  if (actions.length <= 3) {
-    return <RowActionsInline actions={actions} row={row} />;
+  const visibleActions = actions.filter((a) => a.visible?.(row) ?? true);
+  if (visibleActions.length <= 3) {
+    return <RowActionsInline actions={visibleActions} row={row} />;
   }
-  return <RowActionsOverflow actions={actions} row={row} moreIcon={moreIcon} />;
+  return <RowActionsOverflow actions={visibleActions} row={row} moreIcon={moreIcon} />;
 }
