@@ -19,6 +19,7 @@ export function RowActionsInline<T>({ actions, row }: RowActionsInlineProps<T>) 
           ]
             .filter(Boolean)
             .join(' ')}
+          disabled={action.disabled?.(row) ?? false}
           aria-label={action.label}
           title={action.label}
           onClick={() => action.onClick(row)}

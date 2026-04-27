@@ -11,7 +11,7 @@ interface RowActionsCellProps<T> {
 }
 
 export function RowActionsCell<T>({ actions, row, moreIcon }: RowActionsCellProps<T>) {
-  const visibleActions = actions.filter((a) => !(a.disabled?.(row) ?? false));
+  const visibleActions = actions.filter((a) => a.visible?.(row) ?? true);
   if (visibleActions.length <= 3) {
     return <RowActionsInline actions={visibleActions} row={row} />;
   }

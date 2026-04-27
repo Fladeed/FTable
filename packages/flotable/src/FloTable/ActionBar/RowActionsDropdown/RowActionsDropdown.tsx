@@ -56,6 +56,7 @@ export function RowActionsDropdown<T>({ actions, row, onClose, style }: RowActio
             ]
               .filter(Boolean)
               .join(' ')}
+            disabled={action.disabled?.(row) ?? false}
             onFocus={() => setFocusedIndex(index)}
             onClick={() => {
               action.onClick(row);

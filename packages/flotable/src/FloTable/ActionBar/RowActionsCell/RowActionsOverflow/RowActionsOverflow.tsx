@@ -70,6 +70,7 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
           ]
             .filter(Boolean)
             .join(' ')}
+          disabled={action.disabled?.(row) ?? false}
           aria-label={action.label}
           title={action.label}
           onClick={() => action.onClick(row)}

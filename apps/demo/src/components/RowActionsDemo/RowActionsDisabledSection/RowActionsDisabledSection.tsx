@@ -12,8 +12,8 @@ interface RowActionsDisabledSectionProps {
 const ACTIONS: RowAction<Employee>[] = [
   { key: 'view', label: 'View', icon: IconView, onClick: () => {} },
   { key: 'edit', label: 'Edit', icon: IconEdit, onClick: () => {} },
-  { key: 'delete', label: 'Delete', icon: IconDelete, onClick: () => {}, danger: true, disabled: (row) => !row.active },
-  { key: 'restore', label: 'Restore', icon: IconRestore, onClick: () => {}, disabled: (row) => row.active },
+  { key: 'delete', label: 'Delete', icon: IconDelete, onClick: () => {}, danger: true, visible: (row) => row.active },
+  { key: 'restore', label: 'Restore', icon: IconRestore, onClick: () => {}, visible: (row) => !row.active },
 ];
 
 export function RowActionsDisabledSection({ onAction }: RowActionsDisabledSectionProps) {
