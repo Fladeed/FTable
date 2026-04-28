@@ -5,6 +5,7 @@ import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
+import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
 import { cx } from '../utils/cx';
 import './FloTable.css';
 
@@ -113,30 +114,33 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
         : 'some';
 
   function handleToggleRow(key: string) {
-    setSelectedKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      onSelectionChange?.([...next]);
-      return next;
-    });
+    const next = new Set(selectedKeys);
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      next.add(key);
+    }
+    setSelectedKeys(next);
+    onSelectionChange?.([...next]);
   }
 
+  function clearSelection() {
+    setSelectedKeys(new Set());
+    onSelectionChange?.([]);
+  }
+
+  const selectedRows = data.filter((row) => selectedKeys.has(String(row[rowKey as keyof T])));
+
   function handleToggleAll() {
-    setSelectedKeys((prev) => {
-      const allSelected = pageRowKeys.every((k) => prev.has(k));
-      const next = new Set(prev);
-      if (allSelected) {
-        pageRowKeys.forEach((k) => next.delete(k));
-      } else {
-        pageRowKeys.forEach((k) => next.add(k));
-      }
-      onSelectionChange?.([...next]);
-      return next;
-    });
+    const allSelected = pageRowKeys.every((k) => selectedKeys.has(k));
+    const next = new Set(selectedKeys);
+    if (allSelected) {
+      pageRowKeys.forEach((k) => next.delete(k));
+    } else {
+      pageRowKeys.forEach((k) => next.add(k));
+    }
+    setSelectedKeys(next);
+    onSelectionChange?.([...next]);
   }
 
   const autoFilterDefs: FilterDef[] = autoFilters
@@ -193,17 +197,30 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     }
   }
 
+  const hasBulkActions = (bulkActions?.length ?? 0) > 0;
+  const hasSelection = selectedKeys.size > 0;
+
   return (
     <div className={classNames?.root} style={styles?.root} dir={direction}>
-      <FilterBar
-        filterDefs={effectiveFilterDefs}
-        activeFilters={quickFilters}
-        onFilterChange={handleFilterChange}
-        showSearch={showSearch}
-        filterMode={filterMode}
-        classNames={classNames}
-        styles={styles}
-      />
+      {!hasSelection && (
+        <FilterBar
+          filterDefs={effectiveFilterDefs}
+          activeFilters={quickFilters}
+          onFilterChange={handleFilterChange}
+          showSearch={showSearch}
+          filterMode={filterMode}
+          classNames={classNames}
+          styles={styles}
+        />
+      )}
+      {hasBulkActions && (
+        <BulkActionBar
+          actions={bulkActions!}
+          selectedRows={selectedRows}
+          onClearSelection={clearSelection}
+          isVisible={hasSelection}
+        />
+      )}
       <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
         <table className={cx('flotable', classNames?.table)} style={styles?.table}>
           <TableHeader

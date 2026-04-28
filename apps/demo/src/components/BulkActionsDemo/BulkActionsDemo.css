@@ -1,0 +1,26 @@
+.bulk-actions-demo {
+}
+
+.bulk-actions-demo__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--color-text-primary, #111827);
+}
+
+.bulk-actions-demo__subtitle {
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+}
+
+.bulk-actions-demo__feedback {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 6px 14px;
+  background: var(--color-surface-2, #eff6ff);
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #1d4ed8;
+}
