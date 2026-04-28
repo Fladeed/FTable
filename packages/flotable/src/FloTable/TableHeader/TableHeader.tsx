@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import type { TableHeaderProps } from '../FloTable.types';
 import { SortIndicator } from '../SortIndicator/SortIndicator';
 import { cx } from '../../utils/cx';
@@ -9,12 +10,34 @@ export function TableHeader<T extends object>({
   onSort,
   rowActions,
   rowActionsLabel = 'Actions',
+  selectable,
+  selectionState,
+  onToggleAll,
   classNames,
   styles,
 }: TableHeaderProps<T>) {
+  const checkboxRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = selectionState === 'some';
+    }
+  }, [selectionState]);
+
   return (
     <thead className={cx('flotable__header', classNames?.header)} style={styles?.header}>
       <tr className={classNames?.headerRow} style={styles?.headerRow}>
+        {selectable && (
+          <th className="flotable__checkbox-cell flotable__checkbox-cell--header" style={styles?.headerCell}>
+            <input
+              ref={checkboxRef}
+              type="checkbox"
+              checked={selectionState === 'all'}
+              onChange={onToggleAll}
+              aria-label="Select all rows"
+            />
+          </th>
+        )}
         {columns.map((col) => {
           const isSortable = col.sortable !== false;
           const activeDirection = sortState?.key === col.key ? sortState.direction : null;

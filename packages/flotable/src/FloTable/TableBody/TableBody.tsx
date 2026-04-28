@@ -11,6 +11,10 @@ export function TableBody<T extends object>({
   rows,
   rowActions,
   rowActionsMoreIcon,
+  selectable,
+  selectedKeys,
+  rowKey = 'id',
+  onToggleRow,
   classNames,
   styles,
   isLoading = false,
@@ -19,13 +23,14 @@ export function TableBody<T extends object>({
   onRetry,
 }: TableBodyProps<T>) {
   const hasActions = (rowActions?.length ?? 0) > 0;
-  const colCount = columns.length + (hasActions ? 1 : 0);
+  const colCount = columns.length + (hasActions ? 1 : 0) + (selectable ? 1 : 0);
 
   if (isLoading) {
     return (
       <TableBodySkeleton
         columns={columns}
         rowCount={loadingRowCount}
+        selectable={selectable}
         classNames={classNames}
         styles={styles}
       />
@@ -56,17 +61,23 @@ export function TableBody<T extends object>({
 
   return (
     <tbody className={cx('flotable__body', classNames?.body)} style={styles?.body}>
-      {rows.map((row, index) => (
-        <TableRow
-          key={index}
-          row={row}
-          columns={columns}
-          rowActions={rowActions}
-          rowActionsMoreIcon={rowActionsMoreIcon}
-          classNames={classNames}
-          styles={styles}
-        />
-      ))}
+      {rows.map((row, index) => {
+        const key = String(row[rowKey as keyof T]);
+        return (
+          <TableRow
+            key={index}
+            row={row}
+            columns={columns}
+            rowActions={rowActions}
+            rowActionsMoreIcon={rowActionsMoreIcon}
+            selectable={selectable}
+            isSelected={selectedKeys?.has(key)}
+            onToggle={() => onToggleRow?.(key)}
+            classNames={classNames}
+            styles={styles}
+          />
+        );
+      })}
     </tbody>
   );
 }

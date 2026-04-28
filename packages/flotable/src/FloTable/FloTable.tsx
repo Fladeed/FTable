@@ -20,6 +20,10 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     filterMode,
     rowActions,
     rowActionsMoreIcon,
+    selectable,
+    rowKey = 'id',
+    onSelectionChange,
+    bulkActions,
     classNames,
     styles,
     direction,
@@ -40,6 +44,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const [isLoading, setIsLoading] = useState(isReqMode);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
 
   const requestRef = useRef<FloTableRequestProps<T>['request'] | null>(null);
   if (isReqMode) {
@@ -98,6 +103,42 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
 
   const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
+  const pageRowKeys = data.map((row) => String(row[rowKey as keyof T]));
+  const selectedOnPage = pageRowKeys.filter((k) => selectedKeys.has(k));
+  const selectionState =
+    selectedOnPage.length === 0
+      ? 'none'
+      : selectedOnPage.length === pageRowKeys.length
+        ? 'all'
+        : 'some';
+
+  function handleToggleRow(key: string) {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      onSelectionChange?.([...next]);
+      return next;
+    });
+  }
+
+  function handleToggleAll() {
+    setSelectedKeys((prev) => {
+      const allSelected = pageRowKeys.every((k) => prev.has(k));
+      const next = new Set(prev);
+      if (allSelected) {
+        pageRowKeys.forEach((k) => next.delete(k));
+      } else {
+        pageRowKeys.forEach((k) => next.add(k));
+      }
+      onSelectionChange?.([...next]);
+      return next;
+    });
+  }
+
   const autoFilterDefs: FilterDef[] = autoFilters
     ? columns
         .filter((col) => col.filterable)
@@ -143,6 +184,8 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   }
 
   function handlePageChange(newPage: number) {
+    setSelectedKeys(new Set());
+    onSelectionChange?.([]);
     if (isReqMode) {
       setInternalPage(newPage);
     } else {
@@ -169,6 +212,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             onSort={handleSort}
             rowActions={rowActions}
             rowActionsLabel={rowActionsLabel}
+            selectable={selectable}
+            selectionState={selectionState}
+            onToggleAll={handleToggleAll}
             classNames={classNames}
             styles={styles}
           />
@@ -177,6 +223,10 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             rows={data}
             rowActions={rowActions}
             rowActionsMoreIcon={rowActionsMoreIcon}
+            selectable={selectable}
+            selectedKeys={selectedKeys}
+            rowKey={rowKey}
+            onToggleRow={handleToggleRow}
             classNames={classNames}
             styles={styles}
             isLoading={isLoading}

@@ -16,4 +16,12 @@
   padding: var(--flotable-cell-padding, 0.625rem 0.875rem);
   vertical-align: middle;
 }
+
+.flotable__row--selected {
+  background-color: var(--ftable-row-selected-bg, #eff6ff);
+}
+
+.flotable__row--selected:hover {
+  background-color: var(--ftable-row-selected-bg, #eff6ff);
+}
 }

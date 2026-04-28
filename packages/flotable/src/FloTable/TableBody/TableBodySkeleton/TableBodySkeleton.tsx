@@ -5,6 +5,7 @@ import './TableBodySkeleton.css';
 interface TableBodySkeletonProps<T extends object> {
   columns: ColumnDef<T>[];
   rowCount: number;
+  selectable?: boolean;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -12,6 +13,7 @@ interface TableBodySkeletonProps<T extends object> {
 export function TableBodySkeleton<T extends object>({
   columns,
   rowCount,
+  selectable,
   classNames,
   styles,
 }: TableBodySkeletonProps<T>) {
@@ -19,6 +21,9 @@ export function TableBodySkeleton<T extends object>({
     <tbody className={cx('flotable__body', classNames?.body)} style={styles?.body}>
       {Array.from({ length: rowCount }).map((_, rowIndex) => (
         <tr key={rowIndex} className="flotable__row--skeleton">
+          {selectable && (
+            <td className={cx('flotable__checkbox-cell flotable__cell--skeleton', classNames?.cell)} style={styles?.cell} />
+          )}
           {columns.map((_, colIndex) => (
             <td
               key={colIndex}

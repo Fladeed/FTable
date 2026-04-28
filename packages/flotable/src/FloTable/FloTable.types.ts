@@ -1,5 +1,21 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+/** A bulk action shown in the BulkActionBar when one or more rows are selected. */
+export interface BulkAction<T = Record<string, unknown>> {
+  /** Unique key for this action. */
+  key: string;
+  /** Label shown on the button. */
+  label: string;
+  /** Optional icon rendered before the label. */
+  icon?: ReactNode;
+  /** Called with the full array of currently selected row objects. */
+  onClick: (selectedRows: T[]) => void;
+  /** When provided, the action button is disabled when this returns true. */
+  disabled?: (selectedRows: T[]) => boolean;
+  /** When true, the action renders with a destructive (red) style. */
+  danger?: boolean;
+}
+
 /** A single per-row action rendered in the trailing Actions column. */
 export interface RowAction<T = Record<string, unknown>> {
   /** Unique key for this action. */
@@ -180,6 +196,14 @@ interface FloTableBaseProps<T extends object> {
   rowActions?: RowAction<T>[];
   /** Custom icon for the overflow (⋯) button when more than 3 actions are provided. */
   rowActionsMoreIcon?: ReactNode;
+  /** When true, renders a leading checkbox column for row selection. */
+  selectable?: boolean;
+  /** The row property used as the unique key for selection. Defaults to "id". */
+  rowKey?: string;
+  /** Called with the array of selected row keys on every selection change. */
+  onSelectionChange?: (selectedKeys: string[]) => void;
+  /** Bulk action buttons shown in the BulkActionBar when rows are selected. */
+  bulkActions?: BulkAction<T>[];
   /** Custom class names for individual table parts. */
   classNames?: FloTableClassNames;
   /** Inline styles for individual table parts. CSS custom properties are accepted. */
@@ -247,6 +271,9 @@ export interface TableHeaderProps<T extends object> {
   onSort: (key: keyof T & string) => void;
   rowActions?: RowAction<T>[];
   rowActionsLabel?: string;
+  selectable?: boolean;
+  selectionState?: 'none' | 'some' | 'all';
+  onToggleAll?: () => void;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -256,6 +283,9 @@ export interface TableRowProps<T extends object> {
   columns: ColumnDef<T>[];
   rowActions?: RowAction<T>[];
   rowActionsMoreIcon?: ReactNode;
+  selectable?: boolean;
+  isSelected?: boolean;
+  onToggle?: () => void;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -265,6 +295,10 @@ export interface TableBodyProps<T extends object> {
   rows: T[];
   rowActions?: RowAction<T>[];
   rowActionsMoreIcon?: ReactNode;
+  selectable?: boolean;
+  selectedKeys?: Set<string>;
+  rowKey?: string;
+  onToggleRow?: (key: string) => void;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
   /** When true, renders animated skeleton rows instead of data. */
