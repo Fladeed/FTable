@@ -1,4 +1,4 @@
-import type { BulkAction } from '../../FloTable.types';
+import type { BulkAction, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
 import { cx } from '../../../utils/cx';
 import './BulkActionBar.css';
 
@@ -7,17 +7,35 @@ interface BulkActionBarProps<T> {
   selectedRows: T[];
   onClearSelection: () => void;
   isVisible: boolean;
+  classNames?: FloTableClassNames;
+  styles?: FloTableStyles;
 }
 
-export function BulkActionBar<T>({ actions, selectedRows, onClearSelection, isVisible }: BulkActionBarProps<T>) {
+export function BulkActionBar<T>({
+  actions,
+  selectedRows,
+  onClearSelection,
+  isVisible,
+  classNames,
+  styles,
+}: BulkActionBarProps<T>) {
   const count = selectedRows.length;
 
   return (
-    <div className={cx('flotable-bulk-bar', isVisible && 'flotable-bulk-bar--visible')}>
-      <span className="flotable-bulk-bar__count">
+    <div
+      className={cx('flotable-bulk-bar', isVisible && 'flotable-bulk-bar--visible', classNames?.bulkActionBar)}
+      style={styles?.bulkActionBar}
+    >
+      <span
+        className={cx('flotable-bulk-bar__count', classNames?.bulkActionBarCount)}
+        style={styles?.bulkActionBarCount}
+      >
         {count} row{count !== 1 ? 's' : ''} selected
       </span>
-      <div className="flotable-bulk-bar__actions">
+      <div
+        className={cx('flotable-bulk-bar__actions', classNames?.bulkActionBarActions)}
+        style={styles?.bulkActionBarActions}
+      >
         {actions.map((action) => {
           const isDisabled = action.disabled?.(selectedRows) ?? false;
           return (
@@ -27,7 +45,9 @@ export function BulkActionBar<T>({ actions, selectedRows, onClearSelection, isVi
               className={cx(
                 'flotable-bulk-bar__btn',
                 action.danger && 'flotable-bulk-bar__btn--danger',
+                action.className,
               )}
+              style={action.style}
               disabled={isDisabled}
               onClick={() => action.onClick(selectedRows)}
               title={action.label}
@@ -40,7 +60,8 @@ export function BulkActionBar<T>({ actions, selectedRows, onClearSelection, isVi
       </div>
       <button
         type="button"
-        className="flotable-bulk-bar__clear"
+        className={cx('flotable-bulk-bar__clear', classNames?.bulkActionBarClear)}
+        style={styles?.bulkActionBarClear}
         onClick={onClearSelection}
       >
         Clear selection

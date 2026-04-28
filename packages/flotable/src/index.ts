@@ -18,6 +18,7 @@ export type {
   FilterInputType,
   RowAction,
   BulkAction,
+  BulkActionBarContext,
   FloTableClassNames,
   FloTableStyleValue,
   FloTableStyles,

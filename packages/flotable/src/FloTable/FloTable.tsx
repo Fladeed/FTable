@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import type { FloTableProps, FloTableDataProps, FloTableRequestProps, FilterDef, QuickFilterState, SortState } from './FloTable.types';
+import type { FloTableProps, FloTableDataProps, FloTableRequestProps, FilterDef, QuickFilterState, SortState, BulkActionBarContext } from './FloTable.types';
 import { nextSortDirection, columnTypeToFilterInputType } from './tableUtils';
 import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
@@ -25,6 +25,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     rowKey = 'id',
     onSelectionChange,
     bulkActions,
+    renderBulkActionBar,
     classNames,
     styles,
     direction,
@@ -198,7 +199,15 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   }
 
   const hasBulkActions = (bulkActions?.length ?? 0) > 0;
+  const hasCustomBar = typeof renderBulkActionBar === 'function';
   const hasSelection = selectedKeys.size > 0;
+
+  const bulkBarContext: BulkActionBarContext<T> = {
+    selectedRows,
+    selectedKeys: [...selectedKeys],
+    count: selectedKeys.size,
+    clearSelection,
+  };
 
   return (
     <div className={classNames?.root} style={styles?.root} dir={direction}>
@@ -213,12 +222,15 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
           styles={styles}
         />
       )}
-      {hasBulkActions && (
+      {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
+      {!hasCustomBar && hasBulkActions && (
         <BulkActionBar
           actions={bulkActions!}
           selectedRows={selectedRows}
           onClearSelection={clearSelection}
           isVisible={hasSelection}
+          classNames={classNames}
+          styles={styles}
         />
       )}
       <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>

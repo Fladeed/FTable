@@ -1,5 +1,13 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+/** Context passed to the renderBulkActionBar render prop. */
+export interface BulkActionBarContext<T = Record<string, unknown>> {
+  selectedRows: T[];
+  selectedKeys: string[];
+  count: number;
+  clearSelection: () => void;
+}
+
 /** A bulk action shown in the BulkActionBar when one or more rows are selected. */
 export interface BulkAction<T = Record<string, unknown>> {
   /** Unique key for this action. */
@@ -14,6 +22,10 @@ export interface BulkAction<T = Record<string, unknown>> {
   disabled?: (selectedRows: T[]) => boolean;
   /** When true, the action renders with a destructive (red) style. */
   danger?: boolean;
+  /** Extra CSS class applied to this action's button. */
+  className?: string;
+  /** Inline style applied to this action's button. */
+  style?: CSSProperties;
 }
 
 /** A single per-row action rendered in the trailing Actions column. */
@@ -130,6 +142,14 @@ export interface FloTableClassNames {
   filterPillTrigger?: string;
   /** Filter pill `<input>` or `<select>` */
   filterPillInput?: string;
+  /** BulkActionBar container `<div>` */
+  bulkActionBar?: string;
+  /** "N rows selected" `<span>` */
+  bulkActionBarCount?: string;
+  /** Action buttons wrapper `<div>` */
+  bulkActionBarActions?: string;
+  /** "Clear selection" `<button>` */
+  bulkActionBarClear?: string;
 }
 
 /**
@@ -155,6 +175,10 @@ export interface FloTableStyles {
   filterPill?: FloTableStyleValue;
   filterPillTrigger?: FloTableStyleValue;
   filterPillInput?: FloTableStyleValue;
+  bulkActionBar?: FloTableStyleValue;
+  bulkActionBarCount?: FloTableStyleValue;
+  bulkActionBarActions?: FloTableStyleValue;
+  bulkActionBarClear?: FloTableStyleValue;
 }
 
 /** Parameters passed to the `request` function on each fetch. */
@@ -204,6 +228,12 @@ interface FloTableBaseProps<T extends object> {
   onSelectionChange?: (selectedKeys: string[]) => void;
   /** Bulk action buttons shown in the BulkActionBar when rows are selected. */
   bulkActions?: BulkAction<T>[];
+  /**
+   * Fully replaces the BulkActionBar with custom content.
+   * Called only when at least one row is selected.
+   * Takes precedence over `bulkActions` when both are provided.
+   */
+  renderBulkActionBar?: (ctx: BulkActionBarContext<T>) => ReactNode;
   /** Custom class names for individual table parts. */
   classNames?: FloTableClassNames;
   /** Inline styles for individual table parts. CSS custom properties are accepted. */
