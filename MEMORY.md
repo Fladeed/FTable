@@ -42,7 +42,8 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-108 | Enhancement | FloTable: add `initialSort` prop for request mode | In Progress | https://fladeed.atlassian.net/browse/ET-108 |
 | ET-109 | Task | [Skill] Update flotable skill — initialSort prop for request mode | To Do | https://fladeed.atlassian.net/browse/ET-109 |
 | ET-110 | Bug | RowActionsOverflow dropdown items never fire onClick (portal vs. outside-click handler race) | Done ✓ | https://fladeed.atlassian.net/browse/ET-110 |
-| ET-84 | Task | FloTable theming — auto-pickup from host theme + dark mode | In Progress | https://fladeed.atlassian.net/browse/ET-84 |
+| ET-84 | Task | FloTable theming — auto-pickup from host theme + dark mode | In Review | https://fladeed.atlassian.net/browse/ET-84 |
+| ET-85 | Task | [Skill] Update flotable skill — theming alias chains + dark mode | To Do | https://fladeed.atlassian.net/browse/ET-85 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net
