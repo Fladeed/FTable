@@ -210,7 +210,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   };
 
   return (
-    <div className={classNames?.root} style={styles?.root} dir={direction}>
+    <div className={cx('flotable-root', classNames?.root)} style={styles?.root} dir={direction}>
       {!hasSelection && (
         <FilterBar
           filterDefs={effectiveFilterDefs}

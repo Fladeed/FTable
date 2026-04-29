@@ -19,6 +19,6 @@
 
 .flotable-filter-pill__active-value {
   font-weight: 400;
-  color: var(--flotable-pill-active-color, #1d4ed8);
+  color: var(--_flotable-pill-active-color);
 }
 }

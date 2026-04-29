@@ -36,7 +36,7 @@
   gap: 0.25rem;
   padding: 0.25rem 0.625rem;
   background: none;
-  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border: 1px solid var(--_flotable-border-color);
   border-radius: var(--flotable-row-action-radius, 4px);
   font-size: var(--flotable-font-size, 0.875rem);
   color: var(--flotable-row-action-color, #374151);
@@ -56,8 +56,8 @@
 }
 
 .flotable-bulk-bar__btn--danger {
-  color: var(--flotable-danger-color, #dc2626);
-  border-color: var(--flotable-danger-color, #dc2626);
+  color: var(--_flotable-danger-color);
+  border-color: var(--_flotable-danger-color);
 }
 
 .flotable-bulk-bar__btn--danger:hover:not(:disabled) {

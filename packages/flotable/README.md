@@ -97,29 +97,70 @@ Any column can use a custom `render` function to override the default renderer.
 
 ---
 
-## Styling & Customization
+## Theming
 
-FloTable ships plain CSS wrapped in `@layer flotable`. Every visual token uses a CSS custom property with a fallback, so you can theme the entire table without touching source files.
+FloTable adapts to your app's theme automatically. There are three layers, from "no config" to "full control":
 
-### CSS Custom Properties
+### Layer 1 — Ecosystem auto-pickup (zero config)
 
-Override tokens on the root element or via the `styles` prop:
+Every core color/typography token resolves through an alias chain that includes the well-known token names from popular design systems:
 
-```css
-.my-table {
-  --flotable-border-color: #e5e7eb;
-  --flotable-header-bg: #f9fafb;
-  --flotable-row-hover-bg: #f3f4f6;
-  --flotable-font-size: 14px;
-}
+| FloTable token | shadcn / ui | Tailwind v4 `@theme` | MUI (CSS variables mode) |
+|---|---|---|---|
+| bg | `--background` | `--color-background` | `--mui-palette-background-default` |
+| color | `--foreground` | `--color-foreground` | `--mui-palette-text-primary` |
+| muted | `--muted-foreground` | `--color-muted-foreground` | `--mui-palette-text-secondary` |
+| border | `--border` | `--color-border` | `--mui-palette-divider` |
+| header bg | `--muted` | `--color-muted` | — |
+| row hover | `--accent` | `--color-accent` | — |
+| primary / link | `--primary` | `--color-primary` | `--mui-palette-primary-main` |
+| danger | `--destructive` | `--color-destructive` | `--mui-palette-error-main` |
+| focus ring | `--ring` | `--color-ring` | — |
+| radius | `--radius` | `--radius` | — |
+| font-family | — | `--font-sans` | `--mui-typography-fontFamily` |
+
+If your app already defines any of those (e.g. shadcn projects always do), the table picks them up — **no `styles` prop needed**.
+
+```tsx
+// Just drop the table in. It'll inherit your app's shadcn / Tailwind tokens.
+<FloTable columns={columns} data={data} totalRows={data.length} page={1} onPageChange={setPage} />
 ```
 
-### classNames API
+### Layer 2 — Built-in dark mode
 
-Pass custom class names to any table slot:
+The table flips to dark automatically when any common selector is present on an ancestor:
+
+- `.dark` (Tailwind dark variant)
+- `[data-theme="dark"]` (next-themes default, Antd, custom)
+- `[data-mode="dark"]`
+- OS-level `prefers-color-scheme: dark` (unless explicitly opted out via `[data-theme="light"]` / `.light`)
+
+Works out of the box with [next-themes](https://github.com/pacocoursey/next-themes) and any equivalent toggle. Non-aliased color tokens (filter pills, dropdowns, skeletons, etc.) re-derive from the resolved core tokens, so the whole component swaps coherently.
+
+### Layer 3 — Explicit overrides (escape hatch)
+
+The `--flotable-*` tokens always win over the alias chain, so you can override any specific token without giving up the auto-pickup elsewhere. Two ways:
+
+**Via the `styles` prop** (per-instance):
 
 ```tsx
 <FloTable
+  // ...
+  styles={{
+    wrapper: {
+      '--flotable-bg': '#0f172a',
+      '--flotable-color': '#e2e8f0',
+      '--flotable-row-hover-bg': '#1e293b',
+    },
+  }}
+/>
+```
+
+**Via `classNames` for class-based styling** (e.g. utility frameworks):
+
+```tsx
+<FloTable
+  // ...
   classNames={{
     root: 'my-table',
     header: 'my-header',
@@ -128,7 +169,6 @@ Pass custom class names to any table slot:
     pagination: 'my-pagination',
     filterBar: 'my-filters',
   }}
-  // ...
 />
 ```
 
@@ -141,6 +181,21 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 @layer flotable;         /* lowest priority — component defaults */
 @import "tailwindcss"; /* utilities layer beats flotable */
 ```
+
+### Notes for legacy shadcn (HSL channel format)
+
+If your project still uses the older shadcn convention where tokens are stored as raw HSL channels (e.g. `--background: 0 0% 100%` and you write `hsl(var(--background))`), bridge them with a one-line wrapper:
+
+```css
+.flotable-root {
+  --flotable-bg: hsl(var(--background));
+  --flotable-color: hsl(var(--foreground));
+  --flotable-border-color: hsl(var(--border));
+  /* … */
+}
+```
+
+Newer shadcn (oklch values) and Tailwind v4 `@theme` are picked up natively without wrapping.
 
 ---
 

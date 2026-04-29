@@ -39,6 +39,7 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-76 | Task | RTL support — add `direction` prop to FloTable | Done ✓ | https://fladeed.atlassian.net/browse/ET-76 |
 | ET-77 | Enhancement | FloTable request mode: add initialQuickFilters prop | Done ✓ | https://fladeed.atlassian.net/browse/ET-77 |
 | ET-78 | Task | FloTable pagination: add optional page number input for direct page navigation | In Progress | https://fladeed.atlassian.net/browse/ET-78 |
+| ET-84 | Task | FloTable theming — auto-pickup from host theme + dark mode | In Progress | https://fladeed.atlassian.net/browse/ET-84 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net

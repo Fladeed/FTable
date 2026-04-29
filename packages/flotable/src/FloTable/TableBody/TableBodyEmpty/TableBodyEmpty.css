@@ -6,7 +6,7 @@
 
 .flotable__empty-cell {
   text-align: center;
-  color: var(--flotable-muted-color, #6b7280);
+  color: var(--_flotable-muted-color);
   padding: var(--flotable-cell-padding, 0.625rem 0.875rem);
   height: 6rem;
 }

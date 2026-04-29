@@ -4,6 +4,142 @@
    Sub-component styles live in their own folders.
    ───────────────────────────────────────────── */
 
+/*
+   Theme alias chains
+   ──────────────────
+   Each core color/typography token resolves through a chain:
+     1. --flotable-X            (consumer override — always wins)
+     2. ecosystem token names   (shadcn / Tailwind v4 / MUI css-vars)
+     3. --_flotable-X-default   (mode-aware default — flips in dark mode)
+
+   Sub-component CSS reads --_flotable-X (the resolved private value).
+   Resolved at three levels so consumer overrides applied via any of
+   styles.root / styles.wrapper / dropdown inline styles are honored:
+     - .flotable-root           — overrides via styles.root
+     - .flotable-wrapper        — overrides via styles.wrapper
+     - .flotable__row-actions-dropdown — portaled to document.body
+*/
+.flotable-root,
+.flotable-wrapper,
+.flotable__row-actions-dropdown {
+  /* Defaults (light) — dark mode block below overrides these. */
+  --_flotable-bg-default: #ffffff;
+  --_flotable-color-default: #111827;
+  --_flotable-muted-color-default: #6b7280;
+  --_flotable-border-color-default: #e5e7eb;
+  --_flotable-header-bg-default: #f9fafb;
+  --_flotable-header-hover-bg-default: #f3f4f6;
+  --_flotable-row-hover-bg-default: #f3f4f6;
+  --_flotable-link-color-default: #2563eb;
+  --_flotable-danger-color-default: #dc2626;
+  --_flotable-error-color-default: #dc2626;
+  --_flotable-focus-ring-default: rgba(0, 0, 0, 0.06);
+  --_flotable-border-radius-default: 0.375rem;
+  --_flotable-font-family-default: system-ui, sans-serif;
+  --_flotable-sort-active-color-default: #2563eb;
+  --_flotable-pill-active-color-default: #1d4ed8;
+
+  /* Resolved chains — flotable token > ecosystem token > default */
+  --_flotable-bg: var(
+    --flotable-bg,
+    var(--background,
+    var(--color-background,
+    var(--mui-palette-background-default,
+    var(--_flotable-bg-default))))
+  );
+  --_flotable-color: var(
+    --flotable-color,
+    var(--foreground,
+    var(--color-foreground,
+    var(--mui-palette-text-primary,
+    var(--_flotable-color-default))))
+  );
+  --_flotable-muted-color: var(
+    --flotable-muted-color,
+    var(--muted-foreground,
+    var(--color-muted-foreground,
+    var(--mui-palette-text-secondary,
+    var(--_flotable-muted-color-default))))
+  );
+  --_flotable-border-color: var(
+    --flotable-border-color,
+    var(--border,
+    var(--color-border,
+    var(--mui-palette-divider,
+    var(--_flotable-border-color-default))))
+  );
+  --_flotable-header-bg: var(
+    --flotable-header-bg,
+    var(--muted,
+    var(--color-muted,
+    var(--_flotable-header-bg-default)))
+  );
+  --_flotable-header-hover-bg: var(
+    --flotable-header-hover-bg,
+    var(--accent,
+    var(--color-accent,
+    var(--_flotable-header-hover-bg-default)))
+  );
+  --_flotable-row-hover-bg: var(
+    --flotable-row-hover-bg,
+    var(--accent,
+    var(--color-accent,
+    var(--_flotable-row-hover-bg-default)))
+  );
+  --_flotable-link-color: var(
+    --flotable-link-color,
+    var(--primary,
+    var(--color-primary,
+    var(--mui-palette-primary-main,
+    var(--_flotable-link-color-default))))
+  );
+  --_flotable-danger-color: var(
+    --flotable-danger-color,
+    var(--destructive,
+    var(--color-destructive,
+    var(--mui-palette-error-main,
+    var(--_flotable-danger-color-default))))
+  );
+  --_flotable-error-color: var(
+    --flotable-error-color,
+    var(--destructive,
+    var(--color-destructive,
+    var(--mui-palette-error-main,
+    var(--_flotable-error-color-default))))
+  );
+  --_flotable-focus-ring: var(
+    --flotable-focus-ring,
+    var(--ring,
+    var(--color-ring,
+    var(--_flotable-focus-ring-default)))
+  );
+  --_flotable-border-radius: var(
+    --flotable-border-radius,
+    var(--radius,
+    var(--_flotable-border-radius-default))
+  );
+  --_flotable-font-family: var(
+    --flotable-font-family,
+    var(--font-sans,
+    var(--mui-typography-fontFamily,
+    var(--_flotable-font-family-default)))
+  );
+  --_flotable-sort-active-color: var(
+    --flotable-sort-active-color,
+    var(--primary,
+    var(--color-primary,
+    var(--mui-palette-primary-main,
+    var(--_flotable-sort-active-color-default))))
+  );
+  --_flotable-pill-active-color: var(
+    --flotable-pill-active-color,
+    var(--primary,
+    var(--color-primary,
+    var(--mui-palette-primary-main,
+    var(--_flotable-pill-active-color-default))))
+  );
+}
+
 .flotable-wrapper,
 .flotable-wrapper * {
   box-sizing: border-box;
@@ -12,14 +148,135 @@
 .flotable-wrapper {
   width: 100%;
   overflow-x: auto;
-  font-family: var(--flotable-font-family, system-ui, sans-serif);
+  font-family: var(--_flotable-font-family);
 }
 
 .flotable {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--flotable-font-size, 0.875rem);
-  background-color: var(--flotable-bg, #ffffff);
-  color: var(--flotable-color, #111827);
+  background-color: var(--_flotable-bg);
+  color: var(--_flotable-color);
+}
+
+/*
+   Dark mode (Layer 2)
+   ──────────────────
+   Triggered by ANY of the common conventions used by next-themes,
+   Tailwind, Antd, shadcn, MUI: .dark ancestor, [data-theme="dark"],
+   [data-mode="dark"], or OS-level prefers-color-scheme: dark.
+
+   We only swap the *-default values (bottom of the alias chain),
+   so consumer overrides via --flotable-* and ecosystem tokens still
+   win. Non-aliased color tokens (pill-bg, dropdown-bg, skeleton-base,
+   etc.) are re-pointed to derive from the resolved core tokens, so
+   they auto-swap without needing a separate dark palette.
+*/
+.dark .flotable-root,
+.dark .flotable-wrapper,
+.dark .flotable__row-actions-dropdown,
+[data-theme="dark"] .flotable-root,
+[data-theme="dark"] .flotable-wrapper,
+[data-theme="dark"] .flotable__row-actions-dropdown,
+[data-mode="dark"] .flotable-root,
+[data-mode="dark"] .flotable-wrapper,
+[data-mode="dark"] .flotable__row-actions-dropdown {
+  --_flotable-bg-default: #0a0a0a;
+  --_flotable-color-default: #ededed;
+  --_flotable-muted-color-default: #9ca3af;
+  --_flotable-border-color-default: #27272a;
+  --_flotable-header-bg-default: #171717;
+  --_flotable-header-hover-bg-default: #1f1f1f;
+  --_flotable-row-hover-bg-default: #1f1f1f;
+  --_flotable-link-color-default: #60a5fa;
+  --_flotable-danger-color-default: #f87171;
+  --_flotable-error-color-default: #f87171;
+  --_flotable-focus-ring-default: rgba(255, 255, 255, 0.12);
+  --_flotable-sort-active-color-default: #60a5fa;
+  --_flotable-pill-active-color-default: #60a5fa;
+
+  /* Non-aliased color tokens — derive from resolved core tokens
+     so they swap automatically. Consumer can still override any
+     of these via styles.root / styles.wrapper. */
+  --flotable-pill-bg: var(--_flotable-bg);
+  --flotable-pill-color: var(--_flotable-color);
+  --flotable-pill-border-color: var(--_flotable-border-color);
+  --flotable-pill-active-bg: rgba(96, 165, 250, 0.14);
+  --flotable-pill-active-border-color: #1e3a8a;
+  --flotable-pill-open-border-color: #52525b;
+  --flotable-pill-clear-color: #60a5fa;
+  --flotable-pill-clear-hover-color: #93c5fd;
+  --flotable-pill-close-color: #60a5fa;
+  --flotable-pill-close-hover-color: #93c5fd;
+  --flotable-pill-placeholder-color: #6b7280;
+  --flotable-pill-separator-color: #60a5fa;
+  --flotable-row-action-color: var(--_flotable-color);
+  --flotable-row-action-hover-bg: var(--_flotable-row-hover-bg);
+  --flotable-row-action-hover-color: var(--_flotable-color);
+  --flotable-danger-hover-bg: rgba(248, 113, 113, 0.14);
+  --flotable-danger-hover-color: #fca5a5;
+  --flotable-link-hover-color: #93c5fd;
+  --flotable-skeleton-base: var(--_flotable-border-color);
+  --flotable-skeleton-highlight: #3f3f46;
+  --flotable-bulk-bar-count-color: var(--_flotable-muted-color);
+  --flotable-bulk-bar-clear-color: var(--_flotable-muted-color);
+  --flotable-boolean-true-color: #4ade80;
+  --flotable-boolean-false-color: #f87171;
+  --flotable-badge-color: var(--_flotable-color);
+  --flotable-dropdown-bg: var(--_flotable-bg);
+  --flotable-dropdown-border-color: var(--_flotable-border-color);
+  --flotable-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Apply dark defaults at the OS level UNLESS the page has explicitly
+     opted into a light theme (via .light, [data-theme="light"], or
+     [data-mode="light"]). The :where() preserves 0 specificity. */
+  :where(:root:not(.light):not([data-theme="light"]):not([data-mode="light"])) .flotable-root,
+  :where(:root:not(.light):not([data-theme="light"]):not([data-mode="light"])) .flotable-wrapper,
+  :where(:root:not(.light):not([data-theme="light"]):not([data-mode="light"])) .flotable__row-actions-dropdown {
+    --_flotable-bg-default: #0a0a0a;
+    --_flotable-color-default: #ededed;
+    --_flotable-muted-color-default: #9ca3af;
+    --_flotable-border-color-default: #27272a;
+    --_flotable-header-bg-default: #171717;
+    --_flotable-header-hover-bg-default: #1f1f1f;
+    --_flotable-row-hover-bg-default: #1f1f1f;
+    --_flotable-link-color-default: #60a5fa;
+    --_flotable-danger-color-default: #f87171;
+    --_flotable-error-color-default: #f87171;
+    --_flotable-focus-ring-default: rgba(255, 255, 255, 0.12);
+    --_flotable-sort-active-color-default: #60a5fa;
+    --_flotable-pill-active-color-default: #60a5fa;
+
+    --flotable-pill-bg: var(--_flotable-bg);
+    --flotable-pill-color: var(--_flotable-color);
+    --flotable-pill-border-color: var(--_flotable-border-color);
+    --flotable-pill-active-bg: rgba(96, 165, 250, 0.14);
+    --flotable-pill-active-border-color: #1e3a8a;
+    --flotable-pill-open-border-color: #52525b;
+    --flotable-pill-clear-color: #60a5fa;
+    --flotable-pill-clear-hover-color: #93c5fd;
+    --flotable-pill-close-color: #60a5fa;
+    --flotable-pill-close-hover-color: #93c5fd;
+    --flotable-pill-placeholder-color: #6b7280;
+    --flotable-pill-separator-color: #60a5fa;
+    --flotable-row-action-color: var(--_flotable-color);
+    --flotable-row-action-hover-bg: var(--_flotable-row-hover-bg);
+    --flotable-row-action-hover-color: var(--_flotable-color);
+    --flotable-danger-hover-bg: rgba(248, 113, 113, 0.14);
+    --flotable-danger-hover-color: #fca5a5;
+    --flotable-link-hover-color: #93c5fd;
+    --flotable-skeleton-base: var(--_flotable-border-color);
+    --flotable-skeleton-highlight: #3f3f46;
+    --flotable-bulk-bar-count-color: var(--_flotable-muted-color);
+    --flotable-bulk-bar-clear-color: var(--_flotable-muted-color);
+    --flotable-boolean-true-color: #4ade80;
+    --flotable-boolean-false-color: #f87171;
+    --flotable-badge-color: var(--_flotable-color);
+    --flotable-dropdown-bg: var(--_flotable-bg);
+    --flotable-dropdown-border-color: var(--_flotable-border-color);
+    --flotable-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
 }
 }

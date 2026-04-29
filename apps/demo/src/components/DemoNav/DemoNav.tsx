@@ -14,6 +14,7 @@ const TABS = [
   { href: '/row-actions', label: 'Row Actions' },
   { href: '/bulk-actions', label: 'Bulk Actions' },
   { href: '/rtl-support', label: 'RTL Support' },
+  { href: '/theming', label: 'Theming' },
 ] as const;
 
 export function DemoNav() {

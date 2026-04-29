@@ -1,15 +1,12 @@
-.row-actions-demo {
-}
-
 .row-actions-demo__title {
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
-  color: var(--color-text-primary, #111827);
+  color: var(--demo-fg);
 }
 
 .row-actions-demo__subtitle {
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--demo-fg-muted);
   margin: 0 0 1.5rem;
   line-height: 1.6;
 }
@@ -18,11 +15,11 @@
   display: inline-block;
   margin-bottom: 1rem;
   padding: 6px 14px;
-  background: var(--color-surface-2, #f0fdf4);
-  border: 1px solid var(--color-border, #bbf7d0);
+  background: var(--demo-success-bg);
+  border: 1px solid var(--demo-success-border);
   border-radius: 6px;
   font-size: 0.875rem;
-  color: #166534;
+  color: var(--demo-success-fg);
 }
 
 .row-actions-demo__section {
@@ -33,11 +30,11 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 0.35rem;
-  color: var(--color-text-primary, #111827);
+  color: var(--demo-fg);
 }
 
 .row-actions-demo__section-desc {
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--demo-fg-muted);
   font-size: 0.875rem;
   margin: 0 0 1rem;
   line-height: 1.6;

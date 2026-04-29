@@ -10,7 +10,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--flotable-error-color, #dc2626);
+  color: var(--_flotable-error-color);
 }
 
 .flotable__error-message {
@@ -21,16 +21,16 @@
   padding: 0.25rem 0.75rem;
   font-size: var(--flotable-font-size, 0.875rem);
   font-family: inherit;
-  border: 1px solid var(--flotable-error-color, #dc2626);
-  border-radius: var(--flotable-border-radius, 0.375rem);
+  border: 1px solid var(--_flotable-error-color);
+  border-radius: var(--_flotable-border-radius);
   background: transparent;
-  color: var(--flotable-error-color, #dc2626);
+  color: var(--_flotable-error-color);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 
 .flotable__retry-btn:hover {
-  background: var(--flotable-error-color, #dc2626);
+  background: var(--_flotable-error-color);
   color: #ffffff;
 }
 
