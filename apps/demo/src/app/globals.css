@@ -1,6 +1,81 @@
 @layer theme, base, flotable, components, utilities;
 @import "tailwindcss";
 
+@layer theme {
+  /* Demo-app theme tokens (separate from --flotable-* tokens — these
+     style the shell/sidebar/page chrome; FloTable manages its own). */
+  :root {
+    --demo-bg: #ffffff;
+    --demo-bg-hover: #f9fafb;
+    --demo-bg-active: #f3f4f6;
+    --demo-fg: #111827;
+    --demo-fg-muted: #6b7280;
+    --demo-border: #e5e7eb;
+    --demo-border-strong: #d1d5db;
+    --demo-code-bg: #1f2937;
+    --demo-code-fg: #f9fafb;
+    --demo-info-bg: #eff6ff;
+    --demo-info-border: #bfdbfe;
+    --demo-info-fg: #1e40af;
+    --demo-success-bg: #f0fdf4;
+    --demo-success-border: #bbf7d0;
+    --demo-success-fg: #166534;
+    --demo-warn-bg: #fef3c7;
+    --demo-warn-fg: #92400e;
+    --demo-danger-bg: #fee2e2;
+    --demo-danger-fg: #991b1b;
+    --demo-accent: #2563eb;
+  }
+
+  [data-theme="dark"] {
+    --demo-bg: #0a0a0a;
+    --demo-bg-hover: #171717;
+    --demo-bg-active: #1f1f1f;
+    --demo-fg: #ededed;
+    --demo-fg-muted: #9ca3af;
+    --demo-border: #27272a;
+    --demo-border-strong: #3f3f46;
+    --demo-code-bg: #1f1f23;
+    --demo-code-fg: #ededed;
+    --demo-info-bg: rgba(59, 130, 246, 0.12);
+    --demo-info-border: rgba(96, 165, 250, 0.32);
+    --demo-info-fg: #93c5fd;
+    --demo-success-bg: rgba(34, 197, 94, 0.12);
+    --demo-success-border: rgba(74, 222, 128, 0.32);
+    --demo-success-fg: #86efac;
+    --demo-warn-bg: rgba(251, 191, 36, 0.12);
+    --demo-warn-fg: #fcd34d;
+    --demo-danger-bg: rgba(239, 68, 68, 0.12);
+    --demo-danger-fg: #fca5a5;
+    --demo-accent: #60a5fa;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --demo-bg: #0a0a0a;
+      --demo-bg-hover: #171717;
+      --demo-bg-active: #1f1f1f;
+      --demo-fg: #ededed;
+      --demo-fg-muted: #9ca3af;
+      --demo-border: #27272a;
+      --demo-border-strong: #3f3f46;
+      --demo-code-bg: #1f1f23;
+      --demo-code-fg: #ededed;
+      --demo-info-bg: rgba(59, 130, 246, 0.12);
+      --demo-info-border: rgba(96, 165, 250, 0.32);
+      --demo-info-fg: #93c5fd;
+      --demo-success-bg: rgba(34, 197, 94, 0.12);
+      --demo-success-border: rgba(74, 222, 128, 0.32);
+      --demo-success-fg: #86efac;
+      --demo-warn-bg: rgba(251, 191, 36, 0.12);
+      --demo-warn-fg: #fcd34d;
+      --demo-danger-bg: rgba(239, 68, 68, 0.12);
+      --demo-danger-fg: #fca5a5;
+      --demo-accent: #60a5fa;
+    }
+  }
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -8,8 +83,9 @@
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background-color: #ffffff;
-  color: #111827;
+  background-color: var(--demo-bg);
+  color: var(--demo-fg);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 /* App shell: sidebar + scrollable content */

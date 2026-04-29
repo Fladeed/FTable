@@ -1,6 +1,6 @@
 @layer flotable {
 .flotable__row {
-  border-bottom: 1px solid var(--flotable-border-color, #e5e7eb);
+  border-bottom: 1px solid var(--_flotable-border-color);
   transition: background-color 0.15s ease;
 }
 
@@ -9,7 +9,7 @@
 }
 
 .flotable__row:hover {
-  background-color: var(--flotable-row-hover-bg, #f3f4f6);
+  background-color: var(--_flotable-row-hover-bg);
 }
 
 .flotable__cell {

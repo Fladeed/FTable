@@ -1,6 +1,6 @@
 @layer flotable {
 .flotable-link {
-  color: var(--flotable-link-color, #2563eb);
+  color: var(--_flotable-link-color);
   text-decoration: underline;
   text-underline-offset: 2px;
 }

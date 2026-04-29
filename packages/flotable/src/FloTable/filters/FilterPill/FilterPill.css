@@ -17,13 +17,13 @@
 }
 
 .flotable-filter-pill--active {
-  color: var(--flotable-pill-active-color, #1d4ed8);
+  color: var(--_flotable-pill-active-color);
   background-color: var(--flotable-pill-active-bg, #eff6ff);
   border-color: var(--flotable-pill-active-border-color, #93c5fd);
 }
 
 .flotable-filter-pill--open {
   border-color: var(--flotable-pill-open-border-color, #9ca3af);
-  box-shadow: 0 0 0 3px var(--flotable-focus-ring, rgba(0, 0, 0, 0.06));
+  box-shadow: 0 0 0 3px var(--_flotable-focus-ring);
 }
 }

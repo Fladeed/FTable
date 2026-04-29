@@ -6,18 +6,20 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  color: var(--demo-fg);
 }
 
 .api-demo__description {
   font-size: 0.9rem;
-  color: #4b5563;
+  color: var(--demo-fg-muted);
   margin-bottom: 1rem;
   line-height: 1.6;
 }
 
 .api-demo__description code {
   font-family: ui-monospace, monospace;
-  background: #f3f4f6;
+  background: var(--demo-bg-active);
+  color: var(--demo-fg);
   padding: 0.1em 0.35em;
   border-radius: 0.2rem;
   font-size: 0.85em;

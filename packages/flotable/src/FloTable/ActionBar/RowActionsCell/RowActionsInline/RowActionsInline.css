@@ -26,7 +26,7 @@
 }
 
 .flotable__row-actions-cell__btn--danger {
-  color: var(--flotable-danger-color, #dc2626);
+  color: var(--_flotable-danger-color);
 }
 
 .flotable__row-actions-cell__btn--danger:hover:not(:disabled) {

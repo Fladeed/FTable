@@ -393,7 +393,7 @@ function FloTableImpl<T extends object, C extends object = T>(
   };
 
   return (
-    <div className={classNames?.root} style={styles?.root} dir={direction}>
+    <div className={cx('flotable-root', classNames?.root)} style={styles?.root} dir={direction}>
       {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
         <div className="flotable-toolbar">
           <FilterBar
