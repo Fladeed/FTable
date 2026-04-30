@@ -5,7 +5,7 @@
   gap: 0.375rem;
   margin-inline-start: 1rem;
   font-size: var(--flotable-pagination-font-size, 0.8125rem);
-  color: var(--flotable-muted-color, #6b7280);
+  color: var(--_flotable-muted-color);
 }
 
 .flotable-go-to-page__label {
@@ -15,10 +15,10 @@
 .flotable-go-to-page__input {
   width: var(--flotable-page-input-width, 3rem);
   padding: 0.1875rem 0.375rem;
-  border: 1px solid var(--flotable-border-color, #e5e7eb);
-  border-radius: var(--flotable-border-radius, 0.375rem);
-  background-color: var(--flotable-bg, #ffffff);
-  color: var(--flotable-color, #111827);
+  border: 1px solid var(--_flotable-border-color);
+  border-radius: var(--_flotable-border-radius);
+  background-color: var(--_flotable-bg);
+  color: var(--_flotable-color);
   font-size: var(--flotable-pagination-font-size, 0.8125rem);
   font-family: inherit;
   text-align: center;
@@ -33,15 +33,15 @@
 .flotable-go-to-page__input:focus {
   outline: none;
   border-color: var(--flotable-pill-active-border-color, #93c5fd);
-  box-shadow: 0 0 0 3px var(--flotable-focus-ring, rgba(0, 0, 0, 0.06));
+  box-shadow: 0 0 0 3px var(--_flotable-focus-ring);
 }
 
 .flotable-go-to-page__btn {
   padding: 0.1875rem 0.5rem;
-  border: 1px solid var(--flotable-border-color, #e5e7eb);
-  border-radius: var(--flotable-border-radius, 0.375rem);
-  background-color: var(--flotable-bg, #ffffff);
-  color: var(--flotable-color, #111827);
+  border: 1px solid var(--_flotable-border-color);
+  border-radius: var(--_flotable-border-radius);
+  background-color: var(--_flotable-bg);
+  color: var(--_flotable-color);
   font-size: var(--flotable-pagination-font-size, 0.8125rem);
   font-family: inherit;
   cursor: pointer;
@@ -50,6 +50,6 @@
 }
 
 .flotable-go-to-page__btn:hover {
-  background-color: var(--flotable-row-hover-bg, #f3f4f6);
+  background-color: var(--_flotable-row-hover-bg);
 }
 }

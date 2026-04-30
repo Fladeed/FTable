@@ -4,11 +4,12 @@
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0 0 0.5rem;
+  color: var(--demo-fg);
 }
 
 .sc-intro {
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--demo-fg-muted);
   line-height: 1.6;
   margin: 0 0 1.5rem;
   max-width: 72ch;
@@ -16,18 +17,19 @@
 
 .sc-code {
   font-family: ui-monospace, monospace;
-  background-color: #e2e8f0;
+  background-color: var(--demo-bg-active);
   border-radius: 0.25rem;
   padding: 0.1rem 0.35rem;
   font-size: 0.8125rem;
-  color: #0f172a;
+  color: var(--demo-fg);
 }
 
 .sc-tabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--demo-border);
   margin-bottom: 1.25rem;
   gap: 0;
+  flex-wrap: wrap;
 }
 
 .sc-tab {
@@ -35,9 +37,10 @@
   border: none;
   border-bottom: 2px solid transparent;
   background: none;
-  color: #6b7280;
+  color: var(--demo-fg-muted);
   font-size: 0.875rem;
   font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
   /* Pull the tab down so its bottom border sits on top of .sc-tabs border */
   margin-bottom: -1px;
@@ -45,13 +48,13 @@
 }
 
 .sc-tab:hover {
-  color: #111827;
+  color: var(--demo-fg);
 }
 
-/* Default active indicator: dark */
+/* Default active indicator: foreground */
 .sc-tab--active {
-  color: #111827;
-  border-bottom-color: #111827;
+  color: var(--demo-fg);
+  border-bottom-color: var(--demo-fg);
 }
 
 /* Per-theme active indicator colours */
@@ -71,8 +74,8 @@
 }
 
 .sc-info {
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background-color: var(--demo-bg-hover);
+  border: 1px solid var(--demo-border);
   border-radius: 0.5rem;
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
@@ -81,7 +84,7 @@
 .sc-info__desc {
   margin: 0 0 0.75rem;
   font-size: 0.875rem;
-  color: #374151;
+  color: var(--demo-fg);
   line-height: 1.65;
   max-width: 80ch;
 }
@@ -96,7 +99,7 @@
 .sc-info__label {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #6b7280;
+  color: var(--demo-fg-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-right: 0.125rem;
@@ -105,10 +108,9 @@
 .sc-override-tag {
   font-family: ui-monospace, monospace;
   font-size: 0.75rem;
-  background-color: #e5e7eb;
-  color: #374151;
+  background-color: var(--demo-bg-active);
+  color: var(--demo-fg);
   border-radius: 0.25rem;
   padding: 0.125rem 0.4rem;
   white-space: nowrap;
 }
-

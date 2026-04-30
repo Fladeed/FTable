@@ -2,11 +2,11 @@
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
-  color: var(--color-text-primary, #111827);
+  color: var(--demo-fg);
 }
 
 .bulk-actions-demo__subtitle {
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--demo-fg-muted);
   margin: 0 0 2rem;
   line-height: 1.6;
 }
@@ -21,11 +21,11 @@
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 0.375rem;
-  color: var(--color-text-primary, #111827);
+  color: var(--demo-fg);
 }
 
 .bulk-demo-section__desc {
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--demo-fg-muted);
   font-size: 0.875rem;
   margin: 0 0 1rem;
   line-height: 1.6;
@@ -37,11 +37,11 @@
   display: inline-block;
   margin-bottom: 1rem;
   padding: 6px 14px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: var(--demo-info-bg);
+  border: 1px solid var(--demo-info-border);
   border-radius: 6px;
   font-size: 0.875rem;
-  color: #1d4ed8;
+  color: var(--demo-info-fg);
 }
 
 /* ── Section 2: custom class on Archive button ─────────────────────────────── */

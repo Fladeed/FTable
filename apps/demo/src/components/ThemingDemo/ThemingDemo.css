@@ -1,0 +1,119 @@
+.theming__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: var(--demo-fg);
+}
+
+.theming__intro {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--demo-fg-muted);
+  max-width: 72ch;
+  margin: 0 0 1rem;
+}
+
+.theming__layers {
+  margin: 0 0 1.5rem;
+  padding: 0.875rem 1rem 0.875rem 2.25rem;
+  background-color: var(--demo-bg-hover);
+  border: 1px solid var(--demo-border);
+  border-radius: 8px;
+  color: var(--demo-fg-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.theming__layers li {
+  margin-bottom: 0.375rem;
+}
+
+.theming__layers li:last-child {
+  margin-bottom: 0;
+}
+
+.theming__layers strong {
+  color: var(--demo-fg);
+  font-weight: 600;
+}
+
+.theming__layers code,
+.theming__intro code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.0625rem 0.3125rem;
+  background-color: var(--demo-bg-active);
+  border-radius: 4px;
+  color: var(--demo-fg);
+}
+
+.theming__demo {
+  padding: 1rem;
+  border: 1px solid var(--demo-border);
+  border-radius: 10px;
+  background-color: var(--demo-bg);
+  margin-bottom: 0.75rem;
+}
+
+.theming__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  padding: 0.875rem 1rem;
+  margin: 0;
+  background-color: var(--demo-bg-hover);
+  border: 1px solid var(--demo-border);
+  border-radius: 6px;
+  color: var(--demo-fg);
+  overflow-x: auto;
+}
+
+/* ───────────── shadcn-style host tokens ───────────── */
+.theming-shadcn {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.55 0.22 260);
+  --border: oklch(0.92 0 0);
+  --accent: oklch(0.96 0.01 260);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --ring: oklch(0.55 0.22 260 / 0.25);
+  --radius: 0.5rem;
+  background-color: var(--background);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .theming-shadcn {
+  --background: oklch(0.18 0 0);
+  --foreground: oklch(0.96 0 0);
+  --border: oklch(0.32 0 0);
+  --accent: oklch(0.28 0.02 260);
+  --muted: oklch(0.24 0 0);
+  --muted-foreground: oklch(0.66 0 0);
+}
+
+/* ───────────── Tailwind v4 @theme-style host tokens ───────────── */
+.theming-tailwind {
+  --color-background: #fdf6ec;
+  --color-foreground: #1c1208;
+  --color-primary: #c8844a;
+  --color-border: #e7d8c3;
+  --color-accent: #f3e7d3;
+  --color-muted: #f8f1e3;
+  --color-muted-foreground: #6f5538;
+  --color-ring: rgba(200, 132, 74, 0.3);
+  --radius: 0.5rem;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .theming-tailwind {
+  --color-background: #1a120b;
+  --color-foreground: #f5e9d2;
+  --color-border: #4a3520;
+  --color-accent: #2d1f12;
+  --color-muted: #25190f;
+  --color-muted-foreground: #c8a673;
+}

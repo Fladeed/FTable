@@ -1,1 +1,20 @@
-/* ShadcnTheme — all overrides expressed via CSS custom properties on styles.root / styles.wrapper */
+/*
+   ShadcnTheme — proof that Layer 1 (alias chains) works in practice.
+
+   Set shadcn's standard tokens on the preview wrapper. FloTable's alias
+   chain resolves --flotable-bg, --flotable-color, --flotable-border-color,
+   --flotable-header-bg, --flotable-row-hover-bg, --flotable-link-color,
+   --flotable-pill-active-color, --flotable-focus-ring, --flotable-border-radius,
+   etc. from these automatically — no styles.root mapping required.
+*/
+.sc-preview--shadcn {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --muted: transparent;
+  --muted-foreground: #64748b;
+  --accent: rgba(241, 245, 249, 0.5);
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --ring: rgba(37, 99, 235, 0.15);
+  --radius: 0.5rem;
+}

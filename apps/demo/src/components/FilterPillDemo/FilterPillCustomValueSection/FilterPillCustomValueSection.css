@@ -6,16 +6,16 @@
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--demo-warn-bg);
+  color: var(--demo-warn-fg);
 }
 
 .pill-value-badge--active {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--demo-success-bg);
+  color: var(--demo-success-fg);
 }
 
 .pill-value-badge--inactive {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--demo-danger-bg);
+  color: var(--demo-danger-fg);
 }
