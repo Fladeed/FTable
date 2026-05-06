@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { ColumnDef, SortState, QuickFilterState } from 'flotable';
+import type { ColumnDef, FilterDef, SortState, QuickFilterState } from 'flotable';
 import { applySorting, applyFilters } from '../../utils/demoUtils';
 
 export interface Employee {
@@ -35,6 +35,21 @@ export const ALL_DATA: Employee[] = [
   { id: 10, name: 'James Ford', role: 'Analyst', department: 'Finance', startDate: '2020-12-01', salary: 76000, active: true },
   { id: 11, name: 'Karen Osei', role: 'Designer', department: 'Product', startDate: '2021-06-30', salary: 84000, active: true },
   { id: 12, name: 'Luca Rossi', role: 'Engineer', department: 'Engineering', startDate: '2024-01-08', salary: 89000, active: true },
+];
+
+export const FILTER_DEFS: FilterDef[] = [
+  {
+    key: 'department',
+    label: 'Department',
+    type: 'select',
+    options: ['Engineering', 'Finance', 'HR', 'Product', 'Sales'],
+  },
+  {
+    key: 'role',
+    label: 'Role',
+    type: 'select',
+    options: ['Analyst', 'Designer', 'DevOps', 'Engineer', 'HR Lead', 'Manager', 'Sales Rep'],
+  },
 ];
 
 export const PAGE_SIZE = 5;

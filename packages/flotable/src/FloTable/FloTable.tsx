@@ -26,6 +26,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     onSelectionChange,
     bulkActions,
     renderBulkActionBar,
+    renderInlineBulkActions,
     classNames,
     styles,
     direction,
@@ -200,7 +201,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
 
   const hasBulkActions = (bulkActions?.length ?? 0) > 0;
   const hasCustomBar = typeof renderBulkActionBar === 'function';
+  const hasInlineBar = typeof renderInlineBulkActions === 'function';
   const hasSelection = selectedKeys.size > 0;
+  const hasFilterBar = showSearch || effectiveFilterDefs.length > 0;
 
   const bulkBarContext: BulkActionBarContext<T> = {
     selectedRows,
@@ -211,28 +214,32 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
 
   return (
     <div className={classNames?.root} style={styles?.root} dir={direction}>
-      {!hasSelection && (
-        <FilterBar
-          filterDefs={effectiveFilterDefs}
-          activeFilters={quickFilters}
-          onFilterChange={handleFilterChange}
-          showSearch={showSearch}
-          filterMode={filterMode}
-          classNames={classNames}
-          styles={styles}
-        />
+      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
+        <div className="flotable-toolbar">
+          <FilterBar
+            filterDefs={effectiveFilterDefs}
+            activeFilters={quickFilters}
+            onFilterChange={handleFilterChange}
+            showSearch={showSearch}
+            filterMode={filterMode}
+            classNames={classNames}
+            styles={styles}
+          />
+          {!hasCustomBar && hasBulkActions && hasFilterBar && <div className="flotable-toolbar__sep" />}
+          {!hasCustomBar && hasBulkActions && (
+            <BulkActionBar
+              actions={bulkActions!}
+              selectedRows={selectedRows}
+              onClearSelection={clearSelection}
+              classNames={classNames}
+              styles={styles}
+            />
+          )}
+          {hasInlineBar && hasFilterBar && <div className="flotable-toolbar__sep" />}
+          {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+        </div>
       )}
       {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
-      {!hasCustomBar && hasBulkActions && (
-        <BulkActionBar
-          actions={bulkActions!}
-          selectedRows={selectedRows}
-          onClearSelection={clearSelection}
-          isVisible={hasSelection}
-          classNames={classNames}
-          styles={styles}
-        />
-      )}
       <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
         <table className={cx('flotable', classNames?.table)} style={styles?.table}>
           <TableHeader

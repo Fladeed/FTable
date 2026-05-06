@@ -3,6 +3,7 @@
 import { DefaultSection } from './DefaultSection/DefaultSection';
 import { StyledSection } from './StyledSection/StyledSection';
 import { CustomBarSection } from './CustomBarSection/CustomBarSection';
+import { InlineCustomBarSection } from './InlineCustomBarSection/InlineCustomBarSection';
 import './BulkActionsDemo.css';
 
 export function BulkActionsDemo() {
@@ -10,13 +11,14 @@ export function BulkActionsDemo() {
     <main className="bulk-actions-demo demo-page-shell">
       <h1 className="bulk-actions-demo__title">Bulk Actions</h1>
       <p className="bulk-actions-demo__subtitle">
-        Three levels of customization: default built-in bar, structural styling via{' '}
-        <code>classNames</code>/<code>styles</code>, and a fully custom bar via{' '}
-        <code>renderBulkActionBar</code>.
+        Four levels of customization: default built-in bar, structural styling via{' '}
+        <code>classNames</code>/<code>styles</code>, a fully custom bar via <code>renderBulkActionBar</code>,
+        and an inline toolbar bar via <code>renderInlineBulkActions</code>.
       </p>
       <DefaultSection />
       <StyledSection />
       <CustomBarSection />
+      <InlineCustomBarSection />
     </main>
   );
 }

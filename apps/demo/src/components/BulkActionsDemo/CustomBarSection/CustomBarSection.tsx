@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { BulkActionBarContext } from 'flotable';
 import { FloTable } from 'flotable';
-import { useTableState, COLUMNS, PAGE_SIZE } from '../BulkActionsDemoData';
+import { useTableState, COLUMNS, FILTER_DEFS, PAGE_SIZE } from '../BulkActionsDemoData';
 import type { Employee } from '../BulkActionsDemoData';
 
 export function CustomBarSection() {
@@ -81,6 +81,8 @@ export function CustomBarSection() {
         onPageChange={setPage}
         sortState={sortState}
         onSortChange={setSortState}
+        filterDefs={FILTER_DEFS}
+        showSearch
         quickFilters={filterState}
         onFilterChange={(f) => { setFilterState(f); setPage(1); }}
         selectable

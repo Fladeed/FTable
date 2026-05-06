@@ -234,6 +234,12 @@ interface FloTableBaseProps<T extends object> {
    * Takes precedence over `bulkActions` when both are provided.
    */
   renderBulkActionBar?: (ctx: BulkActionBarContext<T>) => ReactNode;
+  /**
+   * Renders custom bulk-action content inside the toolbar, inline with the filter bar.
+   * Always called (even when nothing is selected — `count` will be 0).
+   * Use `count` to decide whether to enable or disable your buttons.
+   */
+  renderInlineBulkActions?: (ctx: BulkActionBarContext<T>) => ReactNode;
   /** Custom class names for individual table parts. */
   classNames?: FloTableClassNames;
   /** Inline styles for individual table parts. CSS custom properties are accepted. */

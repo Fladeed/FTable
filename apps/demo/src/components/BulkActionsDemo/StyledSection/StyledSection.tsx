@@ -3,7 +3,7 @@
 import type { FloTableStyleValue } from 'flotable';
 import type { BulkAction } from 'flotable';
 import { FloTable } from 'flotable';
-import { useTableState, COLUMNS, PAGE_SIZE } from '../BulkActionsDemoData';
+import { useTableState, COLUMNS, FILTER_DEFS, PAGE_SIZE } from '../BulkActionsDemoData';
 import type { Employee } from '../BulkActionsDemoData';
 
 const BULK_ACTIONS: BulkAction<Employee>[] = [
@@ -40,6 +40,8 @@ export function StyledSection() {
         onPageChange={setPage}
         sortState={sortState}
         onSortChange={setSortState}
+        filterDefs={FILTER_DEFS}
+        showSearch
         quickFilters={filterState}
         onFilterChange={(f) => { setFilterState(f); setPage(1); }}
         selectable

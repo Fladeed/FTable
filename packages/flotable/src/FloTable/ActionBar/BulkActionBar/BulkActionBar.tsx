@@ -6,7 +6,6 @@ interface BulkActionBarProps<T> {
   actions: BulkAction<T>[];
   selectedRows: T[];
   onClearSelection: () => void;
-  isVisible: boolean;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -15,29 +14,29 @@ export function BulkActionBar<T>({
   actions,
   selectedRows,
   onClearSelection,
-  isVisible,
   classNames,
   styles,
 }: BulkActionBarProps<T>) {
   const count = selectedRows.length;
+  const hasSelection = count > 0;
 
   return (
     <div
-      className={cx('flotable-bulk-bar', isVisible && 'flotable-bulk-bar--visible', classNames?.bulkActionBar)}
+      className={cx('flotable-bulk-bar', classNames?.bulkActionBar)}
       style={styles?.bulkActionBar}
     >
       <span
         className={cx('flotable-bulk-bar__count', classNames?.bulkActionBarCount)}
         style={styles?.bulkActionBarCount}
       >
-        {count} row{count !== 1 ? 's' : ''} selected
+        {hasSelection ? `${count} row${count !== 1 ? 's' : ''} selected` : 'No rows selected'}
       </span>
       <div
         className={cx('flotable-bulk-bar__actions', classNames?.bulkActionBarActions)}
         style={styles?.bulkActionBarActions}
       >
         {actions.map((action) => {
-          const isDisabled = action.disabled?.(selectedRows) ?? false;
+          const isDisabled = !hasSelection || (action.disabled?.(selectedRows) ?? false);
           return (
             <button
               key={action.key}
@@ -58,14 +57,16 @@ export function BulkActionBar<T>({
           );
         })}
       </div>
-      <button
-        type="button"
-        className={cx('flotable-bulk-bar__clear', classNames?.bulkActionBarClear)}
-        style={styles?.bulkActionBarClear}
-        onClick={onClearSelection}
-      >
-        Clear selection
-      </button>
+      {hasSelection && (
+        <button
+          type="button"
+          className={cx('flotable-bulk-bar__clear', classNames?.bulkActionBarClear)}
+          style={styles?.bulkActionBarClear}
+          onClick={onClearSelection}
+        >
+          Clear selection
+        </button>
+      )}
     </div>
   );
 }
