@@ -29,7 +29,8 @@ export function StyledSection() {
       <h2 className="bulk-demo-section__title">Styled via <code>classNames</code> / <code>styles</code></h2>
       <p className="bulk-demo-section__desc">
         Target every part of the bar through the <code>classNames</code> and <code>styles</code> props.
-        Individual actions also accept <code>className</code> and <code>style</code>.
+        Individual actions also accept <code>className</code> and <code>style</code>. The selection-count
+        text is customized via <code>selectionCountLabel</code>.
       </p>
       <FloTable
         columns={COLUMNS}
@@ -47,6 +48,9 @@ export function StyledSection() {
         selectable
         rowKey="id"
         bulkActions={BULK_ACTIONS}
+        selectionCountLabel={(count) =>
+          count === 0 ? 'Pick employees to act on' : `${count} employee${count !== 1 ? 's' : ''} ready`
+        }
         classNames={{
           bulkActionBar: 'demo-styled-bar',
           bulkActionBarCount: 'demo-styled-bar__count',

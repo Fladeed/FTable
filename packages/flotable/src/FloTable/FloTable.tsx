@@ -25,6 +25,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     rowKey = 'id',
     onSelectionChange,
     bulkActions,
+    clearSelectionLabel,
+    clearSelectionIcon,
+    selectionCountLabel,
     renderBulkActionBar,
     renderInlineBulkActions,
     classNames,
@@ -225,17 +228,18 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             classNames={classNames}
             styles={styles}
           />
-          {!hasCustomBar && hasBulkActions && hasFilterBar && <div className="flotable-toolbar__sep" />}
           {!hasCustomBar && hasBulkActions && (
             <BulkActionBar
               actions={bulkActions!}
               selectedRows={selectedRows}
               onClearSelection={clearSelection}
+              clearSelectionLabel={clearSelectionLabel}
+              clearSelectionIcon={clearSelectionIcon}
+              selectionCountLabel={selectionCountLabel}
               classNames={classNames}
               styles={styles}
             />
           )}
-          {hasInlineBar && hasFilterBar && <div className="flotable-toolbar__sep" />}
           {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
         </div>
       )}

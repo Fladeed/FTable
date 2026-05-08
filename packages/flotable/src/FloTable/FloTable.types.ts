@@ -228,6 +228,16 @@ interface FloTableBaseProps<T extends object> {
   onSelectionChange?: (selectedKeys: string[]) => void;
   /** Bulk action buttons shown in the BulkActionBar when rows are selected. */
   bulkActions?: BulkAction<T>[];
+  /** Label for the clear-selection button. Defaults to `'Clear selection'`. */
+  clearSelectionLabel?: string;
+  /** Icon rendered before the clear-selection label. */
+  clearSelectionIcon?: ReactNode;
+  /**
+   * Custom formatter for the selection-count text in the BulkActionBar.
+   * Receives the number of selected rows and returns the text to display.
+   * Defaults to `"No rows selected"` / `"N row(s) selected"`.
+   */
+  selectionCountLabel?: (count: number) => string;
   /**
    * Fully replaces the BulkActionBar with custom content.
    * Called only when at least one row is selected.

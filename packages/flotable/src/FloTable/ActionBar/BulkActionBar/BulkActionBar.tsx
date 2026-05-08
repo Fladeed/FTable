@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { BulkAction, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
 import { cx } from '../../../utils/cx';
 import './BulkActionBar.css';
@@ -6,14 +7,23 @@ interface BulkActionBarProps<T> {
   actions: BulkAction<T>[];
   selectedRows: T[];
   onClearSelection: () => void;
+  clearSelectionLabel?: string;
+  clearSelectionIcon?: ReactNode;
+  selectionCountLabel?: (count: number) => string;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
+
+const defaultSelectionCountLabel = (count: number) =>
+  count === 0 ? 'No rows selected' : `${count} row${count !== 1 ? 's' : ''} selected`;
 
 export function BulkActionBar<T>({
   actions,
   selectedRows,
   onClearSelection,
+  clearSelectionLabel = 'Clear selection',
+  clearSelectionIcon,
+  selectionCountLabel = defaultSelectionCountLabel,
   classNames,
   styles,
 }: BulkActionBarProps<T>) {
@@ -29,7 +39,7 @@ export function BulkActionBar<T>({
         className={cx('flotable-bulk-bar__count', classNames?.bulkActionBarCount)}
         style={styles?.bulkActionBarCount}
       >
-        {hasSelection ? `${count} row${count !== 1 ? 's' : ''} selected` : 'No rows selected'}
+        {selectionCountLabel(count)}
       </span>
       <div
         className={cx('flotable-bulk-bar__actions', classNames?.bulkActionBarActions)}
@@ -43,6 +53,7 @@ export function BulkActionBar<T>({
               type="button"
               className={cx(
                 'flotable-bulk-bar__btn',
+                action.icon != null && !action.label ? 'flotable-bulk-bar__btn--icon-only' : null,
                 action.danger && 'flotable-bulk-bar__btn--danger',
                 action.className,
               )}
@@ -64,7 +75,8 @@ export function BulkActionBar<T>({
           style={styles?.bulkActionBarClear}
           onClick={onClearSelection}
         >
-          Clear selection
+          {clearSelectionIcon ? <span aria-hidden="true">{clearSelectionIcon}</span> : null}
+          {clearSelectionLabel}
         </button>
       )}
     </div>
