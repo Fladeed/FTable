@@ -1,0 +1,102 @@
+@layer flotable {
+.flotable-bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0 0.75rem 0;
+}
+
+.flotable-bulk-bar__count {
+  font-size: var(--flotable-font-size, 0.875rem);
+  color: var(--flotable-bulk-bar-count-color, #6b7280);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.flotable-bulk-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.flotable-bulk-bar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  background: none;
+  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border-radius: var(--flotable-row-action-radius, 4px);
+  font-size: var(--flotable-font-size, 0.875rem);
+  color: var(--flotable-row-action-color, #374151);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s, background 0.12s, border-color 0.12s;
+}
+
+.flotable-bulk-bar__btn:hover:not(:disabled) {
+  background: var(--flotable-row-action-hover-bg, #f3f4f6);
+  color: var(--flotable-row-action-hover-color, #111827);
+}
+
+.flotable-bulk-bar__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.flotable-bulk-bar__btn--icon-only {
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  justify-content: center;
+  border-radius: 6px;
+  border-color: transparent;
+  color: var(--flotable-row-action-color, #6b7280);
+}
+
+.flotable-bulk-bar__btn--icon-only:hover:not(:disabled) {
+  background: var(--flotable-row-action-hover-bg, #f3f4f6);
+  border-color: var(--flotable-border-color, #e5e7eb);
+  color: var(--flotable-row-action-hover-color, #111827);
+}
+
+.flotable-bulk-bar__btn--danger.flotable-bulk-bar__btn--icon-only {
+  border-color: transparent;
+}
+
+.flotable-bulk-bar__btn--danger.flotable-bulk-bar__btn--icon-only:hover:not(:disabled) {
+  border-color: var(--flotable-danger-color, #dc2626);
+  background: var(--flotable-danger-hover-bg, #fef2f2);
+}
+
+.flotable-bulk-bar__btn--danger {
+  color: var(--flotable-danger-color, #dc2626);
+  border-color: var(--flotable-danger-color, #dc2626);
+}
+
+.flotable-bulk-bar__btn--danger:hover:not(:disabled) {
+  background: var(--flotable-danger-hover-bg, #fef2f2);
+  color: var(--flotable-danger-hover-color, #b91c1c);
+}
+
+.flotable-bulk-bar__clear {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  background: none;
+  border: none;
+  border-radius: var(--flotable-row-action-radius, 4px);
+  font-size: var(--flotable-font-size, 0.875rem);
+  color: var(--flotable-bulk-bar-clear-color, #6b7280);
+  cursor: pointer;
+  white-space: nowrap;
+  margin-left: auto;
+  transition: color 0.12s, background 0.12s;
+}
+
+.flotable-bulk-bar__clear:hover {
+  background: var(--flotable-row-action-hover-bg, #f3f4f6);
+  color: var(--flotable-row-action-hover-color, #111827);
+}
+}

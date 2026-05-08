@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import type { FloTableProps, FloTableDataProps, FloTableRequestProps, FilterDef, QuickFilterState, SortState } from './FloTable.types';
+import type { FloTableProps, FloTableDataProps, FloTableRequestProps, FilterDef, QuickFilterState, SortState, BulkActionBarContext } from './FloTable.types';
 import { nextSortDirection, columnTypeToFilterInputType } from './tableUtils';
 import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
+import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
 import { cx } from '../utils/cx';
 import './FloTable.css';
 
@@ -20,6 +21,15 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     filterMode,
     rowActions,
     rowActionsMoreIcon,
+    selectable,
+    rowKey = 'id',
+    onSelectionChange,
+    bulkActions,
+    clearSelectionLabel,
+    clearSelectionIcon,
+    selectionCountLabel,
+    renderBulkActionBar,
+    renderInlineBulkActions,
     classNames,
     styles,
     direction,
@@ -40,6 +50,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const [isLoading, setIsLoading] = useState(isReqMode);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
 
   const requestRef = useRef<FloTableRequestProps<T>['request'] | null>(null);
   if (isReqMode) {
@@ -98,6 +109,45 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
 
   const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
+  const pageRowKeys = data.map((row) => String(row[rowKey as keyof T]));
+  const selectedOnPage = pageRowKeys.filter((k) => selectedKeys.has(k));
+  const selectionState =
+    selectedOnPage.length === 0
+      ? 'none'
+      : selectedOnPage.length === pageRowKeys.length
+        ? 'all'
+        : 'some';
+
+  function handleToggleRow(key: string) {
+    const next = new Set(selectedKeys);
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      next.add(key);
+    }
+    setSelectedKeys(next);
+    onSelectionChange?.([...next]);
+  }
+
+  function clearSelection() {
+    setSelectedKeys(new Set());
+    onSelectionChange?.([]);
+  }
+
+  const selectedRows = data.filter((row) => selectedKeys.has(String(row[rowKey as keyof T])));
+
+  function handleToggleAll() {
+    const allSelected = pageRowKeys.every((k) => selectedKeys.has(k));
+    const next = new Set(selectedKeys);
+    if (allSelected) {
+      pageRowKeys.forEach((k) => next.delete(k));
+    } else {
+      pageRowKeys.forEach((k) => next.add(k));
+    }
+    setSelectedKeys(next);
+    onSelectionChange?.([...next]);
+  }
+
   const autoFilterDefs: FilterDef[] = autoFilters
     ? columns
         .filter((col) => col.filterable)
@@ -143,6 +193,8 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   }
 
   function handlePageChange(newPage: number) {
+    setSelectedKeys(new Set());
+    onSelectionChange?.([]);
     if (isReqMode) {
       setInternalPage(newPage);
     } else {
@@ -150,17 +202,48 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     }
   }
 
+  const hasBulkActions = (bulkActions?.length ?? 0) > 0;
+  const hasCustomBar = typeof renderBulkActionBar === 'function';
+  const hasInlineBar = typeof renderInlineBulkActions === 'function';
+  const hasSelection = selectedKeys.size > 0;
+  const hasFilterBar = showSearch || effectiveFilterDefs.length > 0;
+
+  const bulkBarContext: BulkActionBarContext<T> = {
+    selectedRows,
+    selectedKeys: [...selectedKeys],
+    count: selectedKeys.size,
+    clearSelection,
+  };
+
   return (
     <div className={classNames?.root} style={styles?.root} dir={direction}>
-      <FilterBar
-        filterDefs={effectiveFilterDefs}
-        activeFilters={quickFilters}
-        onFilterChange={handleFilterChange}
-        showSearch={showSearch}
-        filterMode={filterMode}
-        classNames={classNames}
-        styles={styles}
-      />
+      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
+        <div className="flotable-toolbar">
+          <FilterBar
+            filterDefs={effectiveFilterDefs}
+            activeFilters={quickFilters}
+            onFilterChange={handleFilterChange}
+            showSearch={showSearch}
+            filterMode={filterMode}
+            classNames={classNames}
+            styles={styles}
+          />
+          {!hasCustomBar && hasBulkActions && (
+            <BulkActionBar
+              actions={bulkActions!}
+              selectedRows={selectedRows}
+              onClearSelection={clearSelection}
+              clearSelectionLabel={clearSelectionLabel}
+              clearSelectionIcon={clearSelectionIcon}
+              selectionCountLabel={selectionCountLabel}
+              classNames={classNames}
+              styles={styles}
+            />
+          )}
+          {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+        </div>
+      )}
+      {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
       <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
         <table className={cx('flotable', classNames?.table)} style={styles?.table}>
           <TableHeader
@@ -169,6 +252,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             onSort={handleSort}
             rowActions={rowActions}
             rowActionsLabel={rowActionsLabel}
+            selectable={selectable}
+            selectionState={selectionState}
+            onToggleAll={handleToggleAll}
             classNames={classNames}
             styles={styles}
           />
@@ -177,6 +263,10 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             rows={data}
             rowActions={rowActions}
             rowActionsMoreIcon={rowActionsMoreIcon}
+            selectable={selectable}
+            selectedKeys={selectedKeys}
+            rowKey={rowKey}
+            onToggleRow={handleToggleRow}
             classNames={classNames}
             styles={styles}
             isLoading={isLoading}

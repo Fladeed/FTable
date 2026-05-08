@@ -9,11 +9,24 @@ export function TableRow<T extends object>({
   columns,
   rowActions,
   rowActionsMoreIcon,
+  selectable,
+  isSelected,
+  onToggle,
   classNames,
   styles,
 }: TableRowProps<T>) {
   return (
-    <tr className={cx('flotable__row', classNames?.row)} style={styles?.row}>
+    <tr className={cx('flotable__row', isSelected && 'flotable__row--selected', classNames?.row)} style={styles?.row}>
+      {selectable && (
+        <td className="flotable__checkbox-cell" style={styles?.cell}>
+          <input
+            type="checkbox"
+            checked={isSelected ?? false}
+            onChange={onToggle}
+            aria-label="Select row"
+          />
+        </td>
+      )}
       {columns.map((col) => (
         <td key={col.key} className={cx('flotable__cell', classNames?.cell)} style={styles?.cell}>
           {renderCell(col, row)}
