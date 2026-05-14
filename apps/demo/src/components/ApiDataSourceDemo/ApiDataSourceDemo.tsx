@@ -104,6 +104,24 @@ export function ApiDataSourceDemo() {
           initialQuickFilters={{ inStock: 'true' }}
         />
       </section>
+
+      <section className="api-demo__section">
+        <h2 className="api-demo__section-title">Initial sort</h2>
+        <p className="api-demo__description">
+          Pass <code>initialSort</code> to seed the internal sort state on mount.
+          The column header renders the sort arrow on first paint, the first
+          request fires with the seeded sort already applied, and the user can
+          click any sortable header to override it. The state resets back to the
+          initial value if the component is remounted via a <code>key</code>{' '}
+          change.
+        </p>
+        <FloTable
+          columns={COLUMNS}
+          request={fetchProducts}
+          pageSize={5}
+          initialSort={{ key: 'price', direction: 'desc' }}
+        />
+      </section>
     </main>
   );
 }
