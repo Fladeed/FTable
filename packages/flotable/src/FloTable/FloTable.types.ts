@@ -298,6 +298,8 @@ export interface FloTableRequestProps<T extends object> extends FloTableBaseProp
   request: FloTableRequestFn<T>;
   /** Seeds the internal quick-filter state on mount. Resets to this value on remount (e.g. via a `key` change). */
   initialQuickFilters?: QuickFilterState;
+  /** Seeds the internal sort state on mount. Resets to this value on remount (e.g. via a `key` change). */
+  initialSort?: SortState<T> | null;
   data?: never;
   totalRows?: never;
   page?: never;
