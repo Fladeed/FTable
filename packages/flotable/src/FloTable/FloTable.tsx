@@ -41,7 +41,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const isReqMode = 'request' in props && typeof props.request === 'function';
 
   const [internalPage, setInternalPage] = useState(1);
-  const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(null);
+  const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(
+    () => (props as FloTableRequestProps<T>).initialSort ?? null,
+  );
   const [internalFilters, setInternalFilters] = useState<QuickFilterState>(
     () => (props as FloTableRequestProps<T>).initialQuickFilters ?? {},
   );
