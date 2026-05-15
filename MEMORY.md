@@ -41,6 +41,7 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-78 | Task | FloTable pagination: add optional page number input for direct page navigation | In Progress | https://fladeed.atlassian.net/browse/ET-78 |
 | ET-108 | Enhancement | FloTable: add `initialSort` prop for request mode | In Progress | https://fladeed.atlassian.net/browse/ET-108 |
 | ET-109 | Task | [Skill] Update flotable skill — initialSort prop for request mode | To Do | https://fladeed.atlassian.net/browse/ET-109 |
+| ET-110 | Bug | RowActionsOverflow dropdown items never fire onClick (portal vs. outside-click handler race) | Done ✓ | https://fladeed.atlassian.net/browse/ET-110 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net
