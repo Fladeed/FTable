@@ -16,6 +16,7 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
   const [dropdownStyle, setDropdownStyle] = useState<CSSProperties | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const overflowBtnRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const inlineActions = actions.slice(0, 2);
   const overflowActions = actions.slice(2);
@@ -32,7 +33,10 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
   useEffect(() => {
     if (!isOpen) return;
     function handleOutsideClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const insideContainer = containerRef.current?.contains(target) ?? false;
+      const insideDropdown = dropdownRef.current?.contains(target) ?? false;
+      if (!insideContainer && !insideDropdown) {
         setIsOpen(false);
       }
     }
@@ -98,6 +102,7 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
           row={row}
           onClose={() => setIsOpen(false)}
           style={dropdownStyle}
+          dropdownRef={dropdownRef}
         />
       )}
     </div>
