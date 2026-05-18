@@ -6,6 +6,7 @@ import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
+import { useMediaBreakpoint } from '../hooks/useMediaBreakpoint';
 import { cx } from '../utils/cx';
 import './FloTable.css';
 
@@ -36,9 +37,16 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     rowActionsLabel,
     paginationLabels,
     showPageInput,
+    mobileBreakpoint = 640,
+    mobileColumnPriority = 2,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
+  const isMobile = useMediaBreakpoint(mobileBreakpoint - 1);
+
+  const responsiveColumns = isMobile
+    ? columns.filter((col) => (col.priority ?? Infinity) >= mobileColumnPriority)
+    : columns;
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(
@@ -218,7 +226,12 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   };
 
   return (
-    <div className={classNames?.root} style={styles?.root} dir={direction}>
+    <div
+      className={classNames?.root}
+      style={styles?.root}
+      dir={direction}
+      data-flotable-mobile={isMobile ? 'true' : undefined}
+    >
       {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
         <div className="flotable-toolbar">
           <FilterBar
@@ -249,7 +262,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
       <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
         <table className={cx('flotable', classNames?.table)} style={styles?.table}>
           <TableHeader
-            columns={columns}
+            columns={responsiveColumns}
             sortState={sortState}
             onSort={handleSort}
             rowActions={rowActions}
@@ -261,7 +274,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             styles={styles}
           />
           <TableBody
-            columns={columns}
+            columns={responsiveColumns}
             rows={data}
             rowActions={rowActions}
             rowActionsMoreIcon={rowActionsMoreIcon}
