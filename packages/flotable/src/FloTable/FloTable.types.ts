@@ -80,6 +80,12 @@ export interface ColumnDef<T extends object> {
   render?: (value: T[keyof T], row: T) => ReactNode;
   /** When autoFilters is enabled on FloTable, columns with filterable: true get a pill generated automatically. */
   filterable?: boolean;
+  /**
+   * Higher = more important. Columns with `priority` strictly less than the table's
+   * `mobileColumnPriority` are hidden on mobile. Columns without `priority` are
+   * treated as `Infinity` (always visible).
+   */
+  priority?: number;
 }
 
 export type FilterInputType = 'text' | 'number' | 'date' | 'boolean' | 'select';
@@ -150,6 +156,20 @@ export interface FloTableClassNames {
   bulkActionBarActions?: string;
   /** "Clear selection" `<button>` */
   bulkActionBarClear?: string;
+  /** Outer toolbar `<div>` wrapping the filter bar and bulk bar */
+  toolbar?: string;
+  /** Each card `<div>` rendered by the card view */
+  card?: string;
+  /** Label `<span>` (column header) inside a card row */
+  cardLabel?: string;
+  /** Value `<span>` (rendered cell) inside a card row */
+  cardValue?: string;
+  /** `+N more` trigger `<button>` in the filter bar overflow */
+  filterBarOverflowTrigger?: string;
+  /** Filter bar overflow popover `<div>` rendered via portal */
+  filterBarOverflowPopover?: string;
+  /** Container `<div>` rendered around the infinite-scroll sentinel + loader */
+  infiniteScroll?: string;
 }
 
 /**
@@ -179,6 +199,13 @@ export interface FloTableStyles {
   bulkActionBarCount?: FloTableStyleValue;
   bulkActionBarActions?: FloTableStyleValue;
   bulkActionBarClear?: FloTableStyleValue;
+  toolbar?: FloTableStyleValue;
+  card?: FloTableStyleValue;
+  cardLabel?: FloTableStyleValue;
+  cardValue?: FloTableStyleValue;
+  filterBarOverflowTrigger?: FloTableStyleValue;
+  filterBarOverflowPopover?: FloTableStyleValue;
+  infiniteScroll?: FloTableStyleValue;
 }
 
 /** Parameters passed to the `request` function on each fetch. */
@@ -262,6 +289,47 @@ interface FloTableBaseProps<T extends object> {
   paginationLabels?: PaginationLabels;
   /** When true, renders a page number input that lets users jump directly to any page. Defaults to `false`. */
   showPageInput?: boolean;
+  /**
+   * Viewport width (px) at or below which the responsive primitives activate
+   * (column priority hiding, card view if opted in, touch-target sizes, and
+   * — in request mode — infinite scroll). Defaults to `640`.
+   */
+  mobileBreakpoint?: number;
+  /**
+   * What rendering to use when the viewport is below `mobileBreakpoint`.
+   * - `'auto'` (default): keep the table layout; only column hiding, sticky
+   *   toolbar, pill overflow, infinite scroll (request mode) and 44px hit
+   *   areas activate.
+   * - `'card'`: switch the data rows to a stacked card layout on mobile.
+   * - `'table'`: force the desktop table layout regardless of width.
+   */
+  mobileVariant?: 'auto' | 'card' | 'table';
+  /**
+   * Columns with `priority` strictly less than this value are hidden when the
+   * viewport is at or below `mobileBreakpoint`. Defaults to `2`.
+   */
+  mobileColumnPriority?: number;
+  /**
+   * Custom card renderer used when `mobileVariant === 'card'`. When omitted,
+   * each card is auto-derived from the column definitions as a stacked list
+   * of `header: value` pairs.
+   */
+  renderCard?: (row: T, index: number) => ReactNode;
+  /**
+   * When true, the toolbar (filter bar + bulk bar) is pinned to the top of
+   * its scroll container via `position: sticky`. Defaults to `false`.
+   */
+  stickyToolbar?: boolean;
+  /**
+   * Labels rendered by the infinite-scroll sentinel when active (request mode
+   * + mobile). Override to translate.
+   */
+  infiniteScrollLabels?: {
+    /** Shown while the next page is loading. Defaults to `'Loading…'`. */
+    loading?: string;
+    /** Shown once all rows are loaded. Defaults to empty (rendered silently). */
+    end?: string;
+  };
 }
 
 /**
