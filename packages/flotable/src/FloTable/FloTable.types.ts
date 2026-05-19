@@ -204,6 +204,8 @@ export interface FloTableClassNames {
   infiniteScrollSpinner?: string;
   /** End-of-list `<div>` shown when no more rows are available */
   infiniteScrollEnd?: string;
+  /** Table/card view-toggle `<button>` in the toolbar */
+  viewToggle?: string;
 }
 
 /**
@@ -257,6 +259,7 @@ export interface FloTableStyles {
   infiniteScrollLoading?: FloTableStyleValue;
   infiniteScrollSpinner?: FloTableStyleValue;
   infiniteScrollEnd?: FloTableStyleValue;
+  viewToggle?: FloTableStyleValue;
 }
 
 /** Parameters passed to the `request` function on each fetch. */
@@ -389,6 +392,36 @@ interface FloTableBaseProps<T extends object> {
    * Defaults to rendering `endLabel` (omitted when no label is provided).
    */
   renderInfiniteScrollEnd?: () => ReactNode;
+  /**
+   * When true, renders an icon button in the toolbar that lets the user
+   * switch between table and card view at any width. Default `false`.
+   *
+   * Initial view follows `mobileVariant` + the current viewport (so it
+   * matches the auto behavior). Once the user clicks the toggle, their
+   * choice persists and overrides automatic switching.
+   */
+  showViewToggle?: boolean;
+  /** Swap the default "table view" icon shown when current view is card. */
+  tableViewIcon?: ReactNode;
+  /** Swap the default "card view" icon shown when current view is table. */
+  cardViewIcon?: ReactNode;
+  /** Labels for the view-toggle button (aria-label + tooltip). Override to translate. */
+  viewToggleLabels?: {
+    /** Used when current view is `'card'`. Defaults to `'Show as table'`. */
+    showTable?: string;
+    /** Used when current view is `'table'`. Defaults to `'Show as cards'`. */
+    showCard?: string;
+  };
+  /**
+   * Fully replaces the default view-toggle button. Receives the current
+   * view, a toggle callback, and the resolved aria-label for the target
+   * view.
+   */
+  renderViewToggle?: (ctx: {
+    view: 'table' | 'card';
+    onToggle: () => void;
+    label: string;
+  }) => ReactNode;
   /**
    * When true, the toolbar (filter bar + bulk bar) is pinned to the top of
    * its scroll container via `position: sticky`. Defaults to `false`.

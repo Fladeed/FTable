@@ -8,6 +8,7 @@ import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
 import { CardList } from './CardList/CardList';
 import { InfiniteScrollSentinel } from './InfiniteScrollSentinel/InfiniteScrollSentinel';
+import { ViewToggle } from './ViewToggle/ViewToggle';
 import { useMediaBreakpoint } from '../hooks/useMediaBreakpoint';
 import { cx } from '../utils/cx';
 import './FloTable.css';
@@ -49,6 +50,11 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     renderInfiniteScrollEnd,
     stickyToolbar = false,
     infiniteScrollLabels,
+    showViewToggle = false,
+    tableViewIcon,
+    cardViewIcon,
+    viewToggleLabels,
+    renderViewToggle,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
@@ -59,7 +65,14 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     ? columns.filter((col) => (col.priority ?? Infinity) >= mobileColumnPriority)
     : columns;
 
-  const useCardView = mobileVariant === 'card' && isMobile;
+  const autoView: 'table' | 'card' = mobileVariant === 'card' && isMobile ? 'card' : 'table';
+  const [explicitView, setExplicitView] = useState<'table' | 'card' | null>(null);
+  const effectiveView = explicitView ?? autoView;
+  const useCardView = effectiveView === 'card';
+
+  function toggleView() {
+    setExplicitView(effectiveView === 'card' ? 'table' : 'card');
+  }
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(
@@ -255,6 +268,10 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const hasInlineBar = typeof renderInlineBulkActions === 'function';
   const hasSelection = selectedKeys.size > 0;
   const hasFilterBar = showSearch || effectiveFilterDefs.length > 0;
+  const viewToggleLabel =
+    effectiveView === 'card'
+      ? (viewToggleLabels?.showTable ?? 'Show as table')
+      : (viewToggleLabels?.showCard ?? 'Show as cards');
 
   const bulkBarContext: BulkActionBarContext<T> = {
     selectedRows,
@@ -270,7 +287,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
       dir={direction}
       data-flotable-mobile={isMobile ? 'true' : undefined}
     >
-      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
+      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || showViewToggle) && (
         <div
           className={cx(
             'flotable-toolbar',
@@ -304,6 +321,22 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             />
           )}
           {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+          {showViewToggle && (
+            renderViewToggle ? (
+              renderViewToggle({ view: effectiveView, onToggle: toggleView, label: viewToggleLabel })
+            ) : (
+              <ViewToggle
+                view={effectiveView}
+                onToggle={toggleView}
+                tableIcon={tableViewIcon}
+                cardIcon={cardViewIcon}
+                showTableLabel={viewToggleLabels?.showTable}
+                showCardLabel={viewToggleLabels?.showCard}
+                classNames={classNames}
+                styles={styles}
+              />
+            )
+          )}
         </div>
       )}
       {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}

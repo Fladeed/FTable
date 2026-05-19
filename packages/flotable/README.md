@@ -188,6 +188,27 @@ Set `mobileVariant="card"` to switch the data rows to a stacked card layout on m
 
 `mobileVariant="table"` forces the desktop table layout even below the breakpoint (opt-out).
 
+#### Optional view toggle
+
+Pass `showViewToggle` to render an icon button in the toolbar that flips between table and card view at any width. The initial view follows `mobileVariant` + the current viewport; once the user clicks the toggle, their choice overrides automatic switching.
+
+```tsx
+<FloTable
+  showViewToggle
+  // optionally swap icons
+  tableViewIcon={<MyRowsIcon />}
+  cardViewIcon={<MyCardsIcon />}
+  viewToggleLabels={{ showTable: 'Voir en tableau', showCard: 'Voir en cartes' }}
+  // or replace the button entirely
+  renderViewToggle={({ view, onToggle, label }) => (
+    <MyButton aria-label={label} onClick={onToggle}>
+      {view === 'card' ? '☰' : '▤'}
+    </MyButton>
+  )}
+  ...
+/>
+```
+
 ### Sticky toolbar
 
 `stickyToolbar` pins the toolbar (filter bar + bulk-action bar) to the top of the nearest scrolling parent via `position: sticky`.
@@ -247,7 +268,7 @@ When `data-flotable-mobile="true"` is active, the root sets `--flotable-touch-mi
 
 ### Customization slots
 
-Every new element exposes a `classNames` and `styles` slot. See the props reference for the full list (`toolbar`, `card`, `cardLabel`, `cardValue`, `cardSelectRow`, `cardActionsRow`, `mobileFilterButton`, `mobileFilterSheet`, `mobileFilterIcon`, `mobileFilterCount`, `mobileFilterBackdrop`, `mobileFilterHeader`, `mobileFilterClearAll`, `mobileFilterClose`, `mobileFilterBody`, `mobileFilterRow`, `mobileFilterRowLabel`, `mobileFilterInput`, `mobileFilterFooter`, `mobileFilterDone`, `infiniteScroll`, `infiniteScrollLoading`, `infiniteScrollSpinner`, `infiniteScrollEnd`).
+Every new element exposes a `classNames` and `styles` slot. See the props reference for the full list (`toolbar`, `card`, `cardLabel`, `cardValue`, `cardSelectRow`, `cardActionsRow`, `mobileFilterButton`, `mobileFilterSheet`, `mobileFilterIcon`, `mobileFilterCount`, `mobileFilterBackdrop`, `mobileFilterHeader`, `mobileFilterClearAll`, `mobileFilterClose`, `mobileFilterBody`, `mobileFilterRow`, `mobileFilterRowLabel`, `mobileFilterInput`, `mobileFilterFooter`, `mobileFilterDone`, `infiniteScroll`, `infiniteScrollLoading`, `infiniteScrollSpinner`, `infiniteScrollEnd`, `viewToggle`).
 
 ### Migration
 
@@ -278,6 +299,11 @@ No action required. With no responsive props set, FloTable behaves exactly as be
 | `infiniteScrollLabels` | `{ loading?: string; end?: string }` | Translate the loading / end-of-list strings shown during infinite scroll. |
 | `renderInfiniteScrollLoading` | `() => ReactNode` | Replace the inline loader rendered while the next infinite-scroll page loads. |
 | `renderInfiniteScrollEnd` | `() => ReactNode` | Replace the end-of-list indicator rendered after the last row. |
+| `showViewToggle` | `boolean` | Render a toolbar button that lets the user flip between table and card view. Default `false`. |
+| `tableViewIcon` | `ReactNode` | Swap the default "rows" icon shown on the view toggle when current view is card. |
+| `cardViewIcon` | `ReactNode` | Swap the default "cards" icon shown on the view toggle when current view is table. |
+| `viewToggleLabels` | `{ showTable?: string; showCard?: string }` | Translate the view-toggle aria-label / tooltip. |
+| `renderViewToggle` | `(ctx) => ReactNode` | Fully replace the view-toggle button. |
 
 ### Data Mode Props
 
