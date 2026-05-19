@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import type { RowAction } from '../../../FloTable.types';
 import { RowActionsDropdown } from '../../RowActionsDropdown/RowActionsDropdown';
@@ -10,6 +10,8 @@ interface RowActionsOverflowProps<T> {
   row: T;
   moreIcon?: ReactNode;
 }
+
+const VIEWPORT_MARGIN = 8;
 
 export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOverflowProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,12 +25,38 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
 
   function computePosition() {
     if (!overflowBtnRef.current) return;
-    const rect = overflowBtnRef.current.getBoundingClientRect();
+    const btnRect = overflowBtnRef.current.getBoundingClientRect();
+    // Default: right-anchored to the button. If we already know the menu's width
+    // (from a prior render), flip to left-anchored when it would overflow the
+    // left edge of the viewport.
+    const menuWidth = dropdownRef.current?.offsetWidth ?? 0;
+    if (menuWidth > 0 && btnRect.right - menuWidth < VIEWPORT_MARGIN) {
+      setDropdownStyle({
+        top: btnRect.bottom + 4,
+        left: Math.max(VIEWPORT_MARGIN, btnRect.left),
+      });
+      return;
+    }
     setDropdownStyle({
-      top: rect.bottom + 4,
-      right: window.innerWidth - rect.right,
+      top: btnRect.bottom + 4,
+      right: window.innerWidth - btnRect.right,
     });
   }
+
+  // After the dropdown first renders we can measure its real width. If the
+  // initial right-anchored position pushes it past the viewport's left edge,
+  // flip it to left-anchored so the whole menu stays on screen.
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    if (!overflowBtnRef.current || !dropdownRef.current) return;
+    const menuRect = dropdownRef.current.getBoundingClientRect();
+    if (menuRect.left >= VIEWPORT_MARGIN) return;
+    const btnRect = overflowBtnRef.current.getBoundingClientRect();
+    setDropdownStyle({
+      top: btnRect.bottom + 4,
+      left: Math.max(VIEWPORT_MARGIN, btnRect.left),
+    });
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -48,8 +76,19 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
     if (!isOpen) return;
     function reposition() {
       if (!overflowBtnRef.current) return;
-      const rect = overflowBtnRef.current.getBoundingClientRect();
-      setDropdownStyle({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+      const btnRect = overflowBtnRef.current.getBoundingClientRect();
+      const menuWidth = dropdownRef.current?.offsetWidth ?? 0;
+      if (menuWidth > 0 && btnRect.right - menuWidth < VIEWPORT_MARGIN) {
+        setDropdownStyle({
+          top: btnRect.bottom + 4,
+          left: Math.max(VIEWPORT_MARGIN, btnRect.left),
+        });
+        return;
+      }
+      setDropdownStyle({
+        top: btnRect.bottom + 4,
+        right: window.innerWidth - btnRect.right,
+      });
     }
     window.addEventListener('scroll', reposition, true);
     window.addEventListener('resize', reposition);
