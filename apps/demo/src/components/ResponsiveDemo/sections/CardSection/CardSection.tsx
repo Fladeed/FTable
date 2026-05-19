@@ -42,6 +42,7 @@ export function CardSection() {
       pageSize={PAGE_SIZE}
       mobileVariant="card"
       showViewToggle
+      showFullscreenToggle
       rowActions={ROW_ACTIONS}
     />
   );

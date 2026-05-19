@@ -29,6 +29,7 @@ export function InfiniteScrollSection() {
         mobileVariant="card"
         stickyToolbar
         showViewToggle
+        showFullscreenToggle
         infiniteScrollLabels={{ loading: 'Loading more orders…', end: 'No more orders.' }}
       />
     </div>

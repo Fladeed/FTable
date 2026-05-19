@@ -206,6 +206,8 @@ export interface FloTableClassNames {
   infiniteScrollEnd?: string;
   /** Table/card view-toggle `<button>` in the toolbar */
   viewToggle?: string;
+  /** Fullscreen-toggle `<button>` in the toolbar */
+  fullscreenToggle?: string;
 }
 
 /**
@@ -260,6 +262,7 @@ export interface FloTableStyles {
   infiniteScrollSpinner?: FloTableStyleValue;
   infiniteScrollEnd?: FloTableStyleValue;
   viewToggle?: FloTableStyleValue;
+  fullscreenToggle?: FloTableStyleValue;
 }
 
 /** Parameters passed to the `request` function on each fetch. */
@@ -419,6 +422,29 @@ interface FloTableBaseProps<T extends object> {
    */
   renderViewToggle?: (ctx: {
     view: 'table' | 'card';
+    onToggle: () => void;
+    label: string;
+  }) => ReactNode;
+  /**
+   * When true, renders an icon button in the toolbar that toggles
+   * fullscreen on the table's root element via the standard
+   * Fullscreen API. Default `false`.
+   */
+  showFullscreenToggle?: boolean;
+  /** Swap the default "enter fullscreen" icon (corner brackets pointing outward). */
+  enterFullscreenIcon?: ReactNode;
+  /** Swap the default "exit fullscreen" icon (corner brackets pointing inward). */
+  exitFullscreenIcon?: ReactNode;
+  /** Aria labels for the fullscreen-toggle button. Override to translate. */
+  fullscreenToggleLabels?: {
+    /** Used when currently not in fullscreen. Defaults to `'Enter fullscreen'`. */
+    enter?: string;
+    /** Used when currently in fullscreen. Defaults to `'Exit fullscreen'`. */
+    exit?: string;
+  };
+  /** Fully replaces the default fullscreen-toggle button. */
+  renderFullscreenToggle?: (ctx: {
+    isFullscreen: boolean;
     onToggle: () => void;
     label: string;
   }) => ReactNode;

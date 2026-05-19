@@ -9,6 +9,7 @@ import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
 import { CardList } from './CardList/CardList';
 import { InfiniteScrollSentinel } from './InfiniteScrollSentinel/InfiniteScrollSentinel';
 import { ViewToggle } from './ViewToggle/ViewToggle';
+import { FullscreenToggle } from './FullscreenToggle/FullscreenToggle';
 import { useMediaBreakpoint } from '../hooks/useMediaBreakpoint';
 import { cx } from '../utils/cx';
 import './FloTable.css';
@@ -55,11 +56,36 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     cardViewIcon,
     viewToggleLabels,
     renderViewToggle,
+    showFullscreenToggle = false,
+    enterFullscreenIcon,
+    exitFullscreenIcon,
+    fullscreenToggleLabels,
+    renderFullscreenToggle,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
   const isMobile = useMediaBreakpoint(mobileBreakpoint - 1);
   const isInfiniteScroll = isReqMode && isMobile;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    function handleChange() {
+      setIsFullscreen(document.fullscreenElement === rootRef.current);
+    }
+    document.addEventListener('fullscreenchange', handleChange);
+    return () => document.removeEventListener('fullscreenchange', handleChange);
+  }, []);
+
+  function toggleFullscreen() {
+    if (typeof document === 'undefined') return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    } else {
+      rootRef.current?.requestFullscreen?.();
+    }
+  }
 
   const responsiveColumns = isMobile
     ? columns.filter((col) => (col.priority ?? Infinity) >= mobileColumnPriority)
@@ -272,6 +298,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     effectiveView === 'card'
       ? (viewToggleLabels?.showTable ?? 'Show as table')
       : (viewToggleLabels?.showCard ?? 'Show as cards');
+  const fullscreenToggleLabel = isFullscreen
+    ? (fullscreenToggleLabels?.exit ?? 'Exit fullscreen')
+    : (fullscreenToggleLabels?.enter ?? 'Enter fullscreen');
 
   const bulkBarContext: BulkActionBarContext<T> = {
     selectedRows,
@@ -282,12 +311,13 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
 
   return (
     <div
+      ref={rootRef}
       className={classNames?.root}
       style={styles?.root}
       dir={direction}
       data-flotable-mobile={isMobile ? 'true' : undefined}
     >
-      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || showViewToggle) && (
+      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || showViewToggle || showFullscreenToggle) && (
         <div
           className={cx(
             'flotable-toolbar',
@@ -332,6 +362,26 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
                 cardIcon={cardViewIcon}
                 showTableLabel={viewToggleLabels?.showTable}
                 showCardLabel={viewToggleLabels?.showCard}
+                classNames={classNames}
+                styles={styles}
+              />
+            )
+          )}
+          {showFullscreenToggle && (
+            renderFullscreenToggle ? (
+              renderFullscreenToggle({
+                isFullscreen,
+                onToggle: toggleFullscreen,
+                label: fullscreenToggleLabel,
+              })
+            ) : (
+              <FullscreenToggle
+                isFullscreen={isFullscreen}
+                onToggle={toggleFullscreen}
+                enterIcon={enterFullscreenIcon}
+                exitIcon={exitFullscreenIcon}
+                enterLabel={fullscreenToggleLabels?.enter}
+                exitLabel={fullscreenToggleLabels?.exit}
                 classNames={classNames}
                 styles={styles}
               />
