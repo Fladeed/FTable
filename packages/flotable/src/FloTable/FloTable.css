@@ -4,6 +4,19 @@
    Sub-component styles live in their own folders.
    ───────────────────────────────────────────── */
 
+/* When the FloTable root enters fullscreen via the standard Fullscreen
+   API, the user agent strips the parent context. Paint the viewport,
+   give the content room to breathe, and let it scroll. */
+.flotable-root:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--flotable-bg, #ffffff);
+  color: var(--flotable-color, #111827);
+  padding: var(--flotable-fullscreen-padding, 1rem);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
 .flotable-wrapper,
 .flotable-wrapper * {
   box-sizing: border-box;

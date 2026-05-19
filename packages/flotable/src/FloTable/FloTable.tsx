@@ -312,7 +312,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   return (
     <div
       ref={rootRef}
-      className={classNames?.root}
+      className={cx('flotable-root', classNames?.root)}
       style={styles?.root}
       dir={direction}
       data-flotable-mobile={isMobile ? 'true' : undefined}
