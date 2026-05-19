@@ -38,6 +38,50 @@
   justify-content: flex-end;
 }
 
+.flotable-card__row--actions {
+  margin-top: 0.25rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--flotable-border-color, #e5e7eb);
+  gap: var(--flotable-card-actions-gap, 0.5rem);
+}
+
+.flotable-card__row--actions .flotable__row-actions-cell {
+  gap: var(--flotable-card-actions-gap, 0.5rem);
+}
+
+.flotable-card__row--actions .flotable__row-actions-cell__btn {
+  padding: 0.375rem 0.875rem;
+  min-height: max(36px, var(--flotable-touch-min, 0px));
+  background-color: transparent;
+  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border-radius: var(--flotable-border-radius, 6px);
+}
+
+.flotable-card__row--actions .flotable__row-actions-cell__btn:hover:not(:disabled) {
+  text-decoration: none;
+  background-color: var(--flotable-row-hover-bg, #f3f4f6);
+  border-color: var(--flotable-pill-open-border-color, #9ca3af);
+}
+
+.flotable-card__row--actions .flotable__row-actions-cell__btn--danger {
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+.flotable-card__row--actions .flotable__row-actions-cell__btn--danger:hover:not(:disabled) {
+  border-color: var(--flotable-danger-color, #dc2626);
+}
+
+.flotable-card__row--actions .flotable__row-actions-cell__overflow-btn {
+  width: max(36px, var(--flotable-touch-min, 0px));
+  height: max(36px, var(--flotable-touch-min, 0px));
+  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border-radius: var(--flotable-border-radius, 6px);
+}
+
+.flotable-card__row--actions .flotable__row-actions-cell__overflow-btn:hover {
+  border-color: var(--flotable-pill-open-border-color, #9ca3af);
+}
+
 .flotable-card__label {
   flex: 0 0 auto;
   font-weight: 600;
