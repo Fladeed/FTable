@@ -45,8 +45,11 @@ const ROW_ACTIONS_LTR: RowAction<Employee>[] = [
 ];
 
 const ROW_ACTIONS_RTL: RowAction<Employee>[] = [
-  { key: 'edit',   label: 'تعديل',  onClick: () => {} },
-  { key: 'delete', label: 'حذف',    onClick: () => {}, danger: true },
+  { key: 'view',      label: 'عرض',                                                   onClick: () => {} },
+  { key: 'duplicate', label: 'تكرار',                                                 onClick: () => {} },
+  { key: 'edit',      label: 'تعديل بيانات الموظف بما في ذلك المنصب والقسم والحالة والاسم الكامل ورقم الهاتف والبريد الإلكتروني وتاريخ الانضمام', onClick: () => {} },
+  { key: 'archive',   label: 'أرشفة',                                                 onClick: () => {} },
+  { key: 'delete',    label: 'حذف',                                                   onClick: () => {}, danger: true },
 ];
 
 const EMPLOYEES_LTR: Employee[] = [
