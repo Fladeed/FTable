@@ -115,7 +115,13 @@ export function CardList<T extends object>({
             style={styles?.card}
           >
             {selectable && (
-              <div className="flotable-card__row flotable-card__row--select">
+              <div
+                className={cx(
+                  'flotable-card__row flotable-card__row--select',
+                  classNames?.cardSelectRow,
+                )}
+                style={styles?.cardSelectRow}
+              >
                 <input
                   type="checkbox"
                   checked={isSelected}
@@ -143,7 +149,13 @@ export function CardList<T extends object>({
                   </div>
                 ))}
             {rowActions && rowActions.length > 0 && (
-              <div className="flotable-card__row flotable-card__row--actions">
+              <div
+                className={cx(
+                  'flotable-card__row flotable-card__row--actions',
+                  classNames?.cardActionsRow,
+                )}
+                style={styles?.cardActionsRow}
+              >
                 <RowActionsCell actions={rowActions} row={row} moreIcon={rowActionsMoreIcon} />
               </div>
             )}

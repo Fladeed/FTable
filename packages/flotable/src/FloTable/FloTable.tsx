@@ -43,6 +43,11 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     mobileVariant = 'auto',
     mobileColumnPriority = 2,
     renderCard,
+    renderMobileFilterTrigger,
+    mobileFilterIcon,
+    renderInfiniteScrollLoading,
+    renderInfiniteScrollEnd,
+    stickyToolbar = false,
     infiniteScrollLabels,
   } = props;
 
@@ -266,13 +271,23 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
       data-flotable-mobile={isMobile ? 'true' : undefined}
     >
       {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
-        <div className="flotable-toolbar">
+        <div
+          className={cx(
+            'flotable-toolbar',
+            stickyToolbar && 'flotable-toolbar--sticky',
+            classNames?.toolbar,
+          )}
+          style={styles?.toolbar}
+        >
           <FilterBar
             filterDefs={effectiveFilterDefs}
             activeFilters={quickFilters}
             onFilterChange={handleFilterChange}
             showSearch={showSearch}
             filterMode={filterMode}
+            isMobile={isMobile}
+            mobileFilterIcon={mobileFilterIcon}
+            renderMobileFilterTrigger={renderMobileFilterTrigger}
             classNames={classNames}
             styles={styles}
           />
@@ -351,6 +366,8 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
           isExhausted={!isLoading && internalData.length >= internalTotalRows}
           loadingLabel={infiniteScrollLabels?.loading}
           endLabel={infiniteScrollLabels?.end}
+          renderLoading={renderInfiniteScrollLoading}
+          renderEnd={renderInfiniteScrollEnd}
           classNames={classNames}
           styles={styles}
         />

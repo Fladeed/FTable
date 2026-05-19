@@ -6,8 +6,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: max(28px, var(--flotable-touch-min, 0px));
+  height: max(28px, var(--flotable-touch-min, 0px));
   padding: 0;
   background: none;
   border: none;

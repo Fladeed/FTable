@@ -164,12 +164,46 @@ export interface FloTableClassNames {
   cardLabel?: string;
   /** Value `<span>` (rendered cell) inside a card row */
   cardValue?: string;
-  /** `+N more` trigger `<button>` in the filter bar overflow */
-  filterBarOverflowTrigger?: string;
-  /** Filter bar overflow popover `<div>` rendered via portal */
-  filterBarOverflowPopover?: string;
+  /** Selection-checkbox row `<div>` inside a card */
+  cardSelectRow?: string;
+  /** Row-actions row `<div>` inside a card */
+  cardActionsRow?: string;
+  /** Mobile "Filters" trigger `<button>` shown in place of inline pills */
+  mobileFilterButton?: string;
+  /** Funnel icon `<svg>` inside the mobile filters trigger */
+  mobileFilterIcon?: string;
+  /** Active-filter count badge `<span>` on the mobile filters trigger */
+  mobileFilterCount?: string;
+  /** Backdrop `<div>` behind the mobile filters sheet */
+  mobileFilterBackdrop?: string;
+  /** Mobile filters sheet `<div>` rendered via portal */
+  mobileFilterSheet?: string;
+  /** Header `<div>` of the mobile filters sheet */
+  mobileFilterHeader?: string;
+  /** "Clear all" `<button>` in the mobile filters sheet header */
+  mobileFilterClearAll?: string;
+  /** Close (×) `<button>` in the mobile filters sheet header */
+  mobileFilterClose?: string;
+  /** Body `<div>` of the mobile filters sheet (the scrollable form area) */
+  mobileFilterBody?: string;
+  /** Each filter row `<label>` inside the mobile filters body */
+  mobileFilterRow?: string;
+  /** Row-label `<span>` inside each mobile filter row */
+  mobileFilterRowLabel?: string;
+  /** `<input>` / `<select>` element inside each mobile filter row */
+  mobileFilterInput?: string;
+  /** Footer `<div>` of the mobile filters sheet */
+  mobileFilterFooter?: string;
+  /** Footer "Done" `<button>` of the mobile filters sheet */
+  mobileFilterDone?: string;
   /** Container `<div>` rendered around the infinite-scroll sentinel + loader */
   infiniteScroll?: string;
+  /** Loading indicator `<div>` rendered while the next infinite-scroll page loads */
+  infiniteScrollLoading?: string;
+  /** Spinner `<span>` inside the infinite-scroll loading indicator */
+  infiniteScrollSpinner?: string;
+  /** End-of-list `<div>` shown when no more rows are available */
+  infiniteScrollEnd?: string;
 }
 
 /**
@@ -203,9 +237,26 @@ export interface FloTableStyles {
   card?: FloTableStyleValue;
   cardLabel?: FloTableStyleValue;
   cardValue?: FloTableStyleValue;
-  filterBarOverflowTrigger?: FloTableStyleValue;
-  filterBarOverflowPopover?: FloTableStyleValue;
+  cardSelectRow?: FloTableStyleValue;
+  cardActionsRow?: FloTableStyleValue;
+  mobileFilterButton?: FloTableStyleValue;
+  mobileFilterIcon?: FloTableStyleValue;
+  mobileFilterCount?: FloTableStyleValue;
+  mobileFilterBackdrop?: FloTableStyleValue;
+  mobileFilterSheet?: FloTableStyleValue;
+  mobileFilterHeader?: FloTableStyleValue;
+  mobileFilterClearAll?: FloTableStyleValue;
+  mobileFilterClose?: FloTableStyleValue;
+  mobileFilterBody?: FloTableStyleValue;
+  mobileFilterRow?: FloTableStyleValue;
+  mobileFilterRowLabel?: FloTableStyleValue;
+  mobileFilterInput?: FloTableStyleValue;
+  mobileFilterFooter?: FloTableStyleValue;
+  mobileFilterDone?: FloTableStyleValue;
   infiniteScroll?: FloTableStyleValue;
+  infiniteScrollLoading?: FloTableStyleValue;
+  infiniteScrollSpinner?: FloTableStyleValue;
+  infiniteScrollEnd?: FloTableStyleValue;
 }
 
 /** Parameters passed to the `request` function on each fetch. */
@@ -315,6 +366,29 @@ interface FloTableBaseProps<T extends object> {
    * of `header: value` pairs.
    */
   renderCard?: (row: T, index: number) => ReactNode;
+  /**
+   * Fully replaces the mobile "Filters" trigger button. Receives the current
+   * active-filter count, whether the sheet is open, and a callback that
+   * opens it. Use this to brand the trigger or render a different shape.
+   */
+  renderMobileFilterTrigger?: (ctx: {
+    activeCount: number;
+    isOpen: boolean;
+    onOpen: () => void;
+    label: string;
+  }) => ReactNode;
+  /** Swaps the funnel icon inside the default mobile "Filters" trigger. */
+  mobileFilterIcon?: ReactNode;
+  /**
+   * Replaces the inline loading indicator rendered by the infinite-scroll
+   * sentinel. Defaults to a small spinner + `loadingLabel` text.
+   */
+  renderInfiniteScrollLoading?: () => ReactNode;
+  /**
+   * Replaces the end-of-list indicator rendered after the last row is loaded.
+   * Defaults to rendering `endLabel` (omitted when no label is provided).
+   */
+  renderInfiniteScrollEnd?: () => ReactNode;
   /**
    * When true, the toolbar (filter bar + bulk bar) is pinned to the top of
    * its scroll container via `position: sticky`. Defaults to `false`.

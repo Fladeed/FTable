@@ -17,6 +17,13 @@
   padding-bottom: 0.75rem;
 }
 
+.flotable-toolbar--sticky {
+  position: sticky;
+  top: var(--flotable-toolbar-sticky-top, 0);
+  z-index: 2;
+  background-color: var(--flotable-bg, #ffffff);
+}
+
 .flotable-toolbar > .flotable-filter-bar {
   flex: 1 1 auto;
   min-width: 0;
@@ -41,5 +48,11 @@
   font-size: var(--flotable-font-size, 0.875rem);
   background-color: var(--flotable-bg, #ffffff);
   color: var(--flotable-color, #111827);
+}
+
+/* Mobile touch targets: 44×44 minimum hit area for any interactive
+   control nested under a [data-flotable-mobile="true"] root. */
+[data-flotable-mobile="true"] {
+  --flotable-touch-min: 44px;
 }
 }

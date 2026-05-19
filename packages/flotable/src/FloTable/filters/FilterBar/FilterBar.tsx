@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import type { FilterDef, QuickFilterState, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
 import { cx } from '../../../utils/cx';
 import { FilterPill } from '../FilterPill/FilterPill';
 import { SearchPill } from '../SearchPill/SearchPill';
+import { MobileFilters } from '../MobileFilters/MobileFilters';
 import './FilterBar.css';
 
 const SEARCH_KEY = '__search__';
@@ -15,11 +17,30 @@ interface FilterBarProps {
   onFilterChange: (filters: QuickFilterState) => void;
   showSearch?: boolean;
   filterMode?: 'live' | 'commit';
+  isMobile?: boolean;
+  mobileFilterIcon?: ReactNode;
+  renderMobileFilterTrigger?: (ctx: {
+    activeCount: number;
+    isOpen: boolean;
+    onOpen: () => void;
+    label: string;
+  }) => ReactNode;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
 
-export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, filterMode, classNames, styles }: FilterBarProps) {
+export function FilterBar({
+  filterDefs,
+  activeFilters,
+  onFilterChange,
+  showSearch = false,
+  filterMode,
+  isMobile = false,
+  mobileFilterIcon,
+  renderMobileFilterTrigger,
+  classNames,
+  styles,
+}: FilterBarProps) {
   const resolvedMode = filterMode ?? 'commit';
 
   const [openKey, setOpenKey] = useState<string | null>(null);
@@ -121,21 +142,35 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
           styles={styles}
         />
       )}
-      {filterDefs.map((def) => (
-        <FilterPill
-          key={def.key}
-          def={def}
-          value={localFilters[def.key] ?? ''}
-          isOpen={openKey === def.key}
-          isClosing={closingKey === def.key}
-          onPillClick={handlePillClick}
+
+      {isMobile && filterDefs.length > 0 ? (
+        <MobileFilters
+          filterDefs={filterDefs}
+          values={localFilters}
           onValueChange={handleValueChange}
           onClear={handleClear}
-          onClose={closeKey}
+          icon={mobileFilterIcon}
+          renderTrigger={renderMobileFilterTrigger}
           classNames={classNames}
           styles={styles}
         />
-      ))}
+      ) : (
+        filterDefs.map((def) => (
+          <FilterPill
+            key={def.key}
+            def={def}
+            value={localFilters[def.key] ?? ''}
+            isOpen={openKey === def.key}
+            isClosing={closingKey === def.key}
+            onPillClick={handlePillClick}
+            onValueChange={handleValueChange}
+            onClear={handleClear}
+            onClose={closeKey}
+            classNames={classNames}
+            styles={styles}
+          />
+        ))
+      )}
     </div>
   );
 }

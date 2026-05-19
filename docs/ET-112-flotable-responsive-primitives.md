@@ -26,7 +26,7 @@ We need to ship opt-in responsive primitives that fix these gaps without changin
 | Breakpoint detection | JS via `matchMedia` driven by a `mobileBreakpoint?: number` prop (default `640`). |
 | Column priority API | Numeric `priority?: number` on `ColumnDef`. Lower priority hides first when width is constrained. |
 | Card / stack view | Auto-derived from columns by default; optional `renderCard?: (row) => ReactNode` for full control. |
-| Pill overflow | `ResizeObserver` measures pills inside `FilterBar`; overflowing pills collapse into a `+N more` trigger that opens a portal-anchored popover (mirrors the `RowActionsOverflow` pattern). |
+| Mobile filters | On mobile, the inline pill row is replaced by a single "Filters" button (funnel icon + active count badge) that opens a portal-rendered bottom sheet with all filter fields as a vertical form. Desktop keeps the existing inline pills. Avoids the failure modes of in-place pill overflow (measurement vs open-state, popover swallowing native `<select>` clicks). |
 | Infinite scroll | Auto-activates on mobile in request mode only. Sentinel + `IntersectionObserver`. Pagination bar is hidden when active. |
 
 ### Assumptions
@@ -77,7 +77,7 @@ All defaults are backward-compatible: with no new props, the table behaves exact
 
 - **`hooks/useMediaBreakpoint.ts`** — tiny hook wrapping `window.matchMedia(`(max-width: ${px}px)`)`. SSR-safe (returns `false` until mounted). Subscribes to `change` and returns the current boolean. Lives under `packages/flotable/src/hooks/`.
 - **`FloTable/CardList/CardList.tsx` + `CardList.css`** — renders rows as stacked cards when `mobileVariant: 'card'` is active. Reuses `renderCell` for value rendering. Handles loading skeletons, empty state, error state by delegating to the existing `TableBodySkeleton`/`TableBodyEmpty`/`TableBodyError` components (rendered in card form — see Task 3.4).
-- **`FloTable/filters/FilterBarOverflow/FilterBarOverflow.tsx` + `FilterBarOverflow.css`** — measures pill widths with `ResizeObserver`, computes which pills overflow, and renders a `+N more` trigger that opens a portal-positioned popover containing the overflowing pills. Mirrors `RowActionsOverflow`.
+- **`FloTable/filters/MobileFilters/MobileFilters.tsx` + `MobileFilters.css`** — a trigger button (funnel icon + active count badge) shown in `FilterBar` when `isMobile`. Clicking opens a portal-rendered bottom-sheet modal with all filter fields as a vertical form (label + native input). Escape, backdrop click, or the Done button close it. Body scroll is locked while open.
 - **`FloTable/InfiniteScrollSentinel/InfiniteScrollSentinel.tsx` + `InfiniteScrollSentinel.css`** — wraps an `IntersectionObserver` on a hidden sentinel `<div>`. Props: `{ onLoadMore: () => void; isLoading: boolean; isExhausted: boolean; loadingLabel?: string; }`. Calls `onLoadMore` once per intersection (debounced via the `isLoading` guard). Renders a small in-list loading indicator while fetching.
 - **CSS custom properties** for touch sizing: `--flotable-touch-min`, `--flotable-pill-min-height-mobile`, `--flotable-pagination-btn-min-height-mobile`. Default to `44px` on the root element when `useMediaBreakpoint` reports mobile.
 - **Toolbar sticky CSS**: a `.flotable-toolbar--sticky` modifier class applied when `stickyToolbar` is true, with `position: sticky; top: 0; z-index: 2; background: var(--flotable-bg, #fff);`.
@@ -177,7 +177,7 @@ This is a **purely frontend** task (UI components, styles, presentational React)
 - Add `mobileColumnPriority?: number` to `FloTableBaseProps<T>` with JSDoc default `2`.
 - Add `renderCard?: (row: T, index: number) => ReactNode` to `FloTableBaseProps<T>` with JSDoc explaining it overrides the default card layout.
 - Add `stickyToolbar?: boolean` to `FloTableBaseProps<T>` with JSDoc default `false`.
-- Add the following new keys to `FloTableClassNames`: `toolbar?: string`, `card?: string`, `cardLabel?: string`, `cardValue?: string`, `filterBarOverflowTrigger?: string`, `filterBarOverflowPopover?: string` — each with a one-line JSDoc.
+- Add the following new keys to `FloTableClassNames`: `toolbar?: string`, `card?: string`, `cardLabel?: string`, `cardValue?: string`, `mobileFilterButton?: string`, `mobileFilterSheet?: string` — each with a one-line JSDoc.
 - Mirror the same keys in `FloTableStyles`.
 - Run `pnpm --filter flotable typecheck` (or equivalent — see CONTRIBUTING.md) to confirm no type errors.
 

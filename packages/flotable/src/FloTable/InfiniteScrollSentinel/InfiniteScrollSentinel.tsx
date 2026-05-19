@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import type { FloTableClassNames, FloTableStyles } from '../FloTable.types';
 import { cx } from '../../utils/cx';
 import './InfiniteScrollSentinel.css';
@@ -9,6 +10,8 @@ interface InfiniteScrollSentinelProps {
   isExhausted: boolean;
   loadingLabel?: string;
   endLabel?: string;
+  renderLoading?: () => ReactNode;
+  renderEnd?: () => ReactNode;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
@@ -19,6 +22,8 @@ export function InfiniteScrollSentinel({
   isExhausted,
   loadingLabel = 'Loading…',
   endLabel,
+  renderLoading,
+  renderEnd,
   classNames,
   styles,
 }: InfiniteScrollSentinelProps) {
@@ -60,14 +65,33 @@ export function InfiniteScrollSentinel({
         aria-hidden="true"
       />
       {isLoading && !isExhausted && (
-        <div className="flotable-infinite-scroll__loading" role="status">
-          <span className="flotable-infinite-scroll__spinner" aria-hidden="true" />
-          {loadingLabel}
+        renderLoading ? (
+          renderLoading()
+        ) : (
+          <div
+            className={cx('flotable-infinite-scroll__loading', classNames?.infiniteScrollLoading)}
+            style={styles?.infiniteScrollLoading}
+            role="status"
+          >
+            <span
+              className={cx('flotable-infinite-scroll__spinner', classNames?.infiniteScrollSpinner)}
+              style={styles?.infiniteScrollSpinner}
+              aria-hidden="true"
+            />
+            {loadingLabel}
+          </div>
+        )
+      )}
+      {isExhausted && !isLoading && (renderEnd ? (
+        renderEnd()
+      ) : endLabel ? (
+        <div
+          className={cx('flotable-infinite-scroll__end', classNames?.infiniteScrollEnd)}
+          style={styles?.infiniteScrollEnd}
+        >
+          {endLabel}
         </div>
-      )}
-      {isExhausted && !isLoading && endLabel && (
-        <div className="flotable-infinite-scroll__end">{endLabel}</div>
-      )}
+      ) : null)}
     </div>
   );
 }
