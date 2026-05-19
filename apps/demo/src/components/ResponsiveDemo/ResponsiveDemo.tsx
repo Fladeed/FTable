@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { FloTable, type QuickFilterState, type SortState } from 'flotable';
+import { useCallback, useMemo, useState } from 'react';
+import { FloTable, type FloTableRequestParams, type QuickFilterState, type SortState } from 'flotable';
 import { applySorting, applyFilters } from '../../utils/demoUtils';
-import { COLUMNS, FILTER_DEFS, SAMPLE_ORDERS, type Order } from './ResponsiveDemoData';
+import { COLUMNS, FILTER_DEFS, LARGE_ORDERS, SAMPLE_ORDERS, type Order } from './ResponsiveDemoData';
 import './ResponsiveDemo.css';
 
 const PAGE_SIZE = 8;
@@ -121,6 +121,43 @@ function StickyToolbarSection() {
   );
 }
 
+function InfiniteScrollSection() {
+  const request = useCallback(
+    async ({ page, pageSize, sortState, quickFilters }: FloTableRequestParams<Order>) => {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const filtered = applyFilters(LARGE_ORDERS, quickFilters);
+      const sorted = applySorting(filtered, sortState);
+      const start = (page - 1) * pageSize;
+      return { data: sorted.slice(start, start + pageSize), totalRows: sorted.length };
+    },
+    [],
+  );
+
+  return (
+    <section className="rd-section">
+      <h2 className="rd-section__title">Infinite scroll (request mode + mobile)</h2>
+      <p className="rd-section__desc">
+        In <code>request</code> mode, resizing below <code>mobileBreakpoint</code> automatically
+        swaps pagination for sentinel-driven infinite scroll. Rows accumulate as you scroll; sorting
+        or filtering resets to page 1. Try resizing this window narrow and scrolling within the
+        bordered area — there are 120 sample rows.
+      </p>
+      <div className="rd-sticky-scroll">
+        <FloTable
+          columns={COLUMNS}
+          request={request}
+          filterDefs={FILTER_DEFS}
+          showSearch
+          pageSize={10}
+          mobileVariant="card"
+          stickyToolbar
+          infiniteScrollLabels={{ loading: 'Loading more orders…', end: 'No more orders.' }}
+        />
+      </div>
+    </section>
+  );
+}
+
 export function ResponsiveDemo() {
   return (
     <main className="rd-page demo-page-shell">
@@ -133,6 +170,7 @@ export function ResponsiveDemo() {
       <AutoSection />
       <CardSection />
       <StickyToolbarSection />
+      <InfiniteScrollSection />
     </main>
   );
 }

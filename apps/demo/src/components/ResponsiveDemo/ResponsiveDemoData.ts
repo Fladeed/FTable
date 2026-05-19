@@ -70,3 +70,4 @@ export function buildOrders(count: number): Order[] {
 }
 
 export const SAMPLE_ORDERS = buildOrders(24);
+export const LARGE_ORDERS = buildOrders(120);

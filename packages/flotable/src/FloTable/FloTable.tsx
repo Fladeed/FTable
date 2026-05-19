@@ -7,6 +7,7 @@ import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
 import { CardList } from './CardList/CardList';
+import { InfiniteScrollSentinel } from './InfiniteScrollSentinel/InfiniteScrollSentinel';
 import { useMediaBreakpoint } from '../hooks/useMediaBreakpoint';
 import { cx } from '../utils/cx';
 import './FloTable.css';
@@ -42,10 +43,12 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     mobileVariant = 'auto',
     mobileColumnPriority = 2,
     renderCard,
+    infiniteScrollLabels,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
   const isMobile = useMediaBreakpoint(mobileBreakpoint - 1);
+  const isInfiniteScroll = isReqMode && isMobile;
 
   const responsiveColumns = isMobile
     ? columns.filter((col) => (col.priority ?? Infinity) >= mobileColumnPriority)
@@ -63,6 +66,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const [internalData, setInternalData] = useState<T[]>([]);
   const [internalTotalRows, setInternalTotalRows] = useState(0);
   const [isLoading, setIsLoading] = useState(isReqMode);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
@@ -75,7 +79,14 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   useEffect(() => {
     if (!isReqMode || !requestRef.current) return;
 
-    setIsLoading(true);
+    const isFirstPage = internalPage === 1;
+    const append = !isFirstPage && isInfiniteScroll;
+
+    if (isFirstPage) {
+      setIsLoading(true);
+    } else {
+      setIsFetchingMore(true);
+    }
     setFetchError(null);
 
     let cancelled = false;
@@ -83,23 +94,33 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     requestRef
       .current({ page: internalPage, pageSize, sortState: internalSortState, quickFilters: internalFilters })
       .then((result) => {
-        if (!cancelled) {
+        if (cancelled) return;
+        if (append) {
+          setInternalData((prev) => [...prev, ...result.data]);
+        } else {
           setInternalData(result.data);
-          setInternalTotalRows(result.totalRows);
-          setIsLoading(false);
         }
+        setInternalTotalRows(result.totalRows);
+        setIsLoading(false);
+        setIsFetchingMore(false);
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
-          setFetchError(err instanceof Error ? err.message : String(err));
-          setIsLoading(false);
-        }
+        if (cancelled) return;
+        setFetchError(err instanceof Error ? err.message : String(err));
+        setIsLoading(false);
+        setIsFetchingMore(false);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [isReqMode, internalPage, internalSortState, internalFilters, pageSize, retryCount]);
+  }, [isReqMode, isInfiniteScroll, internalPage, internalSortState, internalFilters, pageSize, retryCount]);
+
+  useEffect(() => {
+    if (!isReqMode) return;
+    setInternalPage(1);
+    setInternalData([]);
+  }, [isReqMode, isInfiniteScroll]);
 
   let page: number;
   let sortState: SortState<T> | null;
@@ -217,6 +238,13 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     }
   }
 
+  function loadMore() {
+    if (!isInfiniteScroll) return;
+    if (isLoading || isFetchingMore) return;
+    if (internalData.length >= internalTotalRows) return;
+    setInternalPage((p) => p + 1);
+  }
+
   const hasBulkActions = (bulkActions?.length ?? 0) > 0;
   const hasCustomBar = typeof renderBulkActionBar === 'function';
   const hasInlineBar = typeof renderInlineBulkActions === 'function';
@@ -316,17 +344,29 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
           </table>
         </div>
       )}
-      <TablePagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPrev={() => handlePageChange(page - 1)}
-        onNext={() => handlePageChange(page + 1)}
-        onGoToPage={handlePageChange}
-        showPageInput={showPageInput}
-        labels={paginationLabels}
-        classNames={classNames}
-        styles={styles}
-      />
+      {isInfiniteScroll ? (
+        <InfiniteScrollSentinel
+          onLoadMore={loadMore}
+          isLoading={isFetchingMore}
+          isExhausted={!isLoading && internalData.length >= internalTotalRows}
+          loadingLabel={infiniteScrollLabels?.loading}
+          endLabel={infiniteScrollLabels?.end}
+          classNames={classNames}
+          styles={styles}
+        />
+      ) : (
+        <TablePagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPrev={() => handlePageChange(page - 1)}
+          onNext={() => handlePageChange(page + 1)}
+          onGoToPage={handlePageChange}
+          showPageInput={showPageInput}
+          labels={paginationLabels}
+          classNames={classNames}
+          styles={styles}
+        />
+      )}
     </div>
   );
 }
