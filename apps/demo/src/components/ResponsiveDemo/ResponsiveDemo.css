@@ -1,0 +1,46 @@
+.rd-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--color-text-primary, #111827);
+}
+
+.rd-subtitle {
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0 0 2rem;
+  line-height: 1.6;
+}
+
+.rd-section {
+  margin-bottom: 3rem;
+}
+
+.rd-section__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.375rem;
+  color: var(--color-text-primary, #111827);
+}
+
+.rd-section__desc {
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 0.875rem;
+  margin: 0 0 1rem;
+  line-height: 1.6;
+}
+
+.rd-section__desc code {
+  background: #f3f4f6;
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+}
+
+.rd-sticky-scroll {
+  max-height: 480px;
+  overflow-y: auto;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #fafafa;
+}

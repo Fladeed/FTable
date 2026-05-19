@@ -29,3 +29,9 @@ body {
   max-width: 1160px;
   padding: 2rem;
 }
+
+@media (max-width: 900px) {
+  .demo-page-shell {
+    padding: 4rem 1rem 2rem;
+  }
+}

@@ -6,6 +6,7 @@ import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
+import { CardList } from './CardList/CardList';
 import { useMediaBreakpoint } from '../hooks/useMediaBreakpoint';
 import { cx } from '../utils/cx';
 import './FloTable.css';
@@ -38,7 +39,9 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     paginationLabels,
     showPageInput,
     mobileBreakpoint = 640,
+    mobileVariant = 'auto',
     mobileColumnPriority = 2,
+    renderCard,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
@@ -47,6 +50,8 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const responsiveColumns = isMobile
     ? columns.filter((col) => (col.priority ?? Infinity) >= mobileColumnPriority)
     : columns;
+
+  const useCardView = mobileVariant === 'card' && isMobile;
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(
@@ -259,38 +264,58 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
         </div>
       )}
       {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
-      <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
-        <table className={cx('flotable', classNames?.table)} style={styles?.table}>
-          <TableHeader
-            columns={responsiveColumns}
-            sortState={sortState}
-            onSort={handleSort}
-            rowActions={rowActions}
-            rowActionsLabel={rowActionsLabel}
-            selectable={selectable}
-            selectionState={selectionState}
-            onToggleAll={handleToggleAll}
-            classNames={classNames}
-            styles={styles}
-          />
-          <TableBody
-            columns={responsiveColumns}
-            rows={data}
-            rowActions={rowActions}
-            rowActionsMoreIcon={rowActionsMoreIcon}
-            selectable={selectable}
-            selectedKeys={selectedKeys}
-            rowKey={rowKey}
-            onToggleRow={handleToggleRow}
-            classNames={classNames}
-            styles={styles}
-            isLoading={isLoading}
-            loadingRowCount={pageSize}
-            error={fetchError}
-            onRetry={() => setRetryCount((c) => c + 1)}
-          />
-        </table>
-      </div>
+      {useCardView ? (
+        <CardList
+          columns={responsiveColumns}
+          rows={data}
+          rowKey={rowKey}
+          rowActions={rowActions}
+          rowActionsMoreIcon={rowActionsMoreIcon}
+          selectable={selectable}
+          selectedKeys={selectedKeys}
+          onToggleRow={handleToggleRow}
+          renderCard={renderCard}
+          classNames={classNames}
+          styles={styles}
+          isLoading={isLoading}
+          loadingRowCount={pageSize}
+          error={fetchError}
+          onRetry={() => setRetryCount((c) => c + 1)}
+        />
+      ) : (
+        <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
+          <table className={cx('flotable', classNames?.table)} style={styles?.table}>
+            <TableHeader
+              columns={responsiveColumns}
+              sortState={sortState}
+              onSort={handleSort}
+              rowActions={rowActions}
+              rowActionsLabel={rowActionsLabel}
+              selectable={selectable}
+              selectionState={selectionState}
+              onToggleAll={handleToggleAll}
+              classNames={classNames}
+              styles={styles}
+            />
+            <TableBody
+              columns={responsiveColumns}
+              rows={data}
+              rowActions={rowActions}
+              rowActionsMoreIcon={rowActionsMoreIcon}
+              selectable={selectable}
+              selectedKeys={selectedKeys}
+              rowKey={rowKey}
+              onToggleRow={handleToggleRow}
+              classNames={classNames}
+              styles={styles}
+              isLoading={isLoading}
+              loadingRowCount={pageSize}
+              error={fetchError}
+              onRetry={() => setRetryCount((c) => c + 1)}
+            />
+          </table>
+        </div>
+      )}
       <TablePagination
         currentPage={page}
         totalPages={totalPages}

@@ -48,3 +48,76 @@
   border-left-color: #111827;
   background-color: #f3f4f6;
 }
+
+/* ── Mobile menu toggle (hamburger) ───────────────────────────── */
+.site-mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 0.875rem;
+  left: 0.875rem;
+  z-index: 30;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: background-color 0.15s ease;
+}
+
+.site-mobile-toggle:hover {
+  background: #f9fafb;
+}
+
+.site-mobile-toggle__bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #111827;
+  border-radius: 1px;
+}
+
+.site-mobile-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 900px) {
+  .site-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .site-mobile-backdrop {
+    display: block;
+  }
+
+  .site-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 25;
+    width: 240px;
+    min-width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .site-sidebar--open {
+    transform: translateX(0);
+  }
+
+  .site-sidebar__logo {
+    padding-left: calc(0.875rem + 44px + 0.75rem);
+  }
+}
