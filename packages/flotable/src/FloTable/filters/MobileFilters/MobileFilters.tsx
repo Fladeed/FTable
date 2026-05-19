@@ -33,6 +33,19 @@ interface MobileFiltersProps {
     onOpen: () => void;
     label: string;
   }) => ReactNode;
+  /**
+   * When true, render a search input as the first row in the sheet
+   * (instead of a separate inline pill in the toolbar).
+   */
+  showSearch?: boolean;
+  /** Current search value. Used together with `showSearch`. */
+  searchValue?: string;
+  /** Called when the search value changes. Receives the new value. */
+  onSearchChange?: (value: string) => void;
+  /** Label for the search row. Defaults to `'Search'`. */
+  searchLabel?: string;
+  /** Placeholder for the search input. Defaults to `'Search…'`. */
+  searchPlaceholder?: string;
 }
 
 export function MobileFilters({
@@ -50,13 +63,20 @@ export function MobileFilters({
   closeAriaLabel = 'Close filters',
   icon,
   renderTrigger,
+  showSearch = false,
+  searchValue = '',
+  onSearchChange,
+  searchLabel = 'Search',
+  searchPlaceholder = 'Search…',
 }: MobileFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const activeCount = filterDefs.reduce(
+  const filterActiveCount = filterDefs.reduce(
     (n, def) => (values[def.key] && values[def.key] !== '' ? n + 1 : n),
     0,
   );
+  const searchActive = showSearch && searchValue !== '';
+  const activeCount = filterActiveCount + (searchActive ? 1 : 0);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -76,6 +96,7 @@ export function MobileFilters({
     filterDefs.forEach((def) => {
       if (values[def.key] && values[def.key] !== '') onClear(def.key);
     });
+    if (showSearch && searchValue !== '') onSearchChange?.('');
   }
 
   const openSheet = () => setIsOpen(true);
@@ -178,13 +199,40 @@ export function MobileFilters({
                 className={cx('flotable-mobile-filters__body', classNames?.mobileFilterBody)}
                 style={styles?.mobileFilterBody}
               >
+                {showSearch && (
+                  <label
+                    className={cx('flotable-mobile-filters__row', classNames?.mobileFilterRow)}
+                    style={styles?.mobileFilterRow}
+                  >
+                    <span
+                      className={cx(
+                        'flotable-mobile-filters__row-label',
+                        classNames?.mobileFilterRowLabel,
+                      )}
+                      style={styles?.mobileFilterRowLabel}
+                    >
+                      {searchLabel}
+                    </span>
+                    <input
+                      className={cx(
+                        'flotable-mobile-filters__input',
+                        classNames?.mobileFilterInput,
+                      )}
+                      style={styles?.mobileFilterInput}
+                      type="search"
+                      value={searchValue}
+                      placeholder={searchPlaceholder}
+                      onChange={(e) => onSearchChange?.(e.target.value)}
+                    />
+                  </label>
+                )}
                 {filterDefs.map((def) => (
                   <MobileFilterRow
                     key={def.key}
                     def={def}
                     value={values[def.key] ?? ''}
                     onValueChange={onValueChange}
-                    
+
                     styles={styles}
                   />
                 ))}

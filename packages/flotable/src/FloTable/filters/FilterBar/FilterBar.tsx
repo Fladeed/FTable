@@ -127,9 +127,12 @@ export function FilterBar({
 
   if (!showSearch && filterDefs.length === 0) return null;
 
+  const useMobileFilters = isMobile && filterDefs.length > 0;
+  const showInlineSearch = showSearch && !useMobileFilters;
+
   return (
     <div className={cx('flotable-filter-bar', classNames?.filterBar)} ref={barRef} style={styles?.filterBar}>
-      {showSearch && (
+      {showInlineSearch && (
         <SearchPill
           value={activeFilters[SEARCH_KEY] ?? ''}
           isOpen={openKey === SEARCH_KEY}
@@ -143,7 +146,7 @@ export function FilterBar({
         />
       )}
 
-      {isMobile && filterDefs.length > 0 ? (
+      {useMobileFilters ? (
         <MobileFilters
           filterDefs={filterDefs}
           values={localFilters}
@@ -151,6 +154,9 @@ export function FilterBar({
           onClear={handleClear}
           icon={mobileFilterIcon}
           renderTrigger={renderMobileFilterTrigger}
+          showSearch={showSearch}
+          searchValue={localFilters[SEARCH_KEY] ?? ''}
+          onSearchChange={(value) => handleValueChange(SEARCH_KEY, value)}
           classNames={classNames}
           styles={styles}
         />
