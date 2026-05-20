@@ -1,0 +1,8 @@
+.rd-infinite-scroll {
+  max-height: 480px;
+  overflow-y: auto;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #fafafa;
+}

@@ -6,6 +6,11 @@ import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
+import { CardList } from './CardList/CardList';
+import { InfiniteScrollSentinel } from './InfiniteScrollSentinel/InfiniteScrollSentinel';
+import { ViewToggle } from './ViewToggle/ViewToggle';
+import { FullscreenToggle } from './FullscreenToggle/FullscreenToggle';
+import { useMediaBreakpoint } from '../hooks/useMediaBreakpoint';
 import { cx } from '../utils/cx';
 import './FloTable.css';
 
@@ -36,9 +41,64 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     rowActionsLabel,
     paginationLabels,
     showPageInput,
+    mobileBreakpoint = 640,
+    mobileVariant = 'auto',
+    mobileColumnPriority = 2,
+    renderCard,
+    renderMobileFilterTrigger,
+    mobileFilterIcon,
+    renderInfiniteScrollLoading,
+    renderInfiniteScrollEnd,
+    stickyToolbar = false,
+    infiniteScrollLabels,
+    showViewToggle = false,
+    tableViewIcon,
+    cardViewIcon,
+    viewToggleLabels,
+    renderViewToggle,
+    showFullscreenToggle = false,
+    enterFullscreenIcon,
+    exitFullscreenIcon,
+    fullscreenToggleLabels,
+    renderFullscreenToggle,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
+  const isMobile = useMediaBreakpoint(mobileBreakpoint - 1);
+  const isInfiniteScroll = isReqMode && isMobile;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    function handleChange() {
+      setIsFullscreen(document.fullscreenElement === rootRef.current);
+    }
+    document.addEventListener('fullscreenchange', handleChange);
+    return () => document.removeEventListener('fullscreenchange', handleChange);
+  }, []);
+
+  function toggleFullscreen() {
+    if (typeof document === 'undefined') return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    } else {
+      rootRef.current?.requestFullscreen?.();
+    }
+  }
+
+  const responsiveColumns = isMobile
+    ? columns.filter((col) => (col.priority ?? Infinity) >= mobileColumnPriority)
+    : columns;
+
+  const autoView: 'table' | 'card' = mobileVariant === 'card' && isMobile ? 'card' : 'table';
+  const [explicitView, setExplicitView] = useState<'table' | 'card' | null>(null);
+  const effectiveView = explicitView ?? autoView;
+  const useCardView = effectiveView === 'card';
+
+  function toggleView() {
+    setExplicitView(effectiveView === 'card' ? 'table' : 'card');
+  }
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(
@@ -50,6 +110,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const [internalData, setInternalData] = useState<T[]>([]);
   const [internalTotalRows, setInternalTotalRows] = useState(0);
   const [isLoading, setIsLoading] = useState(isReqMode);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
@@ -62,7 +123,14 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   useEffect(() => {
     if (!isReqMode || !requestRef.current) return;
 
-    setIsLoading(true);
+    const isFirstPage = internalPage === 1;
+    const append = !isFirstPage && isInfiniteScroll;
+
+    if (isFirstPage) {
+      setIsLoading(true);
+    } else {
+      setIsFetchingMore(true);
+    }
     setFetchError(null);
 
     let cancelled = false;
@@ -70,23 +138,33 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     requestRef
       .current({ page: internalPage, pageSize, sortState: internalSortState, quickFilters: internalFilters })
       .then((result) => {
-        if (!cancelled) {
+        if (cancelled) return;
+        if (append) {
+          setInternalData((prev) => [...prev, ...result.data]);
+        } else {
           setInternalData(result.data);
-          setInternalTotalRows(result.totalRows);
-          setIsLoading(false);
         }
+        setInternalTotalRows(result.totalRows);
+        setIsLoading(false);
+        setIsFetchingMore(false);
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
-          setFetchError(err instanceof Error ? err.message : String(err));
-          setIsLoading(false);
-        }
+        if (cancelled) return;
+        setFetchError(err instanceof Error ? err.message : String(err));
+        setIsLoading(false);
+        setIsFetchingMore(false);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [isReqMode, internalPage, internalSortState, internalFilters, pageSize, retryCount]);
+  }, [isReqMode, isInfiniteScroll, internalPage, internalSortState, internalFilters, pageSize, retryCount]);
+
+  useEffect(() => {
+    if (!isReqMode) return;
+    setInternalPage(1);
+    setInternalData([]);
+  }, [isReqMode, isInfiniteScroll]);
 
   let page: number;
   let sortState: SortState<T> | null;
@@ -204,11 +282,25 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     }
   }
 
+  function loadMore() {
+    if (!isInfiniteScroll) return;
+    if (isLoading || isFetchingMore) return;
+    if (internalData.length >= internalTotalRows) return;
+    setInternalPage((p) => p + 1);
+  }
+
   const hasBulkActions = (bulkActions?.length ?? 0) > 0;
   const hasCustomBar = typeof renderBulkActionBar === 'function';
   const hasInlineBar = typeof renderInlineBulkActions === 'function';
   const hasSelection = selectedKeys.size > 0;
   const hasFilterBar = showSearch || effectiveFilterDefs.length > 0;
+  const viewToggleLabel =
+    effectiveView === 'card'
+      ? (viewToggleLabels?.showTable ?? 'Show as table')
+      : (viewToggleLabels?.showCard ?? 'Show as cards');
+  const fullscreenToggleLabel = isFullscreen
+    ? (fullscreenToggleLabels?.exit ?? 'Exit fullscreen')
+    : (fullscreenToggleLabels?.enter ?? 'Enter fullscreen');
 
   const bulkBarContext: BulkActionBarContext<T> = {
     selectedRows,
@@ -218,15 +310,31 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   };
 
   return (
-    <div className={classNames?.root} style={styles?.root} dir={direction}>
-      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
-        <div className="flotable-toolbar">
+    <div
+      ref={rootRef}
+      className={cx('flotable-root', classNames?.root)}
+      style={styles?.root}
+      dir={direction}
+      data-flotable-mobile={isMobile ? 'true' : undefined}
+    >
+      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || showViewToggle || showFullscreenToggle) && (
+        <div
+          className={cx(
+            'flotable-toolbar',
+            stickyToolbar && 'flotable-toolbar--sticky',
+            classNames?.toolbar,
+          )}
+          style={styles?.toolbar}
+        >
           <FilterBar
             filterDefs={effectiveFilterDefs}
             activeFilters={quickFilters}
             onFilterChange={handleFilterChange}
             showSearch={showSearch}
             filterMode={filterMode}
+            isMobile={isMobile}
+            mobileFilterIcon={mobileFilterIcon}
+            renderMobileFilterTrigger={renderMobileFilterTrigger}
             classNames={classNames}
             styles={styles}
           />
@@ -243,52 +351,122 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             />
           )}
           {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+          {showViewToggle && (
+            renderViewToggle ? (
+              renderViewToggle({ view: effectiveView, onToggle: toggleView, label: viewToggleLabel })
+            ) : (
+              <ViewToggle
+                view={effectiveView}
+                onToggle={toggleView}
+                tableIcon={tableViewIcon}
+                cardIcon={cardViewIcon}
+                showTableLabel={viewToggleLabels?.showTable}
+                showCardLabel={viewToggleLabels?.showCard}
+                classNames={classNames}
+                styles={styles}
+              />
+            )
+          )}
+          {showFullscreenToggle && (
+            renderFullscreenToggle ? (
+              renderFullscreenToggle({
+                isFullscreen,
+                onToggle: toggleFullscreen,
+                label: fullscreenToggleLabel,
+              })
+            ) : (
+              <FullscreenToggle
+                isFullscreen={isFullscreen}
+                onToggle={toggleFullscreen}
+                enterIcon={enterFullscreenIcon}
+                exitIcon={exitFullscreenIcon}
+                enterLabel={fullscreenToggleLabels?.enter}
+                exitLabel={fullscreenToggleLabels?.exit}
+                classNames={classNames}
+                styles={styles}
+              />
+            )
+          )}
         </div>
       )}
       {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
-      <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
-        <table className={cx('flotable', classNames?.table)} style={styles?.table}>
-          <TableHeader
-            columns={columns}
-            sortState={sortState}
-            onSort={handleSort}
-            rowActions={rowActions}
-            rowActionsLabel={rowActionsLabel}
-            selectable={selectable}
-            selectionState={selectionState}
-            onToggleAll={handleToggleAll}
-            classNames={classNames}
-            styles={styles}
-          />
-          <TableBody
-            columns={columns}
-            rows={data}
-            rowActions={rowActions}
-            rowActionsMoreIcon={rowActionsMoreIcon}
-            selectable={selectable}
-            selectedKeys={selectedKeys}
-            rowKey={rowKey}
-            onToggleRow={handleToggleRow}
-            classNames={classNames}
-            styles={styles}
-            isLoading={isLoading}
-            loadingRowCount={pageSize}
-            error={fetchError}
-            onRetry={() => setRetryCount((c) => c + 1)}
-          />
-        </table>
-      </div>
-      <TablePagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPrev={() => handlePageChange(page - 1)}
-        onNext={() => handlePageChange(page + 1)}
-        onGoToPage={handlePageChange}
-        showPageInput={showPageInput}
-        labels={paginationLabels}
-        classNames={classNames}
-        styles={styles}
-      />
+      {useCardView ? (
+        <CardList
+          columns={responsiveColumns}
+          rows={data}
+          rowKey={rowKey}
+          rowActions={rowActions}
+          rowActionsMoreIcon={rowActionsMoreIcon}
+          selectable={selectable}
+          selectedKeys={selectedKeys}
+          onToggleRow={handleToggleRow}
+          renderCard={renderCard}
+          classNames={classNames}
+          styles={styles}
+          isLoading={isLoading}
+          loadingRowCount={pageSize}
+          error={fetchError}
+          onRetry={() => setRetryCount((c) => c + 1)}
+        />
+      ) : (
+        <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
+          <table className={cx('flotable', classNames?.table)} style={styles?.table}>
+            <TableHeader
+              columns={responsiveColumns}
+              sortState={sortState}
+              onSort={handleSort}
+              rowActions={rowActions}
+              rowActionsLabel={rowActionsLabel}
+              selectable={selectable}
+              selectionState={selectionState}
+              onToggleAll={handleToggleAll}
+              classNames={classNames}
+              styles={styles}
+            />
+            <TableBody
+              columns={responsiveColumns}
+              rows={data}
+              rowActions={rowActions}
+              rowActionsMoreIcon={rowActionsMoreIcon}
+              selectable={selectable}
+              selectedKeys={selectedKeys}
+              rowKey={rowKey}
+              onToggleRow={handleToggleRow}
+              classNames={classNames}
+              styles={styles}
+              isLoading={isLoading}
+              loadingRowCount={pageSize}
+              error={fetchError}
+              onRetry={() => setRetryCount((c) => c + 1)}
+            />
+          </table>
+        </div>
+      )}
+      {isInfiniteScroll ? (
+        <InfiniteScrollSentinel
+          onLoadMore={loadMore}
+          isLoading={isFetchingMore}
+          isExhausted={!isLoading && internalData.length >= internalTotalRows}
+          loadingLabel={infiniteScrollLabels?.loading}
+          endLabel={infiniteScrollLabels?.end}
+          renderLoading={renderInfiniteScrollLoading}
+          renderEnd={renderInfiniteScrollEnd}
+          classNames={classNames}
+          styles={styles}
+        />
+      ) : (
+        <TablePagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPrev={() => handlePageChange(page - 1)}
+          onNext={() => handlePageChange(page + 1)}
+          onGoToPage={handlePageChange}
+          showPageInput={showPageInput}
+          labels={paginationLabels}
+          classNames={classNames}
+          styles={styles}
+        />
+      )}
     </div>
   );
 }

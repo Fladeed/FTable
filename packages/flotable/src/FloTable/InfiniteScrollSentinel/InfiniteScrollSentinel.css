@@ -1,0 +1,42 @@
+@layer flotable {
+
+@keyframes flotable-infinite-spin {
+  to { transform: rotate(360deg); }
+}
+
+.flotable-infinite-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+.flotable-infinite-scroll__sentinel {
+  width: 100%;
+  height: 1px;
+}
+
+.flotable-infinite-scroll__loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--flotable-muted-color, #6b7280);
+  font-size: var(--flotable-pagination-font-size, 0.8125rem);
+}
+
+.flotable-infinite-scroll__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--flotable-skeleton-base, #e5e7eb);
+  border-top-color: var(--flotable-muted-color, #6b7280);
+  border-radius: 50%;
+  animation: flotable-infinite-spin 0.9s linear infinite;
+}
+
+.flotable-infinite-scroll__end {
+  color: var(--flotable-muted-color, #6b7280);
+  font-size: var(--flotable-pagination-font-size, 0.8125rem);
+}
+
+}

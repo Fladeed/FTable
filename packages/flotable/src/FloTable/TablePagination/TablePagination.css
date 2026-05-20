@@ -11,6 +11,8 @@
 
 .flotable-pagination__btn {
   padding: 0.25rem 0.75rem;
+  min-height: var(--flotable-touch-min, auto);
+  min-width: var(--flotable-touch-min, auto);
   border: 1px solid var(--flotable-border-color, #e5e7eb);
   border-radius: var(--flotable-border-radius, 0.375rem);
   background-color: var(--flotable-bg, #ffffff);

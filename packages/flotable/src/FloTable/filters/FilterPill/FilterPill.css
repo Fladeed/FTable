@@ -5,7 +5,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: var(--flotable-pill-padding, 0.3125rem 0.625rem);
-  min-height: var(--flotable-pill-height, 2rem);
+  min-height: var(--flotable-pill-height, var(--flotable-touch-min, 2rem));
   font-size: var(--flotable-pill-font-size, 0.875rem);
   font-family: inherit;
   color: var(--flotable-pill-color, #374151);

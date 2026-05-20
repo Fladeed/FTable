@@ -4,6 +4,19 @@
    Sub-component styles live in their own folders.
    ───────────────────────────────────────────── */
 
+/* When the FloTable root enters fullscreen via the standard Fullscreen
+   API, the user agent strips the parent context. Paint the viewport,
+   give the content room to breathe, and let it scroll. */
+.flotable-root:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--flotable-bg, #ffffff);
+  color: var(--flotable-color, #111827);
+  padding: var(--flotable-fullscreen-padding, 1rem);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
 .flotable-wrapper,
 .flotable-wrapper * {
   box-sizing: border-box;
@@ -15,6 +28,26 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   padding-bottom: 0.75rem;
+}
+
+.flotable-toolbar--sticky {
+  position: sticky;
+  top: var(--flotable-toolbar-sticky-top, 0);
+  z-index: 2;
+  padding: var(--flotable-toolbar-sticky-padding, 0.625rem 0.875rem);
+  margin-bottom: var(--flotable-toolbar-sticky-gap, 0.75rem);
+  background-color: var(--flotable-bg, #ffffff);
+  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border-radius: var(--flotable-card-radius, 8px);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 6px 14px rgba(0, 0, 0, 0.05);
+}
+
+/* Inner filter bar adds its own bottom padding; cancel it inside the
+   sticky-card variant so spacing is symmetric. */
+.flotable-toolbar--sticky > .flotable-filter-bar {
+  padding-bottom: 0;
 }
 
 .flotable-toolbar > .flotable-filter-bar {
@@ -41,5 +74,11 @@
   font-size: var(--flotable-font-size, 0.875rem);
   background-color: var(--flotable-bg, #ffffff);
   color: var(--flotable-color, #111827);
+}
+
+/* Mobile touch targets: 44×44 minimum hit area for any interactive
+   control nested under a [data-flotable-mobile="true"] root. */
+[data-flotable-mobile="true"] {
+  --flotable-touch-min: 44px;
 }
 }

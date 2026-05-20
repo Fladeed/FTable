@@ -44,4 +44,11 @@
   border-bottom: 2px solid var(--flotable-border-color, #e5e7eb);
   background-color: var(--flotable-header-bg, #f9fafb);
 }
+
+/* On mobile, give sortable headers (which are the tap target for sort)
+   a vertical padding that meets the 44px touch floor. */
+[data-flotable-mobile="true"] .flotable__header-cell--sortable {
+  padding-top: var(--flotable-header-cell-padding-y-mobile, 0.875rem);
+  padding-bottom: var(--flotable-header-cell-padding-y-mobile, 0.875rem);
+}
 }

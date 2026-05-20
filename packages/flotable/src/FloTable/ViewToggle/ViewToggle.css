@@ -1,0 +1,35 @@
+@layer flotable {
+
+.flotable-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: max(32px, var(--flotable-touch-min, 0px));
+  height: max(32px, var(--flotable-touch-min, 0px));
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--flotable-border-radius, 6px);
+  color: var(--flotable-muted-color, #6b7280);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.flotable-view-toggle:hover {
+  background-color: var(--flotable-row-hover-bg, #f3f4f6);
+  color: var(--flotable-color, #111827);
+}
+
+.flotable-view-toggle:focus-visible {
+  outline: none;
+  background-color: var(--flotable-row-hover-bg, #f3f4f6);
+  color: var(--flotable-color, #111827);
+  box-shadow: 0 0 0 2px var(--flotable-focus-ring, rgba(0, 0, 0, 0.08));
+}
+
+.flotable-view-toggle__svg {
+  display: block;
+}
+
+}
