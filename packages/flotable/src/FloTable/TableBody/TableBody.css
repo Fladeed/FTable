@@ -1,4 +1,10 @@
 @layer flotable {
 /* TableBody — sub-component styles live in their own subdirectories */
+
+.flotable__body--refreshing {
+  opacity: var(--flotable-refreshing-opacity, 0.55);
+  pointer-events: none;
+  transition: opacity 120ms ease-out;
+}
 }
 

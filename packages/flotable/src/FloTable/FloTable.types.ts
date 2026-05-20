@@ -200,6 +200,28 @@ export type FloTableRequestFn<T extends object> = (
   params: FloTableRequestParams<T>,
 ) => Promise<FloTableRequestResult<T>>;
 
+/**
+ * Imperative handle exposed via `ref` on `<FloTable>` in request mode.
+ * Lets the caller refresh data or mutate rows without remounting the component
+ * (so page / sort / filters are preserved).
+ *
+ * In data (controlled) mode both methods are no-ops — the consumer owns the data.
+ */
+export interface FloTableHandle<T extends object> {
+  /**
+   * Re-invokes the `request` function with the current internal page / sort / filters.
+   * Resolves after the fetch settles. No skeleton flash — rows stay rendered but
+   * dimmed while the request is in flight.
+   */
+  refresh(): Promise<void>;
+  /**
+   * Mutates the matching row(s) in the current page in-place. No network call.
+   * Type-safe via `T`. Useful after an edit success when the caller already has
+   * the updated row object.
+   */
+  updateRow(predicate: (row: T) => boolean, updater: (row: T) => T): void;
+}
+
 interface FloTableBaseProps<T extends object> {
   columns: ColumnDef<T>[];
   pageSize?: number;
@@ -357,6 +379,12 @@ export interface TableBodyProps<T extends object> {
   error?: string | null;
   /** Called when the user clicks the Retry button shown in the error state. */
   onRetry?: () => void;
+  /**
+   * When true, the body is rendered with a dim modifier class to signal an
+   * in-flight refresh — rows stay visible (no skeleton flash) but slightly
+   * faded out. Ignored while `isLoading` is true.
+   */
+  isRefreshing?: boolean;
 }
 
 export interface TablePaginationProps {

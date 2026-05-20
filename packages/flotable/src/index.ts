@@ -9,6 +9,7 @@ export type {
   FloTableRequestParams,
   FloTableRequestResult,
   FloTableRequestFn,
+  FloTableHandle,
   ColumnDef,
   ColumnType,
   SortState,

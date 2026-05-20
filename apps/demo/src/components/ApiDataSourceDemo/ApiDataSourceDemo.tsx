@@ -1,7 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
 import { FloTable } from 'flotable';
-import type { ColumnDef, FilterDef, FloTableRequestFn } from 'flotable';
+import type { ColumnDef, FilterDef, FloTableHandle, FloTableRequestFn } from 'flotable';
 import { simulateFetch } from '../../utils/demoUtils';
 import './ApiDataSourceDemo.css';
 
@@ -58,7 +59,34 @@ const fetchWithError: FloTableRequestFn<Product> = async () => {
   throw new Error('Network error: connection refused');
 };
 
+// Mutable copy backing the imperative-ref demo section. Buttons mutate this
+// array; `refresh()` then re-reads it through the simulateFetch closure.
+const refDemoProducts: Product[] = ALL_PRODUCTS.map((p) => ({ ...p }));
+const fetchRefDemoProducts: FloTableRequestFn<Product> = simulateFetch(refDemoProducts, 800);
+let nextRefDemoId = ALL_PRODUCTS.length + 1;
+
 export function ApiDataSourceDemo() {
+  const refDemoTableRef = useRef<FloTableHandle<Product>>(null);
+
+  function handleEditFirstRow() {
+    refDemoTableRef.current?.updateRow(
+      (r) => r.id === 1,
+      (r) => ({ ...r, name: `${r.name.replace(/ \(edited.*\)$/, '')} (edited ${new Date().toLocaleTimeString()})` }),
+    );
+  }
+
+  function handleAddRandomProduct() {
+    const id = nextRefDemoId++;
+    refDemoProducts.unshift({
+      id,
+      name: `New Product ${id}`,
+      category: 'Electronics',
+      price: Math.round(Math.random() * 200 * 100) / 100,
+      inStock: true,
+    });
+    refDemoTableRef.current?.refresh();
+  }
+
   return (
     <main className="demo-shell demo-page-shell">
       <h1 className="demo-shell__title">FloTable — API Data Source</h1>
@@ -120,6 +148,36 @@ export function ApiDataSourceDemo() {
           request={fetchProducts}
           pageSize={5}
           initialSort={{ key: 'price', direction: 'desc' }}
+        />
+      </section>
+
+      <section className="api-demo__section">
+        <h2 className="api-demo__section-title">Imperative ref API</h2>
+        <p className="api-demo__description">
+          Pass a <code>ref</code> typed as <code>FloTableHandle&lt;T&gt;</code> to get
+          imperative control over the table without losing state. Use{' '}
+          <code>updateRow(predicate, updater)</code> after an edit success to mutate a
+          row in-place with no network call. Use <code>refresh()</code> after a create
+          or delete to re-invoke the request function while preserving the current
+          page, sort, and filters — rows stay visible (slightly dimmed) instead of
+          flashing the loading skeleton. Navigate to page 2, change a filter, then
+          click either button to see state persist.
+        </p>
+        <div className="api-demo__buttons">
+          <button type="button" className="api-demo__button" onClick={handleEditFirstRow}>
+            Edit first row (updateRow)
+          </button>
+          <button type="button" className="api-demo__button" onClick={handleAddRandomProduct}>
+            Add product + refresh()
+          </button>
+        </div>
+        <FloTable<Product>
+          ref={refDemoTableRef}
+          columns={COLUMNS}
+          request={fetchRefDemoProducts}
+          pageSize={5}
+          autoFilters={true}
+          showSearch={true}
         />
       </section>
     </main>
