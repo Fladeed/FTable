@@ -1,5 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
-import type { FloTableProps, FloTableDataProps, FloTableRequestProps, FilterDef, QuickFilterState, SortState, BulkActionBarContext } from './FloTable.types';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
+import type { Ref, ReactElement } from 'react';
+import type {
+  FloTableProps,
+  FloTableDataProps,
+  FloTableRequestProps,
+  FloTableHandle,
+  FilterDef,
+  QuickFilterState,
+  SortState,
+  BulkActionBarContext,
+} from './FloTable.types';
 import { nextSortDirection, columnTypeToFilterInputType } from './tableUtils';
 import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
@@ -11,7 +28,10 @@ import './FloTable.css';
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export default function FloTable<T extends object>(props: FloTableProps<T>) {
+function FloTableImpl<T extends object>(
+  props: FloTableProps<T>,
+  ref: Ref<FloTableHandle<T>>,
+) {
   const {
     columns,
     pageSize = DEFAULT_PAGE_SIZE,
@@ -50,6 +70,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   const [internalData, setInternalData] = useState<T[]>([]);
   const [internalTotalRows, setInternalTotalRows] = useState(0);
   const [isLoading, setIsLoading] = useState(isReqMode);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
@@ -59,34 +80,70 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
     requestRef.current = (props as FloTableRequestProps<T>).request;
   }
 
+  const pageRef = useRef(internalPage);
+  const sortStateRef = useRef(internalSortState);
+  const filtersRef = useRef(internalFilters);
+  const pageSizeRef = useRef(pageSize);
+  pageRef.current = internalPage;
+  sortStateRef.current = internalSortState;
+  filtersRef.current = internalFilters;
+  pageSizeRef.current = pageSize;
+
+  const requestIdRef = useRef(0);
+
+  const fireRequest = useCallback(
+    async ({ silent }: { silent: boolean }): Promise<void> => {
+      if (!isReqMode || !requestRef.current) return;
+      const id = ++requestIdRef.current;
+      if (silent) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+        setFetchError(null);
+      }
+      try {
+        const result = await requestRef.current({
+          page: pageRef.current,
+          pageSize: pageSizeRef.current,
+          sortState: sortStateRef.current,
+          quickFilters: filtersRef.current,
+        });
+        if (id !== requestIdRef.current) return;
+        setInternalData(result.data);
+        setInternalTotalRows(result.totalRows);
+        setFetchError(null);
+      } catch (err: unknown) {
+        if (id !== requestIdRef.current) return;
+        setFetchError(err instanceof Error ? err.message : String(err));
+      } finally {
+        if (id === requestIdRef.current) {
+          if (silent) setIsRefreshing(false);
+          else setIsLoading(false);
+        }
+      }
+    },
+    [isReqMode],
+  );
+
   useEffect(() => {
     if (!isReqMode || !requestRef.current) return;
+    fireRequest({ silent: false });
+  }, [isReqMode, internalPage, internalSortState, internalFilters, pageSize, retryCount, fireRequest]);
 
-    setIsLoading(true);
-    setFetchError(null);
-
-    let cancelled = false;
-
-    requestRef
-      .current({ page: internalPage, pageSize, sortState: internalSortState, quickFilters: internalFilters })
-      .then((result) => {
-        if (!cancelled) {
-          setInternalData(result.data);
-          setInternalTotalRows(result.totalRows);
-          setIsLoading(false);
-        }
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) {
-          setFetchError(err instanceof Error ? err.message : String(err));
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isReqMode, internalPage, internalSortState, internalFilters, pageSize, retryCount]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      refresh: async () => {
+        if (!isReqMode) return;
+        await fireRequest({ silent: true });
+      },
+      updateRow: (predicate, updater) => {
+        if (!isReqMode) return;
+        setInternalData((prev) => prev.map((row) => (predicate(row) ? updater(row) : row)));
+      },
+    }),
+    [isReqMode, fireRequest],
+  );
 
   let page: number;
   let sortState: SortState<T> | null;
@@ -272,6 +329,7 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
             classNames={classNames}
             styles={styles}
             isLoading={isLoading}
+            isRefreshing={isRefreshing}
             loadingRowCount={pageSize}
             error={fetchError}
             onRetry={() => setRetryCount((c) => c + 1)}
@@ -293,3 +351,10 @@ export default function FloTable<T extends object>(props: FloTableProps<T>) {
   );
 }
 
+const FloTable = forwardRef(FloTableImpl) as <T extends object>(
+  props: FloTableProps<T> & { ref?: Ref<FloTableHandle<T>> },
+) => ReactElement | null;
+
+(FloTable as { displayName?: string }).displayName = 'FloTable';
+
+export default FloTable;

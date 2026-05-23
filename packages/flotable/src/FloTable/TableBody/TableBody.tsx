@@ -21,6 +21,7 @@ export function TableBody<T extends object>({
   loadingRowCount = 5,
   error = null,
   onRetry,
+  isRefreshing = false,
 }: TableBodyProps<T>) {
   const hasActions = (rowActions?.length ?? 0) > 0;
   const colCount = columns.length + (hasActions ? 1 : 0) + (selectable ? 1 : 0);
@@ -60,7 +61,10 @@ export function TableBody<T extends object>({
   }
 
   return (
-    <tbody className={cx('flotable__body', classNames?.body)} style={styles?.body}>
+    <tbody
+      className={cx('flotable__body', isRefreshing && 'flotable__body--refreshing', classNames?.body)}
+      style={styles?.body}
+    >
       {rows.map((row, index) => {
         const key = String(row[rowKey as keyof T]);
         return (
