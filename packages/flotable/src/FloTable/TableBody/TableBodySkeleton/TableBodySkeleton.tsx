@@ -2,21 +2,21 @@ import type { ColumnDef, FloTableClassNames, FloTableStyles } from '../../FloTab
 import { cx } from '../../../utils/cx';
 import './TableBodySkeleton.css';
 
-interface TableBodySkeletonProps<T extends object> {
-  columns: ColumnDef<T>[];
+interface TableBodySkeletonProps<T extends object, C extends object = T> {
+  columns: ColumnDef<T, C>[];
   rowCount: number;
   selectable?: boolean;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
 
-export function TableBodySkeleton<T extends object>({
+export function TableBodySkeleton<T extends object, C extends object = T>({
   columns,
   rowCount,
   selectable,
   classNames,
   styles,
-}: TableBodySkeletonProps<T>) {
+}: TableBodySkeletonProps<T, C>) {
   return (
     <tbody className={cx('flotable__body', classNames?.body)} style={styles?.body}>
       {Array.from({ length: rowCount }).map((_, rowIndex) => (

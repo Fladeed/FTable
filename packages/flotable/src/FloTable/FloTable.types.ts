@@ -62,7 +62,7 @@ export interface SortState<T extends object> {
   direction: 'asc' | 'desc';
 }
 
-export interface ColumnDef<T extends object> {
+export interface ColumnDef<T extends object, C extends object = T> {
   key: keyof T & string;
   header: string;
   type?: ColumnType;
@@ -80,6 +80,13 @@ export interface ColumnDef<T extends object> {
   render?: (value: T[keyof T], row: T) => ReactNode;
   /** When autoFilters is enabled on FloTable, columns with filterable: true get a pill generated automatically. */
   filterable?: boolean;
+  /**
+   * Expandable rows only: renders an aggregate of a parent row's children in this cell
+   * (e.g. `"3 variants"`, a price range, a total). Receives the children array and the
+   * parent row. Takes precedence over `render`/`type`, but only for parent rows that have
+   * a non-empty children array — rows without children fall back to the normal cell.
+   */
+  aggregate?: (children: C[], parentRow: T) => ReactNode;
 }
 
 export type FilterInputType = 'text' | 'number' | 'date' | 'boolean' | 'select';
@@ -222,8 +229,8 @@ export interface FloTableHandle<T extends object> {
   updateRow(predicate: (row: T) => boolean, updater: (row: T) => T): void;
 }
 
-interface FloTableBaseProps<T extends object> {
-  columns: ColumnDef<T>[];
+interface FloTableBaseProps<T extends object, C extends object = T> {
+  columns: ColumnDef<T, C>[];
   pageSize?: number;
   /** Explicit consumer-defined filter pills. Keys can be any string (column keys or server params). */
   filterDefs?: FilterDef[];
@@ -284,13 +291,39 @@ interface FloTableBaseProps<T extends object> {
   paginationLabels?: PaginationLabels;
   /** When true, renders a page number input that lets users jump directly to any page. Defaults to `false`. */
   showPageInput?: boolean;
+  /**
+   * Expandable rows: returns the child rows for a given parent row.
+   * Return `undefined` or an empty array for rows that have no children (no chevron is rendered).
+   * Providing this prop enables the expandable-rows feature (a leading chevron column appears).
+   */
+  getChildren?: (row: T) => C[] | undefined;
+  /**
+   * Optional column set used to render child rows. Defaults to the parent `columns`
+   * (only valid when children share the parent row shape). Child columns reuse the same
+   * `ColumnDef` shape (including custom `render`).
+   */
+  childColumns?: ColumnDef<C>[];
+  /**
+   * Initial expanded state for parent rows. A boolean applies to every parent;
+   * a predicate decides per row. Defaults to `false` (all collapsed).
+   * Applied as each parent row is first seen (so it also covers pagination / async pages).
+   */
+  defaultExpanded?: boolean | ((row: T) => boolean);
+  /** Called with the array of currently-expanded parent row keys whenever the user toggles a row. */
+  onExpandedChange?: (expandedKeys: string[]) => void;
+  /**
+   * What toggles expansion: just the chevron (`'chevron'`, default) or clicking anywhere on the
+   * parent row (`'row'`). Row actions and the selection checkbox never toggle expansion.
+   */
+  expandOn?: 'chevron' | 'row';
 }
 
 /**
  * Controlled (data) mode — the consumer supplies pre-fetched rows, pagination, sort, and filters.
  * Cannot be combined with `request`.
  */
-export interface FloTableDataProps<T extends object> extends FloTableBaseProps<T> {
+export interface FloTableDataProps<T extends object, C extends object = T>
+  extends FloTableBaseProps<T, C> {
   /** Current page rows only — already paginated by the server (or the consumer). */
   data: T[];
   /** Total number of rows across all pages (used to compute page count). */
@@ -315,7 +348,8 @@ export interface FloTableDataProps<T extends object> extends FloTableBaseProps<T
  * the provided async function whenever those change.
  * Cannot be combined with `data`.
  */
-export interface FloTableRequestProps<T extends object> extends FloTableBaseProps<T> {
+export interface FloTableRequestProps<T extends object, C extends object = T>
+  extends FloTableBaseProps<T, C> {
   /** Async function called on mount and on every sort / filter / pagination change. */
   request: FloTableRequestFn<T>;
   /** Seeds the internal quick-filter state on mount. Resets to this value on remount (e.g. via a `key` change). */
@@ -333,10 +367,12 @@ export interface FloTableRequestProps<T extends object> extends FloTableBaseProp
 }
 
 /** Props for `<FloTable />`. Use either `data` (controlled) or `request` (self-managed) — not both. */
-export type FloTableProps<T extends object> = FloTableDataProps<T> | FloTableRequestProps<T>;
+export type FloTableProps<T extends object, C extends object = T> =
+  | FloTableDataProps<T, C>
+  | FloTableRequestProps<T, C>;
 
-export interface TableHeaderProps<T extends object> {
-  columns: ColumnDef<T>[];
+export interface TableHeaderProps<T extends object, C extends object = T> {
+  columns: ColumnDef<T, C>[];
   sortState: SortState<T> | null;
   onSort: (key: keyof T & string) => void;
   rowActions?: RowAction<T>[];
@@ -346,11 +382,13 @@ export interface TableHeaderProps<T extends object> {
   onToggleAll?: () => void;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
+  /** When true, renders a leading spacer cell aligned with the row chevron column. */
+  expandable?: boolean;
 }
 
-export interface TableRowProps<T extends object> {
+export interface TableRowProps<T extends object, C extends object = T> {
   row: T;
-  columns: ColumnDef<T>[];
+  columns: ColumnDef<T, C>[];
   rowActions?: RowAction<T>[];
   rowActionsMoreIcon?: ReactNode;
   selectable?: boolean;
@@ -358,10 +396,24 @@ export interface TableRowProps<T extends object> {
   onToggle?: () => void;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
+  /** Expandable rows: returns this row's children (undefined/empty ⇒ no chevron). Presence enables the chevron column. */
+  getChildren?: (row: T) => C[] | undefined;
+  /** Expandable rows: column set for child rows. Defaults to the parent `columns`. */
+  childColumns?: ColumnDef<C>[];
+  /** Expandable rows: whether this parent row is currently expanded (user-driven). */
+  isExpanded?: boolean;
+  /** Expandable rows: toggles this row's expansion. */
+  onToggleExpand?: () => void;
+  /** Expandable rows: what toggles expansion. Defaults to `'chevron'`. */
+  expandOn?: 'chevron' | 'row';
+  /** Expandable rows: active global-search query, used to auto-expand and highlight matching children. */
+  searchQuery?: string;
+  /** Expandable rows: total column count, used as the colSpan of the child-container row. */
+  colSpan?: number;
 }
 
-export interface TableBodyProps<T extends object> {
-  columns: ColumnDef<T>[];
+export interface TableBodyProps<T extends object, C extends object = T> {
+  columns: ColumnDef<T, C>[];
   rows: T[];
   rowActions?: RowAction<T>[];
   rowActionsMoreIcon?: ReactNode;
@@ -385,6 +437,18 @@ export interface TableBodyProps<T extends object> {
    * faded out. Ignored while `isLoading` is true.
    */
   isRefreshing?: boolean;
+  /** Expandable rows: returns a row's children (undefined/empty ⇒ no chevron). Presence enables the chevron column. */
+  getChildren?: (row: T) => C[] | undefined;
+  /** Expandable rows: column set for child rows. Defaults to the parent `columns`. */
+  childColumns?: ColumnDef<C>[];
+  /** Expandable rows: set of currently-expanded parent row keys. */
+  expandedKeys?: Set<string>;
+  /** Expandable rows: toggles expansion for the given parent row key. */
+  onToggleExpand?: (key: string) => void;
+  /** Expandable rows: what toggles expansion. Defaults to `'chevron'`. */
+  expandOn?: 'chevron' | 'row';
+  /** Expandable rows: active global-search query, used to auto-expand and highlight matching children. */
+  searchQuery?: string;
 }
 
 export interface TablePaginationProps {

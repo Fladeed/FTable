@@ -8,8 +8,16 @@ import { BadgeRenderer, type BadgeRendererValue } from './BadgeRenderer/BadgeRen
 import { CurrencyRenderer, type CurrencyRendererValue } from './CurrencyRenderer/CurrencyRenderer';
 import { LinkRenderer, type LinkRendererValue } from './LinkRenderer/LinkRenderer';
 
-export function renderCell<T extends object>(col: ColumnDef<T>, row: T): ReactNode {
+export function renderCell<T extends object, C extends object = T>(
+  col: ColumnDef<T, C>,
+  row: T,
+  children?: C[],
+): ReactNode {
   const value = (row as Record<string, unknown>)[col.key];
+
+  if (col.aggregate && children && children.length > 0) {
+    return col.aggregate(children, row);
+  }
 
   if (col.render) {
     return col.render(value as T[keyof T], row);

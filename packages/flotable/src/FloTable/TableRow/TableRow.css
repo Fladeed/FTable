@@ -24,4 +24,111 @@
 .flotable__row--selected:hover {
   background-color: var(--ftable-row-selected-bg, #eff6ff);
 }
+
+.flotable__row--expandable-click {
+  cursor: pointer;
+}
+
+/* Expandable rows: leading chevron column */
+.flotable__expander-cell {
+  width: var(--flotable-expander-width, 2.25rem);
+  padding: var(--flotable-cell-padding, 0.625rem 0.875rem);
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.flotable__expander-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--flotable-expander-color, #6b7280);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.flotable__expander-btn:hover {
+  background-color: var(--flotable-expander-hover-bg, #f3f4f6);
+  color: var(--flotable-expander-hover-color, #111827);
+}
+
+.flotable__expander-chevron {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+}
+
+.flotable__expander-btn--expanded .flotable__expander-chevron {
+  transform: rotate(45deg);
+}
+
+[dir='rtl'] .flotable__expander-chevron {
+  transform: rotate(135deg);
+}
+
+[dir='rtl'] .flotable__expander-btn--expanded .flotable__expander-chevron {
+  transform: rotate(45deg);
+}
+
+/* Expandable rows: child rows render in the same table grid so their cells
+   align under the parent column headers. Each cell animates its own height
+   via a CSS grid collapser, so the row collapses smoothly to zero. */
+.flotable__child-row > td {
+  padding: 0;
+  border: none;
+  background-color: var(--flotable-child-bg, #f9fafb);
+  vertical-align: top;
+}
+
+.flotable__child-row:hover > td {
+  background-color: var(--flotable-child-bg, #f9fafb);
+}
+
+.flotable__child-row--match > td {
+  background-color: var(--flotable-child-match-bg, #fef9c3);
+}
+
+.flotable__child-spacer {
+  width: auto;
+}
+
+.flotable__child-collapser {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--flotable-expand-duration, 0.25s) ease;
+}
+
+.flotable__child-row--expanded .flotable__child-collapser {
+  grid-template-rows: 1fr;
+}
+
+.flotable__child-collapser-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.flotable__child-collapser-content {
+  padding: var(--flotable-child-cell-padding, 0.5rem 0.875rem);
+  font-size: var(--flotable-child-font-size, 0.8125rem);
+  color: var(--flotable-child-color, #374151);
+}
+
+.flotable__child-row--expanded > td {
+  border-bottom: 1px solid var(--flotable-child-border, #eef0f2);
+}
+
+.flotable__child-cell--first .flotable__child-collapser-content {
+  padding-left: var(--flotable-child-indent, 1.25rem);
+  border-left: 2px solid var(--flotable-child-accent, #d1d5db);
+}
 }
