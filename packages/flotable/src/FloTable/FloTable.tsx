@@ -57,6 +57,10 @@ function FloTableImpl<T extends object, C extends object = T>(
     paginationLabels,
     showPageInput,
     getChildren,
+    childRequest,
+    rowHasChildren,
+    childPageSize,
+    childRowKey,
     childColumns,
     defaultExpanded = false,
     onExpandedChange,
@@ -64,7 +68,7 @@ function FloTableImpl<T extends object, C extends object = T>(
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
-  const isExpandable = typeof getChildren === 'function';
+  const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(
@@ -376,11 +380,17 @@ function FloTableImpl<T extends object, C extends object = T>(
             error={fetchError}
             onRetry={() => setRetryCount((c) => c + 1)}
             getChildren={getChildren}
+            childRequest={childRequest}
+            rowHasChildren={rowHasChildren}
+            childPageSize={childPageSize}
+            childRowKey={childRowKey}
             childColumns={childColumns}
             expandedKeys={expandedKeys}
             onToggleExpand={handleToggleExpand}
             expandOn={expandOn}
             searchQuery={searchQuery}
+            paginationLabels={paginationLabels}
+            showPageInput={showPageInput}
           />
         </table>
       </div>

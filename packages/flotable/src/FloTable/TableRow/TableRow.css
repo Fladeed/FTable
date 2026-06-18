@@ -128,7 +128,96 @@
 }
 
 .flotable__child-cell--first .flotable__child-collapser-content {
+  position: relative;
   padding-left: var(--flotable-child-indent, 1.25rem);
-  border-left: 2px solid var(--flotable-child-accent, #d1d5db);
+}
+
+/* Short, vertically-centered accent bar on each child row's first cell. */
+.flotable__child-cell--first .flotable__child-collapser-content::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: var(--flotable-child-accent-height, 60%);
+  background-color: var(--flotable-child-accent, #d1d5db);
+}
+
+/* Full-width child rows: per-parent pager, loading, error, empty states. */
+.flotable__child-fullspan {
+  padding: 0;
+  border: none;
+  background-color: var(--flotable-child-bg, #f9fafb);
+}
+
+.flotable__child-pager-row .flotable__child-collapser-content {
+  padding: 0;
+}
+
+/* Scale the per-parent pager down to match the smaller child rows. */
+.flotable__child-pager-row .flotable-pagination {
+  border-top: 1px solid var(--flotable-child-border, #eef0f2);
+  gap: var(--flotable-child-pager-gap, 0.5rem);
+  padding: var(--flotable-child-pager-padding, 0.375rem 0.625rem);
+  font-size: var(--flotable-child-pager-font-size, 0.75rem);
+}
+
+.flotable__child-pager-row .flotable-pagination__btn {
+  padding: var(--flotable-child-pager-btn-padding, 0.125rem 0.5rem);
+  font-size: var(--flotable-child-pager-font-size, 0.75rem);
+  border-radius: 0.25rem;
+}
+
+.flotable__child-pager-row .flotable-go-to-page,
+.flotable__child-pager-row .flotable-go-to-page__input,
+.flotable__child-pager-row .flotable-go-to-page__btn {
+  font-size: var(--flotable-child-pager-font-size, 0.75rem);
+}
+
+.flotable__child-pager-row .flotable-go-to-page__btn {
+  padding: var(--flotable-child-pager-btn-padding, 0.125rem 0.5rem);
+}
+
+.flotable__child-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--flotable-child-font-size, 0.8125rem);
+  color: var(--flotable-child-color, #374151);
+}
+
+.flotable__child-state--error {
+  color: var(--flotable-error-color, #b91c1c);
+}
+
+.flotable__child-state-row .flotable__child-collapser-content {
+  position: relative;
+  padding-left: var(--flotable-child-indent, 1.25rem);
+}
+
+.flotable__child-state-row .flotable__child-collapser-content::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: var(--flotable-child-accent-height, 60%);
+  background-color: var(--flotable-child-accent, #d1d5db);
+}
+
+.flotable__child-retry {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border-radius: 0.25rem;
+  background: var(--flotable-bg, #ffffff);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.flotable__child-retry:hover {
+  background: var(--flotable-row-hover-bg, #f3f4f6);
 }
 }

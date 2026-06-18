@@ -298,6 +298,30 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
    */
   getChildren?: (row: T) => C[] | undefined;
   /**
+   * Request mode for children: async function called the first time a parent is expanded, and on
+   * every child page change, to fetch that parent's children. Mirrors FloTable's top-level
+   * `request`. Use instead of `getChildren` when children are not already in memory. Loading
+   * skeleton and error / retry states are handled internally.
+   * Use either `getChildren` (data mode) or `childRequest` (request mode) — not both.
+   */
+  childRequest?: (
+    row: T,
+    params: { page: number; pageSize: number },
+  ) => Promise<{ data: C[]; totalRows: number }>;
+  /**
+   * Request mode only: optional predicate deciding whether a parent row has children (and thus
+   * shows a chevron) before they are fetched. When omitted, every parent row shows a chevron.
+   */
+  rowHasChildren?: (row: T) => boolean;
+  /**
+   * Rows per page for a parent's children. In data mode the in-memory children are sliced
+   * client-side; in request mode it is passed to `childRequest`. A per-parent pager is shown
+   * when a parent has more children than this. Defaults to `5`.
+   */
+  childPageSize?: number;
+  /** The child property used as the unique React key for child rows. Defaults to `'id'`. */
+  childRowKey?: string;
+  /**
    * Optional column set used to render child rows. Defaults to the parent `columns`
    * (only valid when children share the parent row shape). Child columns reuse the same
    * `ColumnDef` shape (including custom `render`).
@@ -398,6 +422,17 @@ export interface TableRowProps<T extends object, C extends object = T> {
   styles?: FloTableStyles;
   /** Expandable rows: returns this row's children (undefined/empty ⇒ no chevron). Presence enables the chevron column. */
   getChildren?: (row: T) => C[] | undefined;
+  /** Expandable rows (request mode): async fetcher for this row's children. */
+  childRequest?: (
+    row: T,
+    params: { page: number; pageSize: number },
+  ) => Promise<{ data: C[]; totalRows: number }>;
+  /** Expandable rows (request mode): predicate deciding chevron visibility before children load. */
+  rowHasChildren?: (row: T) => boolean;
+  /** Expandable rows: rows per page for this row's children. Defaults to 5. */
+  childPageSize?: number;
+  /** Expandable rows: child row React key field. Defaults to 'id'. */
+  childRowKey?: string;
   /** Expandable rows: column set for child rows. Defaults to the parent `columns`. */
   childColumns?: ColumnDef<C>[];
   /** Expandable rows: whether this parent row is currently expanded (user-driven). */
@@ -408,8 +443,12 @@ export interface TableRowProps<T extends object, C extends object = T> {
   expandOn?: 'chevron' | 'row';
   /** Expandable rows: active global-search query, used to auto-expand and highlight matching children. */
   searchQuery?: string;
-  /** Expandable rows: total column count, used as the colSpan of the child-container row. */
+  /** Expandable rows: total column count, used as the colSpan of the child rows. */
   colSpan?: number;
+  /** Expandable rows: labels for the per-parent child pager. */
+  paginationLabels?: PaginationLabels;
+  /** Expandable rows: whether the child pager shows a page-jump input. */
+  showPageInput?: boolean;
 }
 
 export interface TableBodyProps<T extends object, C extends object = T> {
@@ -439,6 +478,17 @@ export interface TableBodyProps<T extends object, C extends object = T> {
   isRefreshing?: boolean;
   /** Expandable rows: returns a row's children (undefined/empty ⇒ no chevron). Presence enables the chevron column. */
   getChildren?: (row: T) => C[] | undefined;
+  /** Expandable rows (request mode): async fetcher for a parent's children. */
+  childRequest?: (
+    row: T,
+    params: { page: number; pageSize: number },
+  ) => Promise<{ data: C[]; totalRows: number }>;
+  /** Expandable rows (request mode): predicate deciding chevron visibility before children load. */
+  rowHasChildren?: (row: T) => boolean;
+  /** Expandable rows: rows per page for a parent's children. Defaults to 5. */
+  childPageSize?: number;
+  /** Expandable rows: child row React key field. Defaults to 'id'. */
+  childRowKey?: string;
   /** Expandable rows: column set for child rows. Defaults to the parent `columns`. */
   childColumns?: ColumnDef<C>[];
   /** Expandable rows: set of currently-expanded parent row keys. */
@@ -449,6 +499,41 @@ export interface TableBodyProps<T extends object, C extends object = T> {
   expandOn?: 'chevron' | 'row';
   /** Expandable rows: active global-search query, used to auto-expand and highlight matching children. */
   searchQuery?: string;
+  /** Expandable rows: labels for the per-parent child pager. */
+  paginationLabels?: PaginationLabels;
+  /** Expandable rows: whether the child pager shows a page-jump input. */
+  showPageInput?: boolean;
+}
+
+/** Props for the per-parent child sub-table (`ChildRows`). */
+export interface ChildRowsProps<T extends object, C extends object = T> {
+  parentRow: T;
+  /** Whether the parent is currently expanded (drives the collapse animation & lazy fetch). */
+  expanded: boolean;
+  /** Parent columns (used as the child column fallback). */
+  columns: ColumnDef<T, C>[];
+  childColumns?: ColumnDef<C>[];
+  /** Data mode: returns the in-memory children for this parent. */
+  getChildren?: (row: T) => C[] | undefined;
+  /** Request mode: async fetcher for this parent's children. */
+  childRequest?: (
+    row: T,
+    params: { page: number; pageSize: number },
+  ) => Promise<{ data: C[]; totalRows: number }>;
+  childPageSize: number;
+  childRowKey: string;
+  /** Total column count (incl. reserved columns) — colSpan for full-width child rows. */
+  colSpan: number;
+  /** Whether a leading checkbox column exists on the parent (for alignment spacing). */
+  selectable?: boolean;
+  /** Whether a trailing actions column exists on the parent (for alignment spacing). */
+  hasActions?: boolean;
+  /** Active global-search query (data mode highlighting). */
+  searchQuery?: string;
+  paginationLabels?: PaginationLabels;
+  showPageInput?: boolean;
+  classNames?: FloTableClassNames;
+  styles?: FloTableStyles;
 }
 
 export interface TablePaginationProps {

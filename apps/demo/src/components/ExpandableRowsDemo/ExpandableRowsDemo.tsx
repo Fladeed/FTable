@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FloTable, type SortState, type QuickFilterState } from 'flotable';
 import { applyFilters, applySorting } from '@/utils/demoUtils';
 import {
@@ -38,7 +38,20 @@ export function ExpandableRowsDemo() {
   const [sortState, setSortState] = useState<SortState<Product> | null>(null);
   const [quickFilters, setQuickFilters] = useState<QuickFilterState>({});
   const [expandOnRow, setExpandOnRow] = useState(false);
+  const [lazyChildren, setLazyChildren] = useState(false);
   const [lastExpanded, setLastExpanded] = useState<string[]>([]);
+
+  const fetchVariants = useCallback(
+    (product: Product, { page: childPage, pageSize }: { page: number; pageSize: number }) =>
+      new Promise<{ data: Variant[]; totalRows: number }>((resolve) => {
+        setTimeout(() => {
+          const all = product.variants;
+          const start = (childPage - 1) * pageSize;
+          resolve({ data: all.slice(start, start + pageSize), totalRows: all.length });
+        }, 600);
+      }),
+    [],
+  );
 
   const { pageData, totalRows } = useMemo(() => {
     const filtered = filterProducts(PRODUCTS, quickFilters);
@@ -63,14 +76,24 @@ export function ExpandableRowsDemo() {
         the child. Pagination counts parents, not children.
       </p>
 
-      <label style={{ display: 'inline-flex', gap: '0.5rem', alignItems: 'center', margin: '0.5rem 0 1rem' }}>
-        <input
-          type="checkbox"
-          checked={expandOnRow}
-          onChange={(e) => setExpandOnRow(e.target.checked)}
-        />
-        Toggle expansion by clicking anywhere on the row (<code>expandOn=&quot;row&quot;</code>)
-      </label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', margin: '0.5rem 0 1rem' }}>
+        <label style={{ display: 'inline-flex', gap: '0.5rem', alignItems: 'center' }}>
+          <input
+            type="checkbox"
+            checked={expandOnRow}
+            onChange={(e) => setExpandOnRow(e.target.checked)}
+          />
+          Toggle expansion by clicking anywhere on the row (<code>expandOn=&quot;row&quot;</code>)
+        </label>
+        <label style={{ display: 'inline-flex', gap: '0.5rem', alignItems: 'center' }}>
+          <input
+            type="checkbox"
+            checked={lazyChildren}
+            onChange={(e) => setLazyChildren(e.target.checked)}
+          />
+          Fetch children lazily with pagination (<code>childRequest</code> request mode, 2 / page)
+        </label>
+      </div>
 
       {lastExpanded.length > 0 && (
         <p role="status">
@@ -79,6 +102,7 @@ export function ExpandableRowsDemo() {
       )}
 
       <FloTable<Product, Variant>
+        key={lazyChildren ? 'lazy' : 'eager'}
         columns={PARENT_COLUMNS}
         data={pageData}
         totalRows={totalRows}
@@ -90,10 +114,16 @@ export function ExpandableRowsDemo() {
         quickFilters={quickFilters}
         onFilterChange={setQuickFilters}
         showSearch
-        getChildren={(product) => product.variants}
         childColumns={CHILD_COLUMNS}
         expandOn={expandOnRow ? 'row' : 'chevron'}
         onExpandedChange={setLastExpanded}
+        {...(lazyChildren
+          ? {
+              childRequest: fetchVariants,
+              rowHasChildren: (product: Product) => product.variants.length > 0,
+              childPageSize: 2,
+            }
+          : { getChildren: (product: Product) => product.variants, childPageSize: 3 })}
       />
     </main>
   );

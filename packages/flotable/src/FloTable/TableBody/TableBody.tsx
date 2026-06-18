@@ -23,14 +23,20 @@ export function TableBody<T extends object, C extends object = T>({
   onRetry,
   isRefreshing = false,
   getChildren,
+  childRequest,
+  rowHasChildren,
+  childPageSize,
+  childRowKey,
   childColumns,
   expandedKeys,
   onToggleExpand,
   expandOn,
   searchQuery,
+  paginationLabels,
+  showPageInput,
 }: TableBodyProps<T, C>) {
   const hasActions = (rowActions?.length ?? 0) > 0;
-  const isExpandable = typeof getChildren === 'function';
+  const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
   const colCount =
     columns.length + (hasActions ? 1 : 0) + (selectable ? 1 : 0) + (isExpandable ? 1 : 0);
 
@@ -89,12 +95,18 @@ export function TableBody<T extends object, C extends object = T>({
             classNames={classNames}
             styles={styles}
             getChildren={getChildren}
+            childRequest={childRequest}
+            rowHasChildren={rowHasChildren}
+            childPageSize={childPageSize}
+            childRowKey={childRowKey}
             childColumns={childColumns}
             isExpanded={expandedKeys?.has(value) ?? false}
             onToggleExpand={() => onToggleExpand?.(value)}
             expandOn={expandOn}
             searchQuery={searchQuery}
             colSpan={colCount}
+            paginationLabels={paginationLabels}
+            showPageInput={showPageInput}
           />
         );
       })}

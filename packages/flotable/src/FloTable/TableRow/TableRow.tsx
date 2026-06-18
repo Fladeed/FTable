@@ -5,6 +5,7 @@ import { renderCell } from '../fields/renderCell';
 import { RowActionsCell } from '../ActionBar/RowActionsCell/RowActionsCell';
 import { rowMatchesQuery } from '../tableUtils';
 import { cx } from '../../utils/cx';
+import { ChildRows } from './ChildRows';
 import './TableRow.css';
 
 export function TableRow<T extends object, C extends object = T>({
@@ -18,25 +19,38 @@ export function TableRow<T extends object, C extends object = T>({
   classNames,
   styles,
   getChildren,
+  childRequest,
+  rowHasChildren,
+  childPageSize = 5,
+  childRowKey = 'id',
   childColumns,
   isExpanded,
   onToggleExpand,
   expandOn = 'chevron',
   searchQuery = '',
+  colSpan,
+  paginationLabels,
+  showPageInput,
 }: TableRowProps<T, C>) {
-  const isExpandable = typeof getChildren === 'function';
-  const children = getChildren?.(row) ?? [];
-  const hasChildren = children.length > 0;
-  // When childColumns is omitted, children are assumed to share the parent row shape (C = T),
-  // so the parent columns are reused to render them.
+  const isRequestChildren = typeof childRequest === 'function';
+  const isExpandable = typeof getChildren === 'function' || isRequestChildren;
+
   const childCols = childColumns ?? (columns as unknown as ColumnDef<C>[]);
+
+  const eagerChildren = isRequestChildren ? [] : getChildren?.(row) ?? [];
+  const hasChildren = isRequestChildren
+    ? rowHasChildren
+      ? rowHasChildren(row)
+      : true
+    : eagerChildren.length > 0;
 
   const childMatches = (child: C) =>
     searchQuery !== '' && rowMatchesQuery(child, childCols, searchQuery);
-  const anyMatch = hasChildren && children.some(childMatches);
+  const anyMatch = !isRequestChildren && eagerChildren.some(childMatches);
   const expanded = (isExpanded ?? false) || anyMatch;
 
   const rowClickToggles = expandOn === 'row' && hasChildren;
+  const hasActions = !!rowActions && rowActions.length > 0;
 
   function handleRowClick(e: MouseEvent<HTMLTableRowElement>) {
     if (!rowClickToggles) return;
@@ -115,51 +129,35 @@ export function TableRow<T extends object, C extends object = T>({
         )}
         {columns.map((col) => (
           <td key={col.key} className={cx('flotable__cell', classNames?.cell)} style={styles?.cell}>
-            {renderCell(col, row, hasChildren ? children : undefined)}
+            {renderCell(col, row, eagerChildren.length > 0 ? eagerChildren : undefined)}
           </td>
         ))}
-        {rowActions && rowActions.length > 0 && (
+        {hasActions && (
           <td className={cx('flotable__cell flotable__cell--actions', classNames?.cell)} style={styles?.cell}>
-            <RowActionsCell actions={rowActions} row={row} moreIcon={rowActionsMoreIcon} />
+            <RowActionsCell actions={rowActions!} row={row} moreIcon={rowActionsMoreIcon} />
           </td>
         )}
       </tr>
-      {isExpandable &&
-        hasChildren &&
-        children.map((child, childIndex) => (
-          <tr
-            key={`child-${childIndex}`}
-            className={cx(
-              'flotable__child-row',
-              expanded && 'flotable__child-row--expanded',
-              childMatches(child) && 'flotable__child-row--match',
-            )}
-            aria-hidden={expanded ? undefined : true}
-          >
-            <td className="flotable__expander-cell flotable__child-spacer" aria-hidden="true" />
-            {selectable && (
-              <td className="flotable__checkbox-cell flotable__child-spacer" aria-hidden="true" />
-            )}
-            {childCols.map((col, colIndex) => (
-              <td
-                key={col.key}
-                className={cx(
-                  'flotable__child-cell',
-                  colIndex === 0 && 'flotable__child-cell--first',
-                )}
-              >
-                <div className="flotable__child-collapser">
-                  <div className="flotable__child-collapser-inner">
-                    <div className="flotable__child-collapser-content">{renderCell(col, child)}</div>
-                  </div>
-                </div>
-              </td>
-            ))}
-            {rowActions && rowActions.length > 0 && (
-              <td className="flotable__cell--actions flotable__child-spacer" aria-hidden="true" />
-            )}
-          </tr>
-        ))}
+      {isExpandable && hasChildren && (
+        <ChildRows
+          parentRow={row}
+          expanded={expanded}
+          columns={columns}
+          childColumns={childColumns}
+          getChildren={getChildren}
+          childRequest={childRequest}
+          childPageSize={childPageSize}
+          childRowKey={childRowKey}
+          colSpan={colSpan ?? columns.length + 1}
+          selectable={selectable}
+          hasActions={hasActions}
+          searchQuery={searchQuery}
+          paginationLabels={paginationLabels}
+          showPageInput={showPageInput}
+          classNames={classNames}
+          styles={styles}
+        />
+      )}
     </Fragment>
   );
 }

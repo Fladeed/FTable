@@ -166,6 +166,37 @@ const variantColumns: ColumnDef<Variant>[] = [
 - **Keyboard:** focus a parent row, then `→` / `←` expand / collapse, and `Enter` triggers the
   row's first available action (`rowActions[0]`).
 
+### Children: data mode vs request mode
+
+Just like the top-level table, children can be supplied directly or fetched on demand:
+
+- **Data mode** — `getChildren(row)` returns the children already in memory. With `childPageSize`
+  they are paginated client-side.
+- **Request mode** — `childRequest(row, { page, pageSize })` fetches a parent's children the first
+  time it expands (and on child page change), resolving `{ data, totalRows }`. A loading skeleton
+  and error/retry are handled internally, and a per-parent pager appears when there's more than one
+  page. Use `rowHasChildren(row)` to control which parents show a chevron before children load.
+
+```tsx
+<FloTable<Product, Variant>
+  columns={productColumns}
+  childColumns={variantColumns}
+  childPageSize={5}
+  rowHasChildren={(p) => p.variantCount > 0}
+  childRequest={async (product, { page, pageSize }) => {
+    const res = await fetch(`/api/products/${product.id}/variants?page=${page}&size=${pageSize}`);
+    return res.json(); // => { data: Variant[], totalRows: number }
+  }}
+  data={products}
+  totalRows={products.length}
+  page={page}
+  onPageChange={setPage}
+/>
+```
+
+> Use either `getChildren` (data mode) or `childRequest` (request mode) — not both. Aggregate
+> columns require the children in memory, so they apply to data mode.
+
 ---
 
 ## Styling & Customization
@@ -226,7 +257,11 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `filterDefs` | `FilterDef[]` | Explicit filter pill definitions |
 | `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
 | `showSearch` | `boolean` | Show a global search input in the filter bar |
-| `getChildren` | `(row: T) => C[] \| undefined` | Returns a row's children; enables expandable rows |
+| `getChildren` | `(row: T) => C[] \| undefined` | Data mode: returns a row's children; enables expandable rows |
+| `childRequest` | `(row, { page, pageSize }) => Promise<{ data: C[]; totalRows: number }>` | Request mode: lazily fetch a parent's children |
+| `rowHasChildren` | `(row: T) => boolean` | Request mode: chevron visibility before children load |
+| `childPageSize` | `number` | Rows per page for a parent's children (default: 5) |
+| `childRowKey` | `string` | Child row key field (default: `'id'`) |
 | `childColumns` | `ColumnDef<C>[]` | Column layout for child rows (defaults to `columns`) |
 | `defaultExpanded` | `boolean \| ((row: T) => boolean)` | Initial expanded state per parent (default `false`) |
 | `onExpandedChange` | `(expandedKeys: string[]) => void` | Called with expanded parent keys on toggle |
