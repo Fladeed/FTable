@@ -29,8 +29,7 @@ export function TableRow<T extends object, C extends object = T>({
   expandOn = 'chevron',
   searchQuery = '',
   colSpan,
-  paginationLabels,
-  showPageInput,
+  columnWidths,
 }: TableRowProps<T, C>) {
   const isRequestChildren = typeof childRequest === 'function';
   const isExpandable = typeof getChildren === 'function' || isRequestChildren;
@@ -152,8 +151,7 @@ export function TableRow<T extends object, C extends object = T>({
           selectable={selectable}
           hasActions={hasActions}
           searchQuery={searchQuery}
-          paginationLabels={paginationLabels}
-          showPageInput={showPageInput}
+          columnWidths={columnWidths}
           classNames={classNames}
           styles={styles}
         />

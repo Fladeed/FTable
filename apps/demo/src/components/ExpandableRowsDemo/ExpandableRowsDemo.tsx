@@ -91,7 +91,7 @@ export function ExpandableRowsDemo() {
             checked={lazyChildren}
             onChange={(e) => setLazyChildren(e.target.checked)}
           />
-          Fetch children lazily with pagination (<code>childRequest</code> request mode, 2 / page)
+          Fetch children lazily with infinite scroll (<code>childRequest</code> request mode, 2 / batch)
         </label>
       </div>
 

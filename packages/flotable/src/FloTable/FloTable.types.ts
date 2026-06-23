@@ -445,10 +445,8 @@ export interface TableRowProps<T extends object, C extends object = T> {
   searchQuery?: string;
   /** Expandable rows: total column count, used as the colSpan of the child rows. */
   colSpan?: number;
-  /** Expandable rows: labels for the per-parent child pager. */
-  paginationLabels?: PaginationLabels;
-  /** Expandable rows: whether the child pager shows a page-jump input. */
-  showPageInput?: boolean;
+  /** Expandable rows: measured parent column widths, synced into the child scroll table. */
+  columnWidths?: number[];
 }
 
 export interface TableBodyProps<T extends object, C extends object = T> {
@@ -499,10 +497,8 @@ export interface TableBodyProps<T extends object, C extends object = T> {
   expandOn?: 'chevron' | 'row';
   /** Expandable rows: active global-search query, used to auto-expand and highlight matching children. */
   searchQuery?: string;
-  /** Expandable rows: labels for the per-parent child pager. */
-  paginationLabels?: PaginationLabels;
-  /** Expandable rows: whether the child pager shows a page-jump input. */
-  showPageInput?: boolean;
+  /** Expandable rows: measured parent column widths, synced into the child scroll table. */
+  columnWidths?: number[];
 }
 
 /** Props for the per-parent child sub-table (`ChildRows`). */
@@ -530,8 +526,8 @@ export interface ChildRowsProps<T extends object, C extends object = T> {
   hasActions?: boolean;
   /** Active global-search query (data mode highlighting). */
   searchQuery?: string;
-  paginationLabels?: PaginationLabels;
-  showPageInput?: boolean;
+  /** Measured parent column widths, synced into the child scroll table's colgroup. */
+  columnWidths?: number[];
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }

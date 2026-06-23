@@ -32,8 +32,7 @@ export function TableBody<T extends object, C extends object = T>({
   onToggleExpand,
   expandOn,
   searchQuery,
-  paginationLabels,
-  showPageInput,
+  columnWidths,
 }: TableBodyProps<T, C>) {
   const hasActions = (rowActions?.length ?? 0) > 0;
   const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
@@ -105,8 +104,7 @@ export function TableBody<T extends object, C extends object = T>({
             expandOn={expandOn}
             searchQuery={searchQuery}
             colSpan={colCount}
-            paginationLabels={paginationLabels}
-            showPageInput={showPageInput}
+            columnWidths={columnWidths}
           />
         );
       })}

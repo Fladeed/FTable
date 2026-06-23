@@ -168,14 +168,19 @@ const variantColumns: ColumnDef<Variant>[] = [
 
 ### Children: data mode vs request mode
 
-Just like the top-level table, children can be supplied directly or fetched on demand:
+Expanded children render in a **fixed-height scroll box** (a few rows tall, then it scrolls
+internally — it doesn't take over the page) whose columns are kept **aligned under the parent
+headers**. Children load with **infinite scroll** (`childPageSize` is the batch size
+revealed/fetched as you scroll), not a pager:
 
-- **Data mode** — `getChildren(row)` returns the children already in memory. With `childPageSize`
-  they are paginated client-side.
-- **Request mode** — `childRequest(row, { page, pageSize })` fetches a parent's children the first
-  time it expands (and on child page change), resolving `{ data, totalRows }`. A loading skeleton
-  and error/retry are handled internally, and a per-parent pager appears when there's more than one
-  page. Use `rowHasChildren(row)` to control which parents show a chevron before children load.
+- **Data mode** — `getChildren(row)` returns the children already in memory; they are revealed in
+  batches of `childPageSize` as you scroll the box.
+- **Request mode** — `childRequest(row, { page, pageSize })` fetches the first batch the first time
+  a parent expands, then the next batch is fetched and appended as you scroll, resolving
+  `{ data, totalRows }`. A loading skeleton and error/retry are handled internally. Use
+  `rowHasChildren(row)` to control which parents show a chevron before children load.
+
+The box height is set with the `--flotable-child-scroll-max-height` CSS variable (default ~5 rows).
 
 ```tsx
 <FloTable<Product, Variant>
@@ -260,7 +265,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `getChildren` | `(row: T) => C[] \| undefined` | Data mode: returns a row's children; enables expandable rows |
 | `childRequest` | `(row, { page, pageSize }) => Promise<{ data: C[]; totalRows: number }>` | Request mode: lazily fetch a parent's children |
 | `rowHasChildren` | `(row: T) => boolean` | Request mode: chevron visibility before children load |
-| `childPageSize` | `number` | Rows per page for a parent's children (default: 5) |
+| `childPageSize` | `number` | Batch size for a parent's children (infinite scroll, default: 5) |
 | `childRowKey` | `string` | Child row key field (default: `'id'`) |
 | `childColumns` | `ColumnDef<C>[]` | Column layout for child rows (defaults to `columns`) |
 | `defaultExpanded` | `boolean \| ((row: T) => boolean)` | Initial expanded state per parent (default `false`) |

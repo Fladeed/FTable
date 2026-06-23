@@ -87,6 +87,9 @@ function FloTableImpl<T extends object, C extends object = T>(
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
   const seededKeysRef = useRef<Set<string>>(new Set());
 
+  const tableRef = useRef<HTMLTableElement>(null);
+  const [columnWidths, setColumnWidths] = useState<number[]>([]);
+
   const requestRef = useRef<FloTableRequestProps<T, C>['request'] | null>(null);
   if (isReqMode) {
     requestRef.current = (props as FloTableRequestProps<T, C>).request;
@@ -212,6 +215,20 @@ function FloTableImpl<T extends object, C extends object = T>(
     setExpandedKeys(next);
     onExpandedChange?.([...next]);
   }
+
+  useEffect(() => {
+    if (!isExpandable) return;
+    const table = tableRef.current;
+    if (!table || typeof ResizeObserver === 'undefined') return;
+    const measure = () => {
+      const ths = table.querySelectorAll<HTMLTableCellElement>('thead tr:first-child > th');
+      setColumnWidths(Array.from(ths).map((th) => th.getBoundingClientRect().width));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(table);
+    return () => ro.disconnect();
+  }, [isExpandable, columns, data]);
 
   const pageRowKeys = data.map((row) => String(row[rowKey as keyof T]));
   const selectedOnPage = pageRowKeys.filter((k) => selectedKeys.has(k));
@@ -349,7 +366,7 @@ function FloTableImpl<T extends object, C extends object = T>(
       )}
       {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
       <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
-        <table className={cx('flotable', classNames?.table)} style={styles?.table}>
+        <table ref={tableRef} className={cx('flotable', classNames?.table)} style={styles?.table}>
           <TableHeader
             columns={columns}
             sortState={sortState}
@@ -389,8 +406,7 @@ function FloTableImpl<T extends object, C extends object = T>(
             onToggleExpand={handleToggleExpand}
             expandOn={expandOn}
             searchQuery={searchQuery}
-            paginationLabels={paginationLabels}
-            showPageInput={showPageInput}
+            columnWidths={columnWidths}
           />
         </table>
       </div>

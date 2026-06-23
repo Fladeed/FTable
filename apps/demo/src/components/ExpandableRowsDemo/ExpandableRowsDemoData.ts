@@ -22,6 +22,21 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [
   {
+    id: 'p7',
+    name: 'Logo Sticker Pack',
+    category: 'Accessories',
+    status: 'Active',
+    price: 3,
+    variantCount: 16,
+    variants: Array.from({ length: 16 }, (_, i) => ({
+      id: `p7-v${i + 1}`,
+      option: `Design #${i + 1}`,
+      sku: `SKU-7${String(i + 1).padStart(2, '0')}`,
+      price: 3 + (i % 4),
+      stock: (i * 7) % 25,
+    })),
+  },
+  {
     id: 'p1',
     name: 'T-Shirt Classic',
     category: 'Apparel',
