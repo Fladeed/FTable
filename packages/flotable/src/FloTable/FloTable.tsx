@@ -28,8 +28,8 @@ import './FloTable.css';
 
 const DEFAULT_PAGE_SIZE = 10;
 
-function FloTableImpl<T extends object>(
-  props: FloTableProps<T>,
+function FloTableImpl<T extends object, C extends object = T>(
+  props: FloTableProps<T, C>,
   ref: Ref<FloTableHandle<T>>,
 ) {
   const {
@@ -56,16 +56,26 @@ function FloTableImpl<T extends object>(
     rowActionsLabel,
     paginationLabels,
     showPageInput,
+    getChildren,
+    childRequest,
+    rowHasChildren,
+    childPageSize,
+    childRowKey,
+    childColumns,
+    defaultExpanded = false,
+    onExpandedChange,
+    expandOn,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
+  const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
 
   const [internalPage, setInternalPage] = useState(1);
   const [internalSortState, setInternalSortState] = useState<SortState<T> | null>(
-    () => (props as FloTableRequestProps<T>).initialSort ?? null,
+    () => (props as FloTableRequestProps<T, C>).initialSort ?? null,
   );
   const [internalFilters, setInternalFilters] = useState<QuickFilterState>(
-    () => (props as FloTableRequestProps<T>).initialQuickFilters ?? {},
+    () => (props as FloTableRequestProps<T, C>).initialQuickFilters ?? {},
   );
   const [internalData, setInternalData] = useState<T[]>([]);
   const [internalTotalRows, setInternalTotalRows] = useState(0);
@@ -74,10 +84,15 @@ function FloTableImpl<T extends object>(
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+  const seededKeysRef = useRef<Set<string>>(new Set());
 
-  const requestRef = useRef<FloTableRequestProps<T>['request'] | null>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+  const [columnWidths, setColumnWidths] = useState<number[]>([]);
+
+  const requestRef = useRef<FloTableRequestProps<T, C>['request'] | null>(null);
   if (isReqMode) {
-    requestRef.current = (props as FloTableRequestProps<T>).request;
+    requestRef.current = (props as FloTableRequestProps<T, C>).request;
   }
 
   const pageRef = useRef(internalPage);
@@ -158,7 +173,7 @@ function FloTableImpl<T extends object>(
     data = internalData;
     totalRows = internalTotalRows;
   } else {
-    const dp = props as FloTableDataProps<T>;
+    const dp = props as FloTableDataProps<T, C>;
     page = dp.page;
     sortState = dp.sortState ?? null;
     quickFilters = dp.quickFilters ?? {};
@@ -167,6 +182,53 @@ function FloTableImpl<T extends object>(
   }
 
   const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+
+  const searchQuery = (quickFilters['__search__'] ?? '').trim();
+
+  useEffect(() => {
+    if (!isExpandable) return;
+    const toExpand: string[] = [];
+    for (const row of data) {
+      const key = String(row[rowKey as keyof T]);
+      if (seededKeysRef.current.has(key)) continue;
+      seededKeysRef.current.add(key);
+      const isDefault =
+        typeof defaultExpanded === 'function' ? defaultExpanded(row) : defaultExpanded;
+      if (isDefault) toExpand.push(key);
+    }
+    if (toExpand.length > 0) {
+      setExpandedKeys((prev) => {
+        const next = new Set(prev);
+        toExpand.forEach((k) => next.add(k));
+        return next;
+      });
+    }
+  }, [isExpandable, data, rowKey, defaultExpanded]);
+
+  function handleToggleExpand(key: string) {
+    const next = new Set(expandedKeys);
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      next.add(key);
+    }
+    setExpandedKeys(next);
+    onExpandedChange?.([...next]);
+  }
+
+  useEffect(() => {
+    if (!isExpandable) return;
+    const table = tableRef.current;
+    if (!table || typeof ResizeObserver === 'undefined') return;
+    const measure = () => {
+      const ths = table.querySelectorAll<HTMLTableCellElement>('thead tr:first-child > th');
+      setColumnWidths(Array.from(ths).map((th) => th.getBoundingClientRect().width));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(table);
+    return () => ro.disconnect();
+  }, [isExpandable, columns, data]);
 
   const pageRowKeys = data.map((row) => String(row[rowKey as keyof T]));
   const selectedOnPage = pageRowKeys.filter((k) => selectedKeys.has(k));
@@ -231,7 +293,7 @@ function FloTableImpl<T extends object>(
       setInternalSortState(next === null ? null : { key, direction: next });
       setInternalPage(1);
     } else {
-      const dp = props as FloTableDataProps<T>;
+      const dp = props as FloTableDataProps<T, C>;
       if (!dp.onSortChange) return;
       const currentDirection = dp.sortState?.key === key ? dp.sortState.direction : null;
       const next = nextSortDirection(currentDirection);
@@ -245,7 +307,7 @@ function FloTableImpl<T extends object>(
       setInternalFilters(filters);
       setInternalPage(1);
     } else {
-      const dp = props as FloTableDataProps<T>;
+      const dp = props as FloTableDataProps<T, C>;
       dp.onFilterChange?.(filters);
       dp.onPageChange(1);
     }
@@ -257,7 +319,7 @@ function FloTableImpl<T extends object>(
     if (isReqMode) {
       setInternalPage(newPage);
     } else {
-      (props as FloTableDataProps<T>).onPageChange(newPage);
+      (props as FloTableDataProps<T, C>).onPageChange(newPage);
     }
   }
 
@@ -304,7 +366,7 @@ function FloTableImpl<T extends object>(
       )}
       {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
       <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
-        <table className={cx('flotable', classNames?.table)} style={styles?.table}>
+        <table ref={tableRef} className={cx('flotable', classNames?.table)} style={styles?.table}>
           <TableHeader
             columns={columns}
             sortState={sortState}
@@ -314,6 +376,7 @@ function FloTableImpl<T extends object>(
             selectable={selectable}
             selectionState={selectionState}
             onToggleAll={handleToggleAll}
+            expandable={isExpandable}
             classNames={classNames}
             styles={styles}
           />
@@ -333,6 +396,17 @@ function FloTableImpl<T extends object>(
             loadingRowCount={pageSize}
             error={fetchError}
             onRetry={() => setRetryCount((c) => c + 1)}
+            getChildren={getChildren}
+            childRequest={childRequest}
+            rowHasChildren={rowHasChildren}
+            childPageSize={childPageSize}
+            childRowKey={childRowKey}
+            childColumns={childColumns}
+            expandedKeys={expandedKeys}
+            onToggleExpand={handleToggleExpand}
+            expandOn={expandOn}
+            searchQuery={searchQuery}
+            columnWidths={columnWidths}
           />
         </table>
       </div>
@@ -351,8 +425,8 @@ function FloTableImpl<T extends object>(
   );
 }
 
-const FloTable = forwardRef(FloTableImpl) as <T extends object>(
-  props: FloTableProps<T> & { ref?: Ref<FloTableHandle<T>> },
+const FloTable = forwardRef(FloTableImpl) as <T extends object, C extends object = T>(
+  props: FloTableProps<T, C> & { ref?: Ref<FloTableHandle<T>> },
 ) => ReactElement | null;
 
 (FloTable as { displayName?: string }).displayName = 'FloTable';

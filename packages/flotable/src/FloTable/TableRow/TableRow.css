@@ -24,4 +24,173 @@
 .flotable__row--selected:hover {
   background-color: var(--ftable-row-selected-bg, #eff6ff);
 }
+
+.flotable__row--expandable-click {
+  cursor: pointer;
+}
+
+/* Expandable rows: leading chevron column */
+.flotable__expander-cell {
+  width: var(--flotable-expander-width, 2.25rem);
+  padding: var(--flotable-cell-padding, 0.625rem 0.875rem);
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.flotable__expander-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--flotable-expander-color, #6b7280);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.flotable__expander-btn:hover {
+  background-color: var(--flotable-expander-hover-bg, #f3f4f6);
+  color: var(--flotable-expander-hover-color, #111827);
+}
+
+.flotable__expander-chevron {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+}
+
+.flotable__expander-btn--expanded .flotable__expander-chevron {
+  transform: rotate(45deg);
+}
+
+[dir='rtl'] .flotable__expander-chevron {
+  transform: rotate(135deg);
+}
+
+[dir='rtl'] .flotable__expander-btn--expanded .flotable__expander-chevron {
+  transform: rotate(45deg);
+}
+
+/* Expandable rows: children live in one full-width cell as a fixed-height scroll box
+   containing a nested table whose column widths are synced to the parent (so the child
+   cells line up under the parent headers). The box animates open via a CSS grid collapse. */
+.flotable__child-fullspan {
+  padding: 0;
+  border: none;
+  background-color: var(--flotable-child-bg, #f9fafb);
+}
+
+.flotable__child-collapser {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--flotable-expand-duration, 0.25s) ease;
+}
+
+.flotable__child-scroll-row--expanded .flotable__child-collapser {
+  grid-template-rows: 1fr;
+}
+
+.flotable__child-collapser-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* The scroll box: shows roughly a few rows, then scrolls internally. */
+.flotable__child-scroll {
+  max-height: var(--flotable-child-scroll-max-height, 11.25rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-top: 1px solid var(--flotable-child-border, #eef0f2);
+  border-bottom: 1px solid var(--flotable-child-border, #eef0f2);
+}
+
+.flotable__child-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--flotable-child-bg, #f9fafb);
+}
+
+.flotable__child-row > td {
+  vertical-align: middle;
+  background-color: var(--flotable-child-bg, #f9fafb);
+}
+
+.flotable__child-row:not(:last-child) > td {
+  border-bottom: 1px solid var(--flotable-child-border, #eef0f2);
+}
+
+.flotable__child-row--match > td {
+  background-color: var(--flotable-child-match-bg, #fef9c3);
+}
+
+.flotable__child-cell {
+  padding: var(--flotable-child-cell-padding, 0.5rem 0.875rem);
+  font-size: var(--flotable-child-font-size, 0.8125rem);
+  color: var(--flotable-child-color, #374151);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Short, vertically-centered accent bar on each child row's first cell. */
+.flotable__child-cell--first {
+  position: relative;
+  padding-left: var(--flotable-child-indent, 1.25rem);
+}
+
+.flotable__child-cell--first::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: var(--flotable-child-accent-height, 60%);
+  background-color: var(--flotable-child-accent, #d1d5db);
+}
+
+/* Full-width child rows: sentinel, loading, error, empty states. */
+.flotable__child-statecell {
+  padding: 0;
+}
+
+.flotable__child-statecell-inner {
+  min-height: var(--flotable-child-sentinel-height, 1.25rem);
+  padding: 0.4rem var(--flotable-child-indent, 1.25rem);
+}
+
+.flotable__child-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--flotable-child-font-size, 0.8125rem);
+  color: var(--flotable-muted-color, #6b7280);
+}
+
+.flotable__child-state--error {
+  color: var(--flotable-error-color, #b91c1c);
+}
+
+.flotable__child-retry {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border-radius: 0.25rem;
+  background: var(--flotable-bg, #ffffff);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.flotable__child-retry:hover {
+  background: var(--flotable-row-hover-bg, #f3f4f6);
+}
 }

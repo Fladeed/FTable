@@ -44,4 +44,10 @@
   border-bottom: 2px solid var(--flotable-border-color, #e5e7eb);
   background-color: var(--flotable-header-bg, #f9fafb);
 }
+
+.flotable__expander-cell--header {
+  width: var(--flotable-expander-width, 2.25rem);
+  border-bottom: 2px solid var(--flotable-border-color, #e5e7eb);
+  background-color: var(--flotable-header-bg, #f9fafb);
+}
 }

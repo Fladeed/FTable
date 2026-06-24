@@ -97,6 +97,113 @@ Any column can use a custom `render` function to override the default renderer.
 
 ---
 
+## Expandable Rows (Parent / Child)
+
+Pass `getChildren` to turn any row into an expandable **parent** that reveals inline **child**
+rows. A chevron appears only for rows that have children. Children can have their own column
+layout (`childColumns`) and a different row type than the parent — `FloTable<Parent, Child>`.
+Parent columns can render an **aggregate** of their children. Works in both data and request mode,
+and adds zero runtime dependencies.
+
+```tsx
+import { FloTable, type ColumnDef } from 'flotable';
+
+interface Variant { id: string; option: string; sku: string; price: number; stock: number; }
+interface Product {
+  id: string; name: string; price: number; status: string; variants: Variant[];
+}
+
+const productColumns: ColumnDef<Product, Variant>[] = [
+  { key: 'name', header: 'Name' },
+  {
+    key: 'variantCount',
+    header: 'Variants',
+    sortable: false,
+    aggregate: (children) => (children.length ? `${children.length} variants` : '—'),
+  },
+  {
+    key: 'price',
+    header: 'Price',
+    type: 'currency',
+    aggregate: (children) => {
+      const prices = children.map((v) => v.price);
+      const [min, max] = [Math.min(...prices), Math.max(...prices)];
+      return min === max ? `$${min}` : `$${min}–$${max}`;
+    },
+  },
+  { key: 'status', header: 'Status', type: 'badge' },
+];
+
+const variantColumns: ColumnDef<Variant>[] = [
+  { key: 'option', header: 'Option' },
+  { key: 'sku', header: 'SKU' },
+  { key: 'price', header: 'Price', type: 'currency' },
+  { key: 'stock', header: 'Stock', type: 'number' },
+];
+
+<FloTable<Product, Variant>
+  columns={productColumns}
+  childColumns={variantColumns}
+  getChildren={(product) => product.variants}   // undefined / [] ⇒ no chevron
+  defaultExpanded={false}                        // or (row) => boolean
+  expandOn="chevron"                             // or "row"
+  showSearch                                     // searching variants auto-expands their parent
+  data={products}
+  totalRows={products.length}
+  page={page}
+  onPageChange={setPage}
+/>
+```
+
+**Behavior**
+
+- The chevron renders only when `getChildren(row)` returns a non-empty array.
+- Expansion animates via a pure-CSS grid collapse and is local to the table (preserved scroll
+  position). Use `onExpandedChange` to observe the expanded parent keys.
+- Global **search** matches child rows too: a matching child auto-expands its parent and is
+  highlighted.
+- **Sorting** and **pagination** apply to parents; child order is whatever `getChildren` returns.
+- **Keyboard:** focus a parent row, then `→` / `←` expand / collapse, and `Enter` triggers the
+  row's first available action (`rowActions[0]`).
+
+### Children: data mode vs request mode
+
+Expanded children render in a **fixed-height scroll box** (a few rows tall, then it scrolls
+internally — it doesn't take over the page) whose columns are kept **aligned under the parent
+headers**. Children load with **infinite scroll** (`childPageSize` is the batch size
+revealed/fetched as you scroll), not a pager:
+
+- **Data mode** — `getChildren(row)` returns the children already in memory; they are revealed in
+  batches of `childPageSize` as you scroll the box.
+- **Request mode** — `childRequest(row, { page, pageSize })` fetches the first batch the first time
+  a parent expands, then the next batch is fetched and appended as you scroll, resolving
+  `{ data, totalRows }`. A loading skeleton and error/retry are handled internally. Use
+  `rowHasChildren(row)` to control which parents show a chevron before children load.
+
+The box height is set with the `--flotable-child-scroll-max-height` CSS variable (default ~5 rows).
+
+```tsx
+<FloTable<Product, Variant>
+  columns={productColumns}
+  childColumns={variantColumns}
+  childPageSize={5}
+  rowHasChildren={(p) => p.variantCount > 0}
+  childRequest={async (product, { page, pageSize }) => {
+    const res = await fetch(`/api/products/${product.id}/variants?page=${page}&size=${pageSize}`);
+    return res.json(); // => { data: Variant[], totalRows: number }
+  }}
+  data={products}
+  totalRows={products.length}
+  page={page}
+  onPageChange={setPage}
+/>
+```
+
+> Use either `getChildren` (data mode) or `childRequest` (request mode) — not both. Aggregate
+> columns require the children in memory, so they apply to data mode.
+
+---
+
 ## Styling & Customization
 
 FloTable ships plain CSS wrapped in `@layer flotable`. Every visual token uses a CSS custom property with a fallback, so you can theme the entire table without touching source files.
@@ -155,6 +262,15 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `filterDefs` | `FilterDef[]` | Explicit filter pill definitions |
 | `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
 | `showSearch` | `boolean` | Show a global search input in the filter bar |
+| `getChildren` | `(row: T) => C[] \| undefined` | Data mode: returns a row's children; enables expandable rows |
+| `childRequest` | `(row, { page, pageSize }) => Promise<{ data: C[]; totalRows: number }>` | Request mode: lazily fetch a parent's children |
+| `rowHasChildren` | `(row: T) => boolean` | Request mode: chevron visibility before children load |
+| `childPageSize` | `number` | Batch size for a parent's children (infinite scroll, default: 5) |
+| `childRowKey` | `string` | Child row key field (default: `'id'`) |
+| `childColumns` | `ColumnDef<C>[]` | Column layout for child rows (defaults to `columns`) |
+| `defaultExpanded` | `boolean \| ((row: T) => boolean)` | Initial expanded state per parent (default `false`) |
+| `onExpandedChange` | `(expandedKeys: string[]) => void` | Called with expanded parent keys on toggle |
+| `expandOn` | `'chevron' \| 'row'` | What toggles expansion (default `'chevron'`) |
 | `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
 | `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |
 

@@ -6,7 +6,7 @@ import { TableBodyEmpty } from './TableBodyEmpty/TableBodyEmpty';
 import { cx } from '../../utils/cx';
 import './TableBody.css';
 
-export function TableBody<T extends object>({
+export function TableBody<T extends object, C extends object = T>({
   columns,
   rows,
   rowActions,
@@ -22,9 +22,22 @@ export function TableBody<T extends object>({
   error = null,
   onRetry,
   isRefreshing = false,
-}: TableBodyProps<T>) {
+  getChildren,
+  childRequest,
+  rowHasChildren,
+  childPageSize,
+  childRowKey,
+  childColumns,
+  expandedKeys,
+  onToggleExpand,
+  expandOn,
+  searchQuery,
+  columnWidths,
+}: TableBodyProps<T, C>) {
   const hasActions = (rowActions?.length ?? 0) > 0;
-  const colCount = columns.length + (hasActions ? 1 : 0) + (selectable ? 1 : 0);
+  const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
+  const colCount =
+    columns.length + (hasActions ? 1 : 0) + (selectable ? 1 : 0) + (isExpandable ? 1 : 0);
 
   if (isLoading) {
     return (
@@ -66,19 +79,32 @@ export function TableBody<T extends object>({
       style={styles?.body}
     >
       {rows.map((row, index) => {
-        const key = String(row[rowKey as keyof T]);
+        const value = String(row[rowKey as keyof T]);
+        const key = value || String(index);
         return (
           <TableRow
-            key={index}
+            key={key}
             row={row}
             columns={columns}
             rowActions={rowActions}
             rowActionsMoreIcon={rowActionsMoreIcon}
             selectable={selectable}
-            isSelected={selectedKeys?.has(key)}
-            onToggle={() => onToggleRow?.(key)}
+            isSelected={selectedKeys?.has(value)}
+            onToggle={() => onToggleRow?.(value)}
             classNames={classNames}
             styles={styles}
+            getChildren={getChildren}
+            childRequest={childRequest}
+            rowHasChildren={rowHasChildren}
+            childPageSize={childPageSize}
+            childRowKey={childRowKey}
+            childColumns={childColumns}
+            isExpanded={expandedKeys?.has(value) ?? false}
+            onToggleExpand={() => onToggleExpand?.(value)}
+            expandOn={expandOn}
+            searchQuery={searchQuery}
+            colSpan={colCount}
+            columnWidths={columnWidths}
           />
         );
       })}
