@@ -164,7 +164,10 @@ const variantColumns: ColumnDef<Variant>[] = [
   highlighted.
 - **Sorting** and **pagination** apply to parents; child order is whatever `getChildren` returns.
 - **Keyboard:** focus a parent row, then `→` / `←` expand / collapse, and `Enter` triggers the
-  row's first available action (`rowActions[0]`).
+  row's first visible, enabled action that is not `danger` — destructive actions are never run
+  from the keyboard. With no such action, `Enter` toggles the row instead.
+- **Labels:** every expandable-rows string is overridable via `childRowsLabels`
+  (`expand`, `collapse`, `empty`, `retry`, `loading`).
 
 ### Children: data mode vs request mode
 
@@ -177,7 +180,8 @@ revealed/fetched as you scroll), not a pager:
   batches of `childPageSize` as you scroll the box.
 - **Request mode** — `childRequest(row, { page, pageSize })` fetches the first batch the first time
   a parent expands, then the next batch is fetched and appended as you scroll, resolving
-  `{ data, totalRows }`. A loading skeleton and error/retry are handled internally. Use
+  `{ data, totalRows }`. A loading skeleton and error/retry are handled internally. Children are
+  re-fetched when the parent row object changes (e.g. after the table refetches). Use
   `rowHasChildren(row)` to control which parents show a chevron before children load.
 
 The box height is set with the `--flotable-child-scroll-max-height` CSS variable (default ~5 rows).
@@ -271,6 +275,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `defaultExpanded` | `boolean \| ((row: T) => boolean)` | Initial expanded state per parent (default `false`) |
 | `onExpandedChange` | `(expandedKeys: string[]) => void` | Called with expanded parent keys on toggle |
 | `expandOn` | `'chevron' \| 'row'` | What toggles expansion (default `'chevron'`) |
+| `childRowsLabels` | `ChildRowsLabels` | Expandable-rows text: `expand` (`'Expand row'`), `collapse` (`'Collapse row'`), `empty` (`'No items'`), `retry` (`'Retry'`), `loading` (`'Loading…'`) |
 | `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
 | `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |
 

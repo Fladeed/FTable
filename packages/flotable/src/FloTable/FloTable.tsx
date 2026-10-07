@@ -16,8 +16,15 @@ import type {
   QuickFilterState,
   SortState,
   BulkActionBarContext,
+  ColumnDef,
 } from './FloTable.types';
-import { nextSortDirection, columnTypeToFilterInputType } from './tableUtils';
+import {
+  nextSortDirection,
+  columnTypeToFilterInputType,
+  rowMatchesQuery,
+  getRowKey,
+  SEARCH_KEY,
+} from './tableUtils';
 import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
@@ -65,6 +72,7 @@ function FloTableImpl<T extends object, C extends object = T>(
     defaultExpanded = false,
     onExpandedChange,
     expandOn,
+    childRowsLabels,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
@@ -86,6 +94,13 @@ function FloTableImpl<T extends object, C extends object = T>(
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
   const seededKeysRef = useRef<Set<string>>(new Set());
+  // Global-search auto-expansion for `query`: `opened` = rows the search expanded (collapsed again
+  // when the query changes); `handled` = rows already processed, so a user collapse sticks.
+  const searchExpandedRef = useRef<{ query: string; opened: Set<string>; handled: Set<string> }>({
+    query: '',
+    opened: new Set(),
+    handled: new Set(),
+  });
 
   const tableRef = useRef<HTMLTableElement>(null);
   const [columnWidths, setColumnWidths] = useState<number[]>([]);
@@ -183,19 +198,19 @@ function FloTableImpl<T extends object, C extends object = T>(
 
   const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
-  const searchQuery = (quickFilters['__search__'] ?? '').trim();
+  const searchQuery = (quickFilters[SEARCH_KEY] ?? '').trim();
 
   useEffect(() => {
     if (!isExpandable) return;
     const toExpand: string[] = [];
-    for (const row of data) {
-      const key = String(row[rowKey as keyof T]);
-      if (seededKeysRef.current.has(key)) continue;
+    data.forEach((row, index) => {
+      const key = getRowKey(row, rowKey, index);
+      if (seededKeysRef.current.has(key)) return;
       seededKeysRef.current.add(key);
       const isDefault =
         typeof defaultExpanded === 'function' ? defaultExpanded(row) : defaultExpanded;
       if (isDefault) toExpand.push(key);
-    }
+    });
     if (toExpand.length > 0) {
       setExpandedKeys((prev) => {
         const next = new Set(prev);
@@ -205,7 +220,47 @@ function FloTableImpl<T extends object, C extends object = T>(
     }
   }, [isExpandable, data, rowKey, defaultExpanded]);
 
+  // Data mode: auto-expand parents with a child matching the global search. The keys go into
+  // `expandedKeys` (one source of truth), so the user can still collapse them. Rows the search
+  // opened are collapsed again when the query changes, unless the user toggled them meanwhile.
+  useEffect(() => {
+    if (typeof getChildren !== 'function') return;
+    const tracked = searchExpandedRef.current;
+    let stale: Set<string> | null = null;
+    if (tracked.query !== searchQuery) {
+      stale = tracked.opened;
+      searchExpandedRef.current = { query: searchQuery, opened: new Set(), handled: new Set() };
+    }
+    const { opened, handled } = searchExpandedRef.current;
+    const toExpand: string[] = [];
+    if (searchQuery !== '') {
+      const childCols = childColumns ?? (columns as unknown as ColumnDef<C>[]);
+      data.forEach((row, index) => {
+        const key = getRowKey(row, rowKey, index);
+        if (handled.has(key)) return;
+        const children = getChildren(row) ?? [];
+        if (children.some((child) => rowMatchesQuery(child, childCols, searchQuery))) {
+          handled.add(key);
+          opened.add(key);
+          toExpand.push(key);
+        }
+      });
+    }
+    if (toExpand.length === 0 && (!stale || stale.size === 0)) return;
+    setExpandedKeys((prev) => {
+      const next = new Set(prev);
+      stale?.forEach((k) => {
+        if (!opened.has(k)) next.delete(k);
+      });
+      toExpand.forEach((k) => next.add(k));
+      return next;
+    });
+  }, [getChildren, childColumns, columns, data, rowKey, searchQuery]);
+
   function handleToggleExpand(key: string) {
+    // A user toggle takes the row over from the search auto-expansion.
+    searchExpandedRef.current.opened.delete(key);
+    searchExpandedRef.current.handled.add(key);
     const next = new Set(expandedKeys);
     if (next.has(key)) {
       next.delete(key);
@@ -230,7 +285,7 @@ function FloTableImpl<T extends object, C extends object = T>(
     return () => ro.disconnect();
   }, [isExpandable, columns, data]);
 
-  const pageRowKeys = data.map((row) => String(row[rowKey as keyof T]));
+  const pageRowKeys = data.map((row, index) => getRowKey(row, rowKey, index));
   const selectedOnPage = pageRowKeys.filter((k) => selectedKeys.has(k));
   const selectionState =
     selectedOnPage.length === 0
@@ -255,7 +310,7 @@ function FloTableImpl<T extends object, C extends object = T>(
     onSelectionChange?.([]);
   }
 
-  const selectedRows = data.filter((row) => selectedKeys.has(String(row[rowKey as keyof T])));
+  const selectedRows = data.filter((row, index) => selectedKeys.has(getRowKey(row, rowKey, index)));
 
   function handleToggleAll() {
     const allSelected = pageRowKeys.every((k) => selectedKeys.has(k));
@@ -407,6 +462,7 @@ function FloTableImpl<T extends object, C extends object = T>(
             expandOn={expandOn}
             searchQuery={searchQuery}
             columnWidths={columnWidths}
+            childRowsLabels={childRowsLabels}
           />
         </table>
       </div>

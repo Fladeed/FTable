@@ -3,6 +3,7 @@ import { TableRow } from '../TableRow/TableRow';
 import { TableBodySkeleton } from './TableBodySkeleton/TableBodySkeleton';
 import { TableBodyError } from './TableBodyError/TableBodyError';
 import { TableBodyEmpty } from './TableBodyEmpty/TableBodyEmpty';
+import { getRowKey } from '../tableUtils';
 import { cx } from '../../utils/cx';
 import './TableBody.css';
 
@@ -33,6 +34,7 @@ export function TableBody<T extends object, C extends object = T>({
   expandOn,
   searchQuery,
   columnWidths,
+  childRowsLabels,
 }: TableBodyProps<T, C>) {
   const hasActions = (rowActions?.length ?? 0) > 0;
   const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
@@ -45,6 +47,8 @@ export function TableBody<T extends object, C extends object = T>({
         columns={columns}
         rowCount={loadingRowCount}
         selectable={selectable}
+        hasActions={hasActions}
+        expandable={isExpandable}
         classNames={classNames}
         styles={styles}
       />
@@ -79,11 +83,10 @@ export function TableBody<T extends object, C extends object = T>({
       style={styles?.body}
     >
       {rows.map((row, index) => {
-        const value = String(row[rowKey as keyof T]);
-        const key = value || String(index);
+        const value = getRowKey(row, rowKey, index);
         return (
           <TableRow
-            key={key}
+            key={value}
             row={row}
             columns={columns}
             rowActions={rowActions}
@@ -105,6 +108,7 @@ export function TableBody<T extends object, C extends object = T>({
             searchQuery={searchQuery}
             colSpan={colCount}
             columnWidths={columnWidths}
+            childRowsLabels={childRowsLabels}
           />
         );
       })}

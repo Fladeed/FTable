@@ -5,9 +5,8 @@ import type { FilterDef, QuickFilterState, FloTableClassNames, FloTableStyles } 
 import { cx } from '../../../utils/cx';
 import { FilterPill } from '../FilterPill/FilterPill';
 import { SearchPill } from '../SearchPill/SearchPill';
+import { SEARCH_KEY } from '../../tableUtils';
 import './FilterBar.css';
-
-const SEARCH_KEY = '__search__';
 
 interface FilterBarProps {
   filterDefs: FilterDef[];

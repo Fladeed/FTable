@@ -31,3 +31,15 @@ export function rowMatchesQuery<T extends object>(
     return String(value ?? '').toLowerCase().includes(q);
   });
 }
+
+/** Quick-filter key under which the global search query is stored. */
+export const SEARCH_KEY = '__search__';
+
+/**
+ * Stable string key for a row: the value of its `rowKey` field, or the row index when that
+ * field is missing (`null` / `undefined`). Used for React keys, selection and expansion.
+ */
+export function getRowKey<T extends object>(row: T, rowKey: string, index: number): string {
+  const raw = (row as Record<string, unknown>)[rowKey];
+  return raw == null ? String(index) : String(raw);
+}

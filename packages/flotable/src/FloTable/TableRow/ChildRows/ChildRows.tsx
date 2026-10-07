@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { ChildRowsProps, ColumnDef } from '../FloTable.types';
-import { renderCell } from '../fields/renderCell';
-import { rowMatchesQuery } from '../tableUtils';
-import { cx } from '../../utils/cx';
+import type { ChildRowsProps, ColumnDef } from '../../FloTable.types';
+import { renderCell } from '../../fields/renderCell';
+import { rowMatchesQuery } from '../../tableUtils';
+import { cx } from '../../../utils/cx';
+import './ChildRows.css';
 
 /**
  * Renders one parent's children inside a single full-width cell, as a fixed-height **scroll box**
@@ -13,14 +14,15 @@ import { cx } from '../../utils/cx';
  * Two data modes, both with infinite scroll (the scroll box is the observer root):
  *  - data mode    (`getChildren`): in-memory children revealed in batches of `childPageSize`.
  *  - request mode (`childRequest`): first batch fetched on expand, next batch fetched & appended
- *    as you scroll — with a loading skeleton and error / retry.
+ *    as you scroll — with a loading skeleton and error / retry. Children are re-fetched whenever
+ *    the parent row object changes (e.g. after the table refetches), so they never go stale.
  */
 export function ChildRows<T extends object, C extends object = T>({
   parentRow,
   expanded,
   columns,
   childColumns,
-  getChildren,
+  eagerChildren,
   childRequest,
   childPageSize,
   childRowKey,
@@ -29,6 +31,7 @@ export function ChildRows<T extends object, C extends object = T>({
   hasActions,
   searchQuery = '',
   columnWidths,
+  labels,
 }: ChildRowsProps<T, C>) {
   const isRequest = typeof childRequest === 'function';
   const childCols = childColumns ?? (columns as unknown as ColumnDef<C>[]);
@@ -41,22 +44,27 @@ export function ChildRows<T extends object, C extends object = T>({
 
   const requestIdRef = useRef(0);
   const nextPageRef = useRef(1);
+  const failedPageRef = useRef(1);
   const initialFetchedRef = useRef(false);
+  // The parent row object the current (or in-flight) first page was requested for.
+  const fetchedForRef = useRef<T | null>(null);
   const loadingRef = useRef(false);
   loadingRef.current = loading;
 
-  const eager = useMemo(
-    () => (isRequest ? [] : getChildren?.(parentRow) ?? []),
-    [isRequest, getChildren, parentRow],
-  );
+  // Read through refs so an inline `childRequest` doesn't change `fetchPage` on every render.
+  const childRequestRef = useRef(childRequest);
+  childRequestRef.current = childRequest;
+  const parentRowRef = useRef(parentRow);
+  parentRowRef.current = parentRow;
 
   const fetchPage = useCallback(
     (pageNum: number) => {
-      if (!childRequest) return;
+      const request = childRequestRef.current;
+      if (!request) return;
       const id = ++requestIdRef.current;
       setLoading(true);
       setError(null);
-      childRequest(parentRow, { page: pageNum, pageSize: childPageSize })
+      request(parentRowRef.current, { page: pageNum, pageSize: childPageSize })
         .then((res) => {
           if (id !== requestIdRef.current) return;
           setLoaded((prev) => (pageNum === 1 ? res.data : [...prev, ...res.data]));
@@ -66,25 +74,40 @@ export function ChildRows<T extends object, C extends object = T>({
         })
         .catch((err: unknown) => {
           if (id !== requestIdRef.current) return;
+          failedPageRef.current = pageNum;
           setError(err instanceof Error ? err.message : String(err));
         })
         .finally(() => {
           if (id === requestIdRef.current) setLoading(false);
         });
     },
-    [childRequest, parentRow, childPageSize],
+    [childPageSize],
   );
 
+  // Fetch the first page on expand, and again whenever the parent row changes.
   useEffect(() => {
-    if (!isRequest || !expanded || initialFetchedRef.current) return;
+    if (!isRequest || !expanded || fetchedForRef.current === parentRow) return;
+    fetchedForRef.current = parentRow;
     fetchPage(1);
-  }, [isRequest, expanded, fetchPage]);
+  }, [isRequest, expanded, parentRow, fetchPage]);
 
-  const rows = isRequest ? loaded : eager.slice(0, visibleCount);
-  const totalRows = isRequest ? total : eager.length;
+  const childMatches = (child: C) =>
+    searchQuery !== '' && rowMatchesQuery(child, childCols, searchQuery);
+
+  // Data mode: always reveal up to the last search match, so a match is never hidden past the batch.
+  const lastMatchIndex = useMemo(() => {
+    if (isRequest || searchQuery === '') return -1;
+    for (let i = eagerChildren.length - 1; i >= 0; i--) {
+      if (rowMatchesQuery(eagerChildren[i], childCols, searchQuery)) return i;
+    }
+    return -1;
+  }, [isRequest, eagerChildren, childCols, searchQuery]);
+  const shownCount = Math.max(visibleCount, lastMatchIndex + 1);
+
+  const rows = isRequest ? loaded : eagerChildren.slice(0, shownCount);
   const hasMore = isRequest
     ? initialFetchedRef.current && loaded.length < total
-    : visibleCount < eager.length;
+    : shownCount < eagerChildren.length;
 
   const loadMore = () => {
     if (loadingRef.current) return;
@@ -92,7 +115,7 @@ export function ChildRows<T extends object, C extends object = T>({
       if (loaded.length >= total) return;
       fetchPage(nextPageRef.current);
     } else {
-      setVisibleCount((v) => Math.min(v + childPageSize, eager.length));
+      setVisibleCount(Math.min(shownCount + childPageSize, eagerChildren.length));
     }
   };
   const loadMoreRef = useRef(loadMore);
@@ -120,9 +143,6 @@ export function ChildRows<T extends object, C extends object = T>({
     const value = String((child as Record<string, unknown>)[childRowKey] ?? '');
     return value || String(index);
   };
-  const childMatches = (child: C) =>
-    searchQuery !== '' && rowMatchesQuery(child, childCols, searchQuery);
-
   const leadingSpacers = (
     <>
       <td className="flotable__expander-cell flotable__child-spacer" aria-hidden="true" />
@@ -186,7 +206,7 @@ export function ChildRows<T extends object, C extends object = T>({
     if (isRequest && initialFetchedRef.current && rows.length === 0 && !loading && !error) {
       body.push(
         <tr key="child-empty" className="flotable__child-row flotable__child-state-row">
-          {fullWidthCell(<span className="flotable__child-state">No items</span>)}
+          {fullWidthCell(<span className="flotable__child-state">{labels?.empty ?? 'No items'}</span>)}
         </tr>,
       );
     }
@@ -201,9 +221,9 @@ export function ChildRows<T extends object, C extends object = T>({
             <button
               type="button"
               className="flotable__child-retry"
-              onClick={() => fetchPage(initialFetchedRef.current ? nextPageRef.current : 1)}
+              onClick={() => fetchPage(failedPageRef.current)}
             >
-              Retry
+              {labels?.retry ?? 'Retry'}
             </button>
           </div>,
         )}
@@ -215,7 +235,7 @@ export function ChildRows<T extends object, C extends object = T>({
     body.push(
       <tr key="child-sentinel" className="flotable__child-row flotable__child-sentinel-row">
         {fullWidthCell(
-          loading ? <span className="flotable__child-state">Loading…</span> : null,
+          loading ? <span className="flotable__child-state">{labels?.loading ?? 'Loading…'}</span> : null,
           (el) => {
             sentinelRef.current = el;
           },
@@ -224,11 +244,25 @@ export function ChildRows<T extends object, C extends object = T>({
     );
   }
 
+  // Mounted collapsed, then opened on the next commit so the CSS grid transition runs on first
+  // expand too. While collapsed the box is `inert`, so its buttons can't be tabbed into.
+  const scrollRowRef = useRef<HTMLTableRowElement | null>(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const el = scrollRowRef.current;
+    if (el) {
+      void el.offsetHeight; // flush the collapsed style before toggling the class
+      el.inert = !expanded;
+    }
+    setOpen(expanded);
+  }, [expanded]);
+
   const widthsValid = !!columnWidths && columnWidths.length === colSpan;
 
   return (
     <tr
-      className={cx('flotable__child-scroll-row', expanded && 'flotable__child-scroll-row--expanded')}
+      ref={scrollRowRef}
+      className={cx('flotable__child-scroll-row', open && 'flotable__child-scroll-row--expanded')}
       aria-hidden={expanded ? undefined : true}
     >
       <td className="flotable__child-fullspan" colSpan={colSpan}>

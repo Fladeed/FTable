@@ -1,11 +1,10 @@
-import { Fragment } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import type { MouseEvent, KeyboardEvent } from 'react';
-import type { ColumnDef, TableRowProps } from '../FloTable.types';
+import type { TableRowProps } from '../FloTable.types';
 import { renderCell } from '../fields/renderCell';
 import { RowActionsCell } from '../ActionBar/RowActionsCell/RowActionsCell';
-import { rowMatchesQuery } from '../tableUtils';
 import { cx } from '../../utils/cx';
-import { ChildRows } from './ChildRows';
+import { ChildRows } from './ChildRows/ChildRows';
 import './TableRow.css';
 
 export function TableRow<T extends object, C extends object = T>({
@@ -30,23 +29,28 @@ export function TableRow<T extends object, C extends object = T>({
   searchQuery = '',
   colSpan,
   columnWidths,
+  childRowsLabels,
 }: TableRowProps<T, C>) {
   const isRequestChildren = typeof childRequest === 'function';
   const isExpandable = typeof getChildren === 'function' || isRequestChildren;
 
-  const childCols = childColumns ?? (columns as unknown as ColumnDef<C>[]);
-
-  const eagerChildren = isRequestChildren ? [] : getChildren?.(row) ?? [];
+  const eagerChildren = useMemo(
+    () => (isRequestChildren ? [] : getChildren?.(row) ?? []),
+    [isRequestChildren, getChildren, row],
+  );
   const hasChildren = isRequestChildren
     ? rowHasChildren
       ? rowHasChildren(row)
       : true
     : eagerChildren.length > 0;
 
-  const childMatches = (child: C) =>
-    searchQuery !== '' && rowMatchesQuery(child, childCols, searchQuery);
-  const anyMatch = !isRequestChildren && eagerChildren.some(childMatches);
-  const expanded = (isExpanded ?? false) || anyMatch;
+  // Search auto-expansion is folded into `isExpanded` by FloTable, so the chevron always reflects
+  // (and toggles) one source of truth.
+  const expanded = isExpanded ?? false;
+
+  // Children are mounted on first expand and kept afterwards (for the collapse animation).
+  const [hasOpened, setHasOpened] = useState(expanded);
+  if (expanded && !hasOpened) setHasOpened(true);
 
   const rowClickToggles = expandOn === 'row' && hasChildren;
   const hasActions = !!rowActions && rowActions.length > 0;
@@ -59,8 +63,10 @@ export function TableRow<T extends object, C extends object = T>({
     onToggleExpand?.();
   }
 
+  // Enter runs the first visible, enabled, non-destructive action — never a `danger` one
+  // (e.g. Delete), since a stray keypress must not destroy data. Without one, Enter toggles.
   const primaryAction = rowActions?.find(
-    (a) => (a.visible?.(row) ?? true) && !(a.disabled?.(row) ?? false),
+    (a) => !a.danger && (a.visible?.(row) ?? true) && !(a.disabled?.(row) ?? false),
   );
 
   function handleRowKeyDown(e: KeyboardEvent<HTMLTableRowElement>) {
@@ -76,9 +82,11 @@ export function TableRow<T extends object, C extends object = T>({
         onToggleExpand?.();
       }
     } else if (e.key === 'Enter') {
+      e.preventDefault();
       if (primaryAction) {
-        e.preventDefault();
         primaryAction.onClick(row);
+      } else {
+        onToggleExpand?.();
       }
     }
   }
@@ -104,7 +112,11 @@ export function TableRow<T extends object, C extends object = T>({
               <button
                 type="button"
                 className={cx('flotable__expander-btn', expanded && 'flotable__expander-btn--expanded')}
-                aria-label={expanded ? 'Collapse row' : 'Expand row'}
+                aria-label={
+                  expanded
+                    ? childRowsLabels?.collapse ?? 'Collapse row'
+                    : childRowsLabels?.expand ?? 'Expand row'
+                }
                 aria-expanded={expanded}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -137,13 +149,13 @@ export function TableRow<T extends object, C extends object = T>({
           </td>
         )}
       </tr>
-      {isExpandable && hasChildren && (
+      {isExpandable && hasChildren && hasOpened && (
         <ChildRows
           parentRow={row}
           expanded={expanded}
           columns={columns}
           childColumns={childColumns}
-          getChildren={getChildren}
+          eagerChildren={eagerChildren}
           childRequest={childRequest}
           childPageSize={childPageSize}
           childRowKey={childRowKey}
@@ -152,6 +164,7 @@ export function TableRow<T extends object, C extends object = T>({
           hasActions={hasActions}
           searchQuery={searchQuery}
           columnWidths={columnWidths}
+          labels={childRowsLabels}
           classNames={classNames}
           styles={styles}
         />

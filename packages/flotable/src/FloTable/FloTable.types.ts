@@ -114,6 +114,26 @@ export interface PaginationLabels {
   goBtn?: string;
 }
 
+/** Async fetcher for a parent row's children (expandable rows, request mode). */
+export type ChildRequestFn<T extends object, C extends object = T> = (
+  row: T,
+  params: { page: number; pageSize: number },
+) => Promise<{ data: C[]; totalRows: number }>;
+
+/** Labels for expandable rows. Override any or all to translate or customise. */
+export interface ChildRowsLabels {
+  /** Accessible label of the chevron when the row is collapsed. Defaults to `'Expand row'`. */
+  expand?: string;
+  /** Accessible label of the chevron when the row is expanded. Defaults to `'Collapse row'`. */
+  collapse?: string;
+  /** Shown when a parent's `childRequest` returns no children. Defaults to `'No items'`. */
+  empty?: string;
+  /** Text of the retry button shown when `childRequest` fails. Defaults to `'Retry'`. */
+  retry?: string;
+  /** Shown while the next batch of children is loading. Defaults to `'Loading…'`. */
+  loading?: string;
+}
+
 /**
  * Custom class names for each part of the table.
  * Passed through to the corresponding DOM elements alongside the built-in classes.
@@ -304,10 +324,7 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
    * skeleton and error / retry states are handled internally.
    * Use either `getChildren` (data mode) or `childRequest` (request mode) — not both.
    */
-  childRequest?: (
-    row: T,
-    params: { page: number; pageSize: number },
-  ) => Promise<{ data: C[]; totalRows: number }>;
+  childRequest?: ChildRequestFn<T, C>;
   /**
    * Request mode only: optional predicate deciding whether a parent row has children (and thus
    * shows a chevron) before they are fetched. When omitted, every parent row shows a chevron.
@@ -340,6 +357,8 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
    * parent row (`'row'`). Row actions and the selection checkbox never toggle expansion.
    */
   expandOn?: 'chevron' | 'row';
+  /** Labels for expandable rows (chevron aria-labels, empty / error / loading states). */
+  childRowsLabels?: ChildRowsLabels;
 }
 
 /**
@@ -423,10 +442,7 @@ export interface TableRowProps<T extends object, C extends object = T> {
   /** Expandable rows: returns this row's children (undefined/empty ⇒ no chevron). Presence enables the chevron column. */
   getChildren?: (row: T) => C[] | undefined;
   /** Expandable rows (request mode): async fetcher for this row's children. */
-  childRequest?: (
-    row: T,
-    params: { page: number; pageSize: number },
-  ) => Promise<{ data: C[]; totalRows: number }>;
+  childRequest?: ChildRequestFn<T, C>;
   /** Expandable rows (request mode): predicate deciding chevron visibility before children load. */
   rowHasChildren?: (row: T) => boolean;
   /** Expandable rows: rows per page for this row's children. Defaults to 5. */
@@ -447,6 +463,8 @@ export interface TableRowProps<T extends object, C extends object = T> {
   colSpan?: number;
   /** Expandable rows: measured parent column widths, synced into the child scroll table. */
   columnWidths?: number[];
+  /** Expandable rows: labels for the chevron and child states. */
+  childRowsLabels?: ChildRowsLabels;
 }
 
 export interface TableBodyProps<T extends object, C extends object = T> {
@@ -477,10 +495,7 @@ export interface TableBodyProps<T extends object, C extends object = T> {
   /** Expandable rows: returns a row's children (undefined/empty ⇒ no chevron). Presence enables the chevron column. */
   getChildren?: (row: T) => C[] | undefined;
   /** Expandable rows (request mode): async fetcher for a parent's children. */
-  childRequest?: (
-    row: T,
-    params: { page: number; pageSize: number },
-  ) => Promise<{ data: C[]; totalRows: number }>;
+  childRequest?: ChildRequestFn<T, C>;
   /** Expandable rows (request mode): predicate deciding chevron visibility before children load. */
   rowHasChildren?: (row: T) => boolean;
   /** Expandable rows: rows per page for a parent's children. Defaults to 5. */
@@ -499,6 +514,8 @@ export interface TableBodyProps<T extends object, C extends object = T> {
   searchQuery?: string;
   /** Expandable rows: measured parent column widths, synced into the child scroll table. */
   columnWidths?: number[];
+  /** Expandable rows: labels for the chevron and child states. */
+  childRowsLabels?: ChildRowsLabels;
 }
 
 /** Props for the per-parent child sub-table (`ChildRows`). */
@@ -509,13 +526,10 @@ export interface ChildRowsProps<T extends object, C extends object = T> {
   /** Parent columns (used as the child column fallback). */
   columns: ColumnDef<T, C>[];
   childColumns?: ColumnDef<C>[];
-  /** Data mode: returns the in-memory children for this parent. */
-  getChildren?: (row: T) => C[] | undefined;
+  /** Data mode: this parent's in-memory children (empty in request mode). */
+  eagerChildren: C[];
   /** Request mode: async fetcher for this parent's children. */
-  childRequest?: (
-    row: T,
-    params: { page: number; pageSize: number },
-  ) => Promise<{ data: C[]; totalRows: number }>;
+  childRequest?: ChildRequestFn<T, C>;
   childPageSize: number;
   childRowKey: string;
   /** Total column count (incl. reserved columns) — colSpan for full-width child rows. */
@@ -528,6 +542,8 @@ export interface ChildRowsProps<T extends object, C extends object = T> {
   searchQuery?: string;
   /** Measured parent column widths, synced into the child scroll table's colgroup. */
   columnWidths?: number[];
+  /** Labels for the empty / error / loading states. */
+  labels?: ChildRowsLabels;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }
