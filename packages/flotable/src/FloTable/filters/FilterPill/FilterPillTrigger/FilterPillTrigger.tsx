@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react';
-import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../../FloTable.types';
+import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import './FilterPillTrigger.css';
 
-export function formatActiveValue(def: FilterDef, value: string): string {
-  if (def.type === 'boolean') return value === 'true' ? 'Yes' : 'No';
+export function formatActiveValue(def: FilterDef, value: string, labels?: FloTableLabels): string {
+  if (def.type === 'boolean') {
+    return value === 'true' ? labels?.booleanTrue ?? 'Yes' : labels?.booleanFalse ?? 'No';
+  }
   return value;
 }
 
@@ -19,6 +21,7 @@ interface FilterPillTriggerProps {
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
   ariaLabel?: string;
+  labels?: FloTableLabels;
 }
 
 export function FilterPillTrigger({
@@ -32,6 +35,7 @@ export function FilterPillTrigger({
   classNames,
   styles,
   ariaLabel,
+  labels,
 }: FilterPillTriggerProps) {
   const isActive = value !== '';
 
@@ -48,7 +52,7 @@ export function FilterPillTrigger({
       {isActive && !isOpen && !isClosing && (
         renderActiveValue
           ? renderActiveValue(value)
-          : <span className="flotable-filter-pill__active-value">: {formatActiveValue(def, value)}</span>
+          : <span className="flotable-filter-pill__active-value">: {formatActiveValue(def, value, labels)}</span>
       )}
     </button>
   );

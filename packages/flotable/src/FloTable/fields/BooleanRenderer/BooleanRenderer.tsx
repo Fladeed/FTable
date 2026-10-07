@@ -4,9 +4,13 @@ export type BooleanRendererValue = boolean | string | number | null | undefined;
 
 interface BooleanRendererProps {
   value: BooleanRendererValue;
+  /** Text for `true`. Defaults to `'Yes'`. */
+  trueLabel?: string;
+  /** Text for `false`. Defaults to `'No'`. */
+  falseLabel?: string;
 }
 
-export function BooleanRenderer({ value }: BooleanRendererProps) {
+export function BooleanRenderer({ value, trueLabel = 'Yes', falseLabel = 'No' }: BooleanRendererProps) {
   const bool =
     value === true ||
     value === 'true' ||
@@ -15,7 +19,7 @@ export function BooleanRenderer({ value }: BooleanRendererProps) {
 
   return (
     <span className={`flotable-boolean flotable-boolean--${bool ? 'true' : 'false'}`}>
-      {bool ? 'Yes' : 'No'}
+      {bool ? trueLabel : falseLabel}
     </span>
   );
 }

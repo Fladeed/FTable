@@ -9,11 +9,18 @@ interface RowActionsOverflowProps<T> {
   actions: RowAction<T>[];
   row: T;
   moreIcon?: ReactNode;
+  /** Accessible label of the overflow button. Defaults to `'More actions'`. */
+  moreActionsLabel?: string;
 }
 
 const VIEWPORT_MARGIN = 8;
 
-export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOverflowProps<T>) {
+export function RowActionsOverflow<T>({
+  actions,
+  row,
+  moreIcon,
+  moreActionsLabel = 'More actions',
+}: RowActionsOverflowProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<CSSProperties | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,7 +132,7 @@ export function RowActionsOverflow<T>({ actions, row, moreIcon }: RowActionsOver
         ref={overflowBtnRef}
         type="button"
         className="flotable__row-actions-cell__overflow-btn"
-        aria-label="More actions"
+        aria-label={moreActionsLabel}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         onClick={() => {

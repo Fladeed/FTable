@@ -2,7 +2,8 @@
 
 /* Expandable rows: children live in one full-width cell as a fixed-height scroll box
    containing a nested table whose column widths are synced to the parent (so the child
-   cells line up under the parent headers). The box animates open via a CSS grid collapse. */
+   cells line up under the parent headers). The box is only mounted while its parent is expanded,
+   and animates open on mount via a CSS grid keyframe. */
 .flotable__child-fullspan {
   padding: 0;
   border: none;
@@ -11,12 +12,13 @@
 
 .flotable__child-collapser {
   display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--flotable-expand-duration, 0.25s) ease;
+  grid-template-rows: 1fr;
+  animation: flotable-child-expand var(--flotable-expand-duration, 0.25s) ease;
 }
 
-.flotable__child-scroll-row--expanded .flotable__child-collapser {
-  grid-template-rows: 1fr;
+@keyframes flotable-child-expand {
+  from { grid-template-rows: 0fr; }
+  to   { grid-template-rows: 1fr; }
 }
 
 .flotable__child-collapser-inner {

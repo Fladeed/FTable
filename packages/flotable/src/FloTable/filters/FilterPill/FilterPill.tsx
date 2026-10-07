@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
+import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../FloTable.types';
 import { cx } from '../../../utils/cx';
 import { FilterPillTrigger } from './FilterPillTrigger/FilterPillTrigger';
 import { FilterPillField } from './FilterPillField/FilterPillField';
@@ -29,6 +29,8 @@ export interface FilterPillProps {
   variant?: string;
   /** aria-label for the trigger button. Defaults to undefined (no aria-label). */
   triggerAriaLabel?: string;
+  /** Built-in text (boolean values, "All" option, close / clear button labels). */
+  labels?: FloTableLabels;
 }
 
 export function FilterPill({
@@ -48,6 +50,7 @@ export function FilterPill({
   placeholder = '…',
   variant,
   triggerAriaLabel,
+  labels,
 }: FilterPillProps) {
   const isActive = value !== '';
 
@@ -74,6 +77,7 @@ export function FilterPill({
         classNames={classNames}
         styles={styles}
         ariaLabel={triggerAriaLabel}
+        labels={labels}
       />
 
       {(isOpen || isClosing) && (
@@ -88,6 +92,7 @@ export function FilterPill({
           placeholder={placeholder}
           classNames={classNames}
           styles={styles}
+          labels={labels}
         />
       )}
 
@@ -96,6 +101,7 @@ export function FilterPill({
           filterKey={def.key}
           label={def.label}
           onClear={onClear}
+          ariaLabel={labels?.clearFilter}
         />
       )}
     </div>

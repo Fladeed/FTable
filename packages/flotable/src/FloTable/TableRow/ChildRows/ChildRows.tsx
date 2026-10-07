@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import type { ChildRowsProps, ColumnDef } from '../../FloTable.types';
+import { useInfiniteScroll } from '../../../hooks/useInfiniteScroll';
 import { renderCell } from '../../fields/renderCell';
 import { rowMatchesQuery } from '../../tableUtils';
 import { cx } from '../../../utils/cx';
@@ -19,7 +20,6 @@ import './ChildRows.css';
  */
 export function ChildRows<T extends object, C extends object = T>({
   parentRow,
-  expanded,
   columns,
   childColumns,
   eagerChildren,
@@ -31,6 +31,7 @@ export function ChildRows<T extends object, C extends object = T>({
   hasActions,
   searchQuery = '',
   columnWidths,
+  childRowsLabels,
   labels,
 }: ChildRowsProps<T, C>) {
   const isRequest = typeof childRequest === 'function';
@@ -84,12 +85,12 @@ export function ChildRows<T extends object, C extends object = T>({
     [childPageSize],
   );
 
-  // Fetch the first page on expand, and again whenever the parent row changes.
+  // Fetch the first page on mount (i.e. on expand), and again whenever the parent row changes.
   useEffect(() => {
-    if (!isRequest || !expanded || fetchedForRef.current === parentRow) return;
+    if (!isRequest || fetchedForRef.current === parentRow) return;
     fetchedForRef.current = parentRow;
     fetchPage(1);
-  }, [isRequest, expanded, parentRow, fetchPage]);
+  }, [isRequest, parentRow, fetchPage]);
 
   const childMatches = (child: C) =>
     searchQuery !== '' && rowMatchesQuery(child, childCols, searchQuery);
@@ -118,26 +119,14 @@ export function ChildRows<T extends object, C extends object = T>({
       setVisibleCount(Math.min(shownCount + childPageSize, eagerChildren.length));
     }
   };
-  const loadMoreRef = useRef(loadMore);
-  loadMoreRef.current = loadMore;
 
-  // Infinite scroll — observe the sentinel within the scroll box (root = viewport).
   const viewportRef = useRef<HTMLDivElement | null>(null);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!expanded || !hasMore) return;
-    const root = viewportRef.current;
-    const el = sentinelRef.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) loadMoreRef.current();
-      },
-      { root, rootMargin: '0px 0px 80px 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [expanded, hasMore, rows.length]);
+  const sentinelRef = useInfiniteScroll<HTMLDivElement>({
+    enabled: hasMore,
+    onLoadMore: loadMore,
+    rootRef: viewportRef,
+    resetKey: rows.length,
+  });
 
   const childKeyOf = (child: C, index: number) => {
     const value = String((child as Record<string, unknown>)[childRowKey] ?? '');
@@ -155,7 +144,7 @@ export function ChildRows<T extends object, C extends object = T>({
     <td className="flotable__cell--actions flotable__child-spacer" aria-hidden="true" />
   ) : null;
 
-  const fullWidthCell = (content: ReactNode, ref?: (el: HTMLDivElement | null) => void) => (
+  const fullWidthCell = (content: ReactNode, ref?: RefObject<HTMLDivElement | null>) => (
     <td className="flotable__child-statecell" colSpan={colSpan}>
       <div className="flotable__child-statecell-inner" ref={ref}>
         {content}
@@ -195,7 +184,7 @@ export function ChildRows<T extends object, C extends object = T>({
               key={col.key}
               className={cx('flotable__child-cell', colIndex === 0 && 'flotable__child-cell--first')}
             >
-              {renderCell(col, child)}
+              {renderCell(col, child, undefined, labels)}
             </td>
           ))}
           {trailingSpacer}
@@ -206,7 +195,7 @@ export function ChildRows<T extends object, C extends object = T>({
     if (isRequest && initialFetchedRef.current && rows.length === 0 && !loading && !error) {
       body.push(
         <tr key="child-empty" className="flotable__child-row flotable__child-state-row">
-          {fullWidthCell(<span className="flotable__child-state">{labels?.empty ?? 'No items'}</span>)}
+          {fullWidthCell(<span className="flotable__child-state">{childRowsLabels?.empty ?? 'No items'}</span>)}
         </tr>,
       );
     }
@@ -223,7 +212,7 @@ export function ChildRows<T extends object, C extends object = T>({
               className="flotable__child-retry"
               onClick={() => fetchPage(failedPageRef.current)}
             >
-              {labels?.retry ?? 'Retry'}
+              {childRowsLabels?.retry ?? 'Retry'}
             </button>
           </div>,
         )}
@@ -235,36 +224,17 @@ export function ChildRows<T extends object, C extends object = T>({
     body.push(
       <tr key="child-sentinel" className="flotable__child-row flotable__child-sentinel-row">
         {fullWidthCell(
-          loading ? <span className="flotable__child-state">{labels?.loading ?? 'Loading…'}</span> : null,
-          (el) => {
-            sentinelRef.current = el;
-          },
+          loading ? <span className="flotable__child-state">{childRowsLabels?.loading ?? 'Loading…'}</span> : null,
+          sentinelRef,
         )}
       </tr>,
     );
   }
 
-  // Mounted collapsed, then opened on the next commit so the CSS grid transition runs on first
-  // expand too. While collapsed the box is `inert`, so its buttons can't be tabbed into.
-  const scrollRowRef = useRef<HTMLTableRowElement | null>(null);
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    const el = scrollRowRef.current;
-    if (el) {
-      void el.offsetHeight; // flush the collapsed style before toggling the class
-      el.inert = !expanded;
-    }
-    setOpen(expanded);
-  }, [expanded]);
-
   const widthsValid = !!columnWidths && columnWidths.length === colSpan;
 
   return (
-    <tr
-      ref={scrollRowRef}
-      className={cx('flotable__child-scroll-row', open && 'flotable__child-scroll-row--expanded')}
-      aria-hidden={expanded ? undefined : true}
-    >
+    <tr className="flotable__child-scroll-row">
       <td className="flotable__child-fullspan" colSpan={colSpan}>
         <div className="flotable__child-collapser">
           <div className="flotable__child-collapser-inner">

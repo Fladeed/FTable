@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ColumnDef } from '../FloTable.types';
+import type { ColumnDef, FloTableLabels } from '../FloTable.types';
 import { TextRenderer, type TextRendererValue } from './TextRenderer/TextRenderer';
 import { NumberRenderer, type NumberRendererValue } from './NumberRenderer/NumberRenderer';
 import { DateRenderer, type DateRendererValue } from './DateRenderer/DateRenderer';
@@ -12,6 +12,7 @@ export function renderCell<T extends object, C extends object = T>(
   col: ColumnDef<T, C>,
   row: T,
   children?: C[],
+  labels?: FloTableLabels,
 ): ReactNode {
   const value = (row as Record<string, unknown>)[col.key];
 
@@ -29,7 +30,13 @@ export function renderCell<T extends object, C extends object = T>(
     case 'date':
       return <DateRenderer value={value as DateRendererValue} locale={col.locale} />;
     case 'boolean':
-      return <BooleanRenderer value={value as BooleanRendererValue} />;
+      return (
+        <BooleanRenderer
+          value={value as BooleanRendererValue}
+          trueLabel={labels?.booleanTrue}
+          falseLabel={labels?.booleanFalse}
+        />
+      );
     case 'badge':
       return <BadgeRenderer value={value as BadgeRendererValue} badgeColors={col.badgeColors} />;
     case 'currency':

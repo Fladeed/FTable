@@ -73,6 +73,7 @@ function FloTableImpl<T extends object, C extends object = T>(
     onExpandedChange,
     expandOn,
     childRowsLabels,
+    labels,
   } = props;
 
   const isReqMode = 'request' in props && typeof props.request === 'function';
@@ -403,6 +404,7 @@ function FloTableImpl<T extends object, C extends object = T>(
             filterMode={filterMode}
             classNames={classNames}
             styles={styles}
+            labels={labels}
           />
           {!hasCustomBar && hasBulkActions && (
             <BulkActionBar
@@ -434,6 +436,7 @@ function FloTableImpl<T extends object, C extends object = T>(
             expandable={isExpandable}
             classNames={classNames}
             styles={styles}
+            labels={labels}
           />
           <TableBody
             columns={columns}
@@ -463,6 +466,7 @@ function FloTableImpl<T extends object, C extends object = T>(
             searchQuery={searchQuery}
             columnWidths={columnWidths}
             childRowsLabels={childRowsLabels}
+            labels={labels}
           />
         </table>
       </div>

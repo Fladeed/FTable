@@ -5,6 +5,8 @@ import './TableBodyError.css';
 interface TableBodyErrorProps {
   columns: number;
   message: string;
+  /** Retry button text. Defaults to `'Retry'`. */
+  retryLabel?: string;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
   onRetry?: () => void;
@@ -13,6 +15,7 @@ interface TableBodyErrorProps {
 export function TableBodyError({
   columns,
   message,
+  retryLabel = 'Retry',
   classNames,
   styles,
   onRetry,
@@ -25,7 +28,7 @@ export function TableBodyError({
             <span className="flotable__error-message">{message}</span>
             {onRetry && (
               <button type="button" className="flotable__retry-btn" onClick={onRetry}>
-                Retry
+                {retryLabel}
               </button>
             )}
           </div>

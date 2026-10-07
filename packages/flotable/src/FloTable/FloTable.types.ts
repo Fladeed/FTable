@@ -120,6 +120,40 @@ export type ChildRequestFn<T extends object, C extends object = T> = (
   params: { page: number; pageSize: number },
 ) => Promise<{ data: C[]; totalRows: number }>;
 
+/**
+ * Built-in text of the table (states, filters, selection, accessible labels). Override any or all
+ * to translate or customise; each field documents its English default.
+ */
+export interface FloTableLabels {
+  /** Empty-state message when there are no rows. Defaults to `'No data'`. */
+  empty?: string;
+  /** Retry button text in the error state. Defaults to `'Retry'`. */
+  retry?: string;
+  /** Placeholder of the global search input. Defaults to `'Search…'`. */
+  searchPlaceholder?: string;
+  /** Accessible label of the global search pill. Defaults to `'Search'`. */
+  search?: string;
+  /** Accessible label of a row's selection checkbox. Defaults to `'Select row'`. */
+  selectRow?: string;
+  /** Accessible label of the header select-all checkbox. Defaults to `'Select all rows'`. */
+  selectAllRows?: string;
+  /** Accessible label of the row-actions overflow (⋯) button. Defaults to `'More actions'`. */
+  moreActions?: string;
+  /** Accessible label of the button closing an open filter. Defaults to `'Close filter'`. */
+  closeFilter?: string;
+  /**
+   * Accessible label of the button clearing an active filter, given the filter's label.
+   * Defaults to `` (label) => `Clear ${label || 'filter'}` ``.
+   */
+  clearFilter?: (label: string) => string;
+  /** "No filter" option of select / boolean filters. Defaults to `'All'`. */
+  filterAll?: string;
+  /** Text for a `true` boolean (cells and filters). Defaults to `'Yes'`. */
+  booleanTrue?: string;
+  /** Text for a `false` boolean (cells and filters). Defaults to `'No'`. */
+  booleanFalse?: string;
+}
+
 /** Labels for expandable rows. Override any or all to translate or customise. */
 export interface ChildRowsLabels {
   /** Accessible label of the chevron when the row is collapsed. Defaults to `'Expand row'`. */
@@ -359,6 +393,8 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
   expandOn?: 'chevron' | 'row';
   /** Labels for expandable rows (chevron aria-labels, empty / error / loading states). */
   childRowsLabels?: ChildRowsLabels;
+  /** Built-in table text (empty / error states, filters, selection, accessible labels). */
+  labels?: FloTableLabels;
 }
 
 /**
@@ -427,6 +463,8 @@ export interface TableHeaderProps<T extends object, C extends object = T> {
   styles?: FloTableStyles;
   /** When true, renders a leading spacer cell aligned with the row chevron column. */
   expandable?: boolean;
+  /** Built-in table text (select-all checkbox label). */
+  labels?: FloTableLabels;
 }
 
 export interface TableRowProps<T extends object, C extends object = T> {
@@ -465,6 +503,8 @@ export interface TableRowProps<T extends object, C extends object = T> {
   columnWidths?: number[];
   /** Expandable rows: labels for the chevron and child states. */
   childRowsLabels?: ChildRowsLabels;
+  /** Built-in table text. */
+  labels?: FloTableLabels;
 }
 
 export interface TableBodyProps<T extends object, C extends object = T> {
@@ -516,13 +556,13 @@ export interface TableBodyProps<T extends object, C extends object = T> {
   columnWidths?: number[];
   /** Expandable rows: labels for the chevron and child states. */
   childRowsLabels?: ChildRowsLabels;
+  /** Built-in table text. */
+  labels?: FloTableLabels;
 }
 
 /** Props for the per-parent child sub-table (`ChildRows`). */
 export interface ChildRowsProps<T extends object, C extends object = T> {
   parentRow: T;
-  /** Whether the parent is currently expanded (drives the collapse animation & lazy fetch). */
-  expanded: boolean;
   /** Parent columns (used as the child column fallback). */
   columns: ColumnDef<T, C>[];
   childColumns?: ColumnDef<C>[];
@@ -543,7 +583,9 @@ export interface ChildRowsProps<T extends object, C extends object = T> {
   /** Measured parent column widths, synced into the child scroll table's colgroup. */
   columnWidths?: number[];
   /** Labels for the empty / error / loading states. */
-  labels?: ChildRowsLabels;
+  childRowsLabels?: ChildRowsLabels;
+  /** Built-in table text (boolean cells). */
+  labels?: FloTableLabels;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
 }

@@ -158,14 +158,12 @@ const variantColumns: ColumnDef<Variant>[] = [
 **Behavior**
 
 - The chevron renders only when `getChildren(row)` returns a non-empty array.
-- Expansion animates via a pure-CSS grid collapse and is local to the table (preserved scroll
-  position). Use `onExpandedChange` to observe the expanded parent keys.
+- Children are mounted only while their parent is expanded (collapsing unmounts them; request-mode
+  children are fetched again on the next expand). Opening animates via a pure-CSS grid keyframe.
+  Use `onExpandedChange` to observe the expanded parent keys.
 - Global **search** matches child rows too: a matching child auto-expands its parent and is
   highlighted.
 - **Sorting** and **pagination** apply to parents; child order is whatever `getChildren` returns.
-- **Keyboard:** focus a parent row, then `→` / `←` expand / collapse, and `Enter` triggers the
-  row's first visible, enabled action that is not `danger` — destructive actions are never run
-  from the keyboard. With no such action, `Enter` toggles the row instead.
 - **Labels:** every expandable-rows string is overridable via `childRowsLabels`
   (`expand`, `collapse`, `empty`, `retry`, `loading`).
 
@@ -276,6 +274,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `onExpandedChange` | `(expandedKeys: string[]) => void` | Called with expanded parent keys on toggle |
 | `expandOn` | `'chevron' \| 'row'` | What toggles expansion (default `'chevron'`) |
 | `childRowsLabels` | `ChildRowsLabels` | Expandable-rows text: `expand` (`'Expand row'`), `collapse` (`'Collapse row'`), `empty` (`'No items'`), `retry` (`'Retry'`), `loading` (`'Loading…'`) |
+| `labels` | `FloTableLabels` | Built-in text: `empty` (`'No data'`), `retry` (`'Retry'`), `searchPlaceholder` (`'Search…'`), `search` (`'Search'`), `selectRow` (`'Select row'`), `selectAllRows` (`'Select all rows'`), `moreActions` (`'More actions'`), `closeFilter` (`'Close filter'`), `clearFilter` (`(label) => 'Clear ' + label`), `filterAll` (`'All'`), `booleanTrue` (`'Yes'`), `booleanFalse` (`'No'`) |
 | `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
 | `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |
 

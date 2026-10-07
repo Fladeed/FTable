@@ -16,6 +16,7 @@ export function TableHeader<T extends object, C extends object = T>({
   expandable,
   classNames,
   styles,
+  labels,
 }: TableHeaderProps<T, C>) {
   const checkboxRef = useRef<HTMLInputElement>(null);
 
@@ -38,7 +39,7 @@ export function TableHeader<T extends object, C extends object = T>({
               type="checkbox"
               checked={selectionState === 'all'}
               onChange={onToggleAll}
-              aria-label="Select all rows"
+              aria-label={labels?.selectAllRows ?? 'Select all rows'}
             />
           </th>
         )}

@@ -1,5 +1,5 @@
-import { Fragment, useMemo, useState } from 'react';
-import type { MouseEvent, KeyboardEvent } from 'react';
+import { Fragment, useMemo } from 'react';
+import type { MouseEvent } from 'react';
 import type { TableRowProps } from '../FloTable.types';
 import { renderCell } from '../fields/renderCell';
 import { RowActionsCell } from '../ActionBar/RowActionsCell/RowActionsCell';
@@ -30,6 +30,7 @@ export function TableRow<T extends object, C extends object = T>({
   colSpan,
   columnWidths,
   childRowsLabels,
+  labels,
 }: TableRowProps<T, C>) {
   const isRequestChildren = typeof childRequest === 'function';
   const isExpandable = typeof getChildren === 'function' || isRequestChildren;
@@ -48,10 +49,6 @@ export function TableRow<T extends object, C extends object = T>({
   // (and toggles) one source of truth.
   const expanded = isExpanded ?? false;
 
-  // Children are mounted on first expand and kept afterwards (for the collapse animation).
-  const [hasOpened, setHasOpened] = useState(expanded);
-  if (expanded && !hasOpened) setHasOpened(true);
-
   const rowClickToggles = expandOn === 'row' && hasChildren;
   const hasActions = !!rowActions && rowActions.length > 0;
 
@@ -61,34 +58,6 @@ export function TableRow<T extends object, C extends object = T>({
       return;
     }
     onToggleExpand?.();
-  }
-
-  // Enter runs the first visible, enabled, non-destructive action — never a `danger` one
-  // (e.g. Delete), since a stray keypress must not destroy data. Without one, Enter toggles.
-  const primaryAction = rowActions?.find(
-    (a) => !a.danger && (a.visible?.(row) ?? true) && !(a.disabled?.(row) ?? false),
-  );
-
-  function handleRowKeyDown(e: KeyboardEvent<HTMLTableRowElement>) {
-    if (e.target !== e.currentTarget) return;
-    if (e.key === 'ArrowRight') {
-      if (hasChildren && !expanded) {
-        e.preventDefault();
-        onToggleExpand?.();
-      }
-    } else if (e.key === 'ArrowLeft') {
-      if (hasChildren && expanded) {
-        e.preventDefault();
-        onToggleExpand?.();
-      }
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (primaryAction) {
-        primaryAction.onClick(row);
-      } else {
-        onToggleExpand?.();
-      }
-    }
   }
 
   return (
@@ -101,10 +70,7 @@ export function TableRow<T extends object, C extends object = T>({
           classNames?.row,
         )}
         style={styles?.row}
-        aria-expanded={hasChildren ? expanded : undefined}
-        tabIndex={isExpandable && hasChildren ? 0 : undefined}
         onClick={rowClickToggles ? handleRowClick : undefined}
-        onKeyDown={isExpandable && hasChildren ? handleRowKeyDown : undefined}
       >
         {isExpandable && (
           <td className="flotable__expander-cell" style={styles?.cell}>
@@ -134,25 +100,29 @@ export function TableRow<T extends object, C extends object = T>({
               type="checkbox"
               checked={isSelected ?? false}
               onChange={onToggle}
-              aria-label="Select row"
+              aria-label={labels?.selectRow ?? 'Select row'}
             />
           </td>
         )}
         {columns.map((col) => (
           <td key={col.key} className={cx('flotable__cell', classNames?.cell)} style={styles?.cell}>
-            {renderCell(col, row, eagerChildren.length > 0 ? eagerChildren : undefined)}
+            {renderCell(col, row, eagerChildren.length > 0 ? eagerChildren : undefined, labels)}
           </td>
         ))}
         {hasActions && (
           <td className={cx('flotable__cell flotable__cell--actions', classNames?.cell)} style={styles?.cell}>
-            <RowActionsCell actions={rowActions!} row={row} moreIcon={rowActionsMoreIcon} />
+            <RowActionsCell
+              actions={rowActions!}
+              row={row}
+              moreIcon={rowActionsMoreIcon}
+              moreActionsLabel={labels?.moreActions}
+            />
           </td>
         )}
       </tr>
-      {isExpandable && hasChildren && hasOpened && (
+      {isExpandable && hasChildren && expanded && (
         <ChildRows
           parentRow={row}
-          expanded={expanded}
           columns={columns}
           childColumns={childColumns}
           eagerChildren={eagerChildren}
@@ -164,7 +134,8 @@ export function TableRow<T extends object, C extends object = T>({
           hasActions={hasActions}
           searchQuery={searchQuery}
           columnWidths={columnWidths}
-          labels={childRowsLabels}
+          childRowsLabels={childRowsLabels}
+          labels={labels}
           classNames={classNames}
           styles={styles}
         />

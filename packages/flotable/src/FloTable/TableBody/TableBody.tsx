@@ -35,6 +35,7 @@ export function TableBody<T extends object, C extends object = T>({
   searchQuery,
   columnWidths,
   childRowsLabels,
+  labels,
 }: TableBodyProps<T, C>) {
   const hasActions = (rowActions?.length ?? 0) > 0;
   const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
@@ -60,6 +61,7 @@ export function TableBody<T extends object, C extends object = T>({
       <TableBodyError
         columns={colCount}
         message={error}
+        retryLabel={labels?.retry}
         classNames={classNames}
         styles={styles}
         onRetry={onRetry}
@@ -71,6 +73,7 @@ export function TableBody<T extends object, C extends object = T>({
     return (
       <TableBodyEmpty
         columns={colCount}
+        message={labels?.empty}
         classNames={classNames}
         styles={styles}
       />
@@ -109,6 +112,7 @@ export function TableBody<T extends object, C extends object = T>({
             colSpan={colCount}
             columnWidths={columnWidths}
             childRowsLabels={childRowsLabels}
+            labels={labels}
           />
         );
       })}
