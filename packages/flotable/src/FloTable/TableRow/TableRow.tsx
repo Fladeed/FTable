@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 import type { TableRowProps } from '../FloTable.types';
 import { renderCell } from '../fields/renderCell';
@@ -31,6 +31,8 @@ export function TableRow<T extends object, C extends object = T>({
   columnWidths,
   childRowsLabels,
   labels,
+  childCache,
+  rowKeyValue,
 }: TableRowProps<T, C>) {
   const isRequestChildren = typeof childRequest === 'function';
   const isExpandable = typeof getChildren === 'function' || isRequestChildren;
@@ -48,6 +50,10 @@ export function TableRow<T extends object, C extends object = T>({
   // Search auto-expansion is folded into `isExpanded` by FloTable, so the chevron always reflects
   // (and toggles) one source of truth.
   const expanded = isExpanded ?? false;
+
+  // Children are mounted while expanded, and kept only for the close animation after collapsing.
+  const [childrenMounted, setChildrenMounted] = useState(expanded);
+  if (expanded && !childrenMounted) setChildrenMounted(true);
 
   const rowClickToggles = expandOn === 'row' && hasChildren;
   const hasActions = !!rowActions && rowActions.length > 0;
@@ -120,9 +126,13 @@ export function TableRow<T extends object, C extends object = T>({
           </td>
         )}
       </tr>
-      {isExpandable && hasChildren && expanded && (
+      {isExpandable && hasChildren && childrenMounted && (
         <ChildRows
           parentRow={row}
+          closing={!expanded}
+          onClosed={() => setChildrenMounted(false)}
+          cache={childCache}
+          cacheKey={rowKeyValue}
           columns={columns}
           childColumns={childColumns}
           eagerChildren={eagerChildren}

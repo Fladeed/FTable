@@ -505,6 +505,9 @@ export interface TableRowProps<T extends object, C extends object = T> {
   childRowsLabels?: ChildRowsLabels;
   /** Built-in table text. */
   labels?: FloTableLabels;
+  /** Expandable rows (request mode): table-wide cache of loaded children, and this row's key. */
+  childCache?: ChildCache<C>;
+  rowKeyValue?: string;
 }
 
 export interface TableBodyProps<T extends object, C extends object = T> {
@@ -560,9 +563,30 @@ export interface TableBodyProps<T extends object, C extends object = T> {
   labels?: FloTableLabels;
 }
 
+/**
+ * Request-mode children already loaded for a parent, kept across collapse / expand so reopening a
+ * row doesn't refetch. Valid only while `parentRow` is the same object (a table refetch replaces it).
+ */
+export interface ChildCacheEntry<C> {
+  parentRow: unknown;
+  data: C[];
+  total: number;
+  nextPage: number;
+}
+
+/** Per-table cache of loaded children, keyed by parent row key. */
+export type ChildCache<C> = Map<string, ChildCacheEntry<C>>;
+
 /** Props for the per-parent child sub-table (`ChildRows`). */
 export interface ChildRowsProps<T extends object, C extends object = T> {
   parentRow: T;
+  /** True while the parent is collapsing: plays the close animation, then calls `onClosed`. */
+  closing?: boolean;
+  /** Called when the close animation has finished, so the parent can unmount the children. */
+  onClosed?: () => void;
+  /** Request mode: cache of loaded children shared by the table, and this parent's key in it. */
+  cache?: ChildCache<C>;
+  cacheKey?: string;
   /** Parent columns (used as the child column fallback). */
   columns: ColumnDef<T, C>[];
   childColumns?: ColumnDef<C>[];

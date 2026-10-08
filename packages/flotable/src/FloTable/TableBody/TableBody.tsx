@@ -1,4 +1,5 @@
-import type { TableBodyProps } from '../FloTable.types';
+import { useRef } from 'react';
+import type { ChildCache, TableBodyProps } from '../FloTable.types';
 import { TableRow } from '../TableRow/TableRow';
 import { TableBodySkeleton } from './TableBodySkeleton/TableBodySkeleton';
 import { TableBodyError } from './TableBodyError/TableBodyError';
@@ -37,6 +38,9 @@ export function TableBody<T extends object, C extends object = T>({
   childRowsLabels,
   labels,
 }: TableBodyProps<T, C>) {
+  // Lives here (not in ChildRows, which unmounts on collapse) so reopening a row reuses its children.
+  const childCacheRef = useRef<ChildCache<C>>(new Map());
+
   const hasActions = (rowActions?.length ?? 0) > 0;
   const isExpandable = typeof getChildren === 'function' || typeof childRequest === 'function';
   const colCount =
@@ -113,6 +117,8 @@ export function TableBody<T extends object, C extends object = T>({
             columnWidths={columnWidths}
             childRowsLabels={childRowsLabels}
             labels={labels}
+            childCache={childCacheRef.current}
+            rowKeyValue={value}
           />
         );
       })}

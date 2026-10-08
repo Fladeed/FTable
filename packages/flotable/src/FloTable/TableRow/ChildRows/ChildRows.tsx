@@ -20,6 +20,10 @@ import './ChildRows.css';
  */
 export function ChildRows<T extends object, C extends object = T>({
   parentRow,
+  closing = false,
+  onClosed,
+  cache,
+  cacheKey,
   columns,
   childColumns,
   eagerChildren,
@@ -37,18 +41,24 @@ export function ChildRows<T extends object, C extends object = T>({
   const isRequest = typeof childRequest === 'function';
   const childCols = childColumns ?? (columns as unknown as ColumnDef<C>[]);
 
-  const [loaded, setLoaded] = useState<C[]>([]);
-  const [total, setTotal] = useState(0);
+  // Request mode: start from the table-level cache when it still belongs to this parent row object.
+  const cachedEntry = cacheKey !== undefined ? cache?.get(cacheKey) : undefined;
+  const cached = isRequest && cachedEntry?.parentRow === parentRow ? cachedEntry : undefined;
+
+  const [loaded, setLoaded] = useState<C[]>(() => cached?.data ?? []);
+  const [total, setTotal] = useState(() => cached?.total ?? 0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(childPageSize);
 
   const requestIdRef = useRef(0);
-  const nextPageRef = useRef(1);
+  const nextPageRef = useRef(cached?.nextPage ?? 1);
   const failedPageRef = useRef(1);
-  const initialFetchedRef = useRef(false);
+  const initialFetchedRef = useRef(!!cached);
   // The parent row object the current (or in-flight) first page was requested for.
-  const fetchedForRef = useRef<T | null>(null);
+  const fetchedForRef = useRef<T | null>(cached ? parentRow : null);
+  // The parent row object `loaded` belongs to.
+  const loadedForRef = useRef<T | null>(cached ? parentRow : null);
   const loadingRef = useRef(false);
   loadingRef.current = loading;
 
@@ -65,9 +75,11 @@ export function ChildRows<T extends object, C extends object = T>({
       const id = ++requestIdRef.current;
       setLoading(true);
       setError(null);
-      request(parentRowRef.current, { page: pageNum, pageSize: childPageSize })
+      const forRow = parentRowRef.current;
+      request(forRow, { page: pageNum, pageSize: childPageSize })
         .then((res) => {
           if (id !== requestIdRef.current) return;
+          loadedForRef.current = forRow;
           setLoaded((prev) => (pageNum === 1 ? res.data : [...prev, ...res.data]));
           setTotal(res.totalRows);
           nextPageRef.current = pageNum + 1;
@@ -85,12 +97,23 @@ export function ChildRows<T extends object, C extends object = T>({
     [childPageSize],
   );
 
-  // Fetch the first page on mount (i.e. on expand), and again whenever the parent row changes.
+  // Fetch the first page on expand (unless cached), and again whenever the parent row changes.
   useEffect(() => {
-    if (!isRequest || fetchedForRef.current === parentRow) return;
+    if (!isRequest || closing || fetchedForRef.current === parentRow) return;
     fetchedForRef.current = parentRow;
     fetchPage(1);
-  }, [isRequest, parentRow, fetchPage]);
+  }, [isRequest, closing, parentRow, fetchPage]);
+
+  // Keep the cache in sync with what has been loaded, so it survives collapsing (unmount).
+  useEffect(() => {
+    if (!isRequest || !cache || cacheKey === undefined || !initialFetchedRef.current) return;
+    cache.set(cacheKey, {
+      parentRow: loadedForRef.current,
+      data: loaded,
+      total,
+      nextPage: nextPageRef.current,
+    });
+  }, [isRequest, cache, cacheKey, loaded, total]);
 
   const childMatches = (child: C) =>
     searchQuery !== '' && rowMatchesQuery(child, childCols, searchQuery);
@@ -122,7 +145,7 @@ export function ChildRows<T extends object, C extends object = T>({
 
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
-    enabled: hasMore,
+    enabled: hasMore && !closing,
     onLoadMore: loadMore,
     rootRef: viewportRef,
     resetKey: rows.length,
@@ -231,12 +254,34 @@ export function ChildRows<T extends object, C extends object = T>({
     );
   }
 
+  // Closing: the collapse keyframe plays, then `onClosed` lets the parent unmount us. The box is
+  // `inert` meanwhile so its buttons can't be focused. If animations are disabled (no keyframe
+  // applied), close immediately.
+  const collapserRef = useRef<HTMLDivElement | null>(null);
+  const onClosedRef = useRef(onClosed);
+  onClosedRef.current = onClosed;
+  useEffect(() => {
+    const el = collapserRef.current;
+    if (!el) return;
+    el.inert = closing;
+    if (closing && getComputedStyle(el).animationName === 'none') onClosedRef.current?.();
+  }, [closing]);
+
   const widthsValid = !!columnWidths && columnWidths.length === colSpan;
 
   return (
-    <tr className="flotable__child-scroll-row">
+    <tr
+      className={cx('flotable__child-scroll-row', closing && 'flotable__child-scroll-row--closing')}
+      aria-hidden={closing || undefined}
+    >
       <td className="flotable__child-fullspan" colSpan={colSpan}>
-        <div className="flotable__child-collapser">
+        <div
+          className="flotable__child-collapser"
+          ref={collapserRef}
+          onAnimationEnd={(e) => {
+            if (closing && e.target === e.currentTarget) onClosed?.();
+          }}
+        >
           <div className="flotable__child-collapser-inner">
             <div className="flotable__child-scroll" ref={viewportRef}>
               <table

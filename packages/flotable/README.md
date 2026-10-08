@@ -158,8 +158,10 @@ const variantColumns: ColumnDef<Variant>[] = [
 **Behavior**
 
 - The chevron renders only when `getChildren(row)` returns a non-empty array.
-- Children are mounted only while their parent is expanded (collapsing unmounts them; request-mode
-  children are fetched again on the next expand). Opening animates via a pure-CSS grid keyframe.
+- Children are mounted only while their parent is expanded; collapsing animates closed, then
+  unmounts them. Opening and closing animate via pure-CSS grid keyframes.
+- Request-mode children are cached per parent: collapsing and re-expanding reuses what was already
+  loaded. The cache is dropped when the parent row object changes (e.g. after the table refetches).
   Use `onExpandedChange` to observe the expanded parent keys.
 - Global **search** matches child rows too: a matching child auto-expands its parent and is
   highlighted.
@@ -178,8 +180,9 @@ revealed/fetched as you scroll), not a pager:
   batches of `childPageSize` as you scroll the box.
 - **Request mode** — `childRequest(row, { page, pageSize })` fetches the first batch the first time
   a parent expands, then the next batch is fetched and appended as you scroll, resolving
-  `{ data, totalRows }`. A loading skeleton and error/retry are handled internally. Children are
-  re-fetched when the parent row object changes (e.g. after the table refetches). Use
+  `{ data, totalRows }`. A loading skeleton and error/retry are handled internally. Loaded children
+  are cached across collapse / expand, and re-fetched when the parent row object changes (e.g.
+  after the table refetches). Use
   `rowHasChildren(row)` to control which parents show a chevron before children load.
 
 The box height is set with the `--flotable-child-scroll-max-height` CSS variable (default ~5 rows).
