@@ -14,6 +14,7 @@ const TABS = [
   { href: '/row-actions', label: 'Row Actions' },
   { href: '/expandable-rows', label: 'Expandable Rows' },
   { href: '/bulk-actions', label: 'Bulk Actions' },
+  { href: '/table-actions', label: 'Table Actions' },
   { href: '/rtl-support', label: 'RTL Support' },
   { href: '/theming', label: 'Theming' },
 ] as const;
