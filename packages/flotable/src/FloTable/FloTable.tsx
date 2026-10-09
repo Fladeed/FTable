@@ -31,6 +31,7 @@ import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
+import { TableActions } from './ActionBar/TableActions/TableActions';
 import { cx } from '../utils/cx';
 import { FloTableThemeContext } from './theme/FloTableThemeContext';
 import './FloTable.css';
@@ -59,6 +60,7 @@ function FloTableImpl<T extends object, C extends object = T>(
     selectionCountLabel,
     renderBulkActionBar,
     renderInlineBulkActions,
+    tableActions,
     classNames,
     styles,
     direction,
@@ -385,6 +387,7 @@ function FloTableImpl<T extends object, C extends object = T>(
   const hasBulkActions = (bulkActions?.length ?? 0) > 0;
   const hasCustomBar = typeof renderBulkActionBar === 'function';
   const hasInlineBar = typeof renderInlineBulkActions === 'function';
+  const hasTableActions = (tableActions?.length ?? 0) > 0;
   const hasSelection = selectedKeys.size > 0;
   const hasFilterBar = showSearch || effectiveFilterDefs.length > 0;
 
@@ -402,7 +405,7 @@ function FloTableImpl<T extends object, C extends object = T>(
       <div
         className={cx('flotable-root', inheritTheme && 'flotable-root--inherit', classNames?.root)}
         style={styles?.root} dir={direction}>
-        {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
+        {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || hasTableActions) && (
           <div className="flotable-toolbar">
             <FilterBar
               filterDefs={effectiveFilterDefs}
@@ -427,6 +430,9 @@ function FloTableImpl<T extends object, C extends object = T>(
               />
             )}
             {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+            {hasTableActions && (
+              <TableActions actions={tableActions!} classNames={classNames} styles={styles} />
+            )}
           </div>
         )}
         {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
