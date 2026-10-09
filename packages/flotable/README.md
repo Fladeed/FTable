@@ -17,7 +17,7 @@ An open-source, **zero-dependency** table component built for ERP-style applicat
 - **Quick filters** — inline per-column filter pills in the header
 - **Sorting** — single-column sorting with visual indicators
 - **Pagination** — built-in page controls with configurable page size
-- **Table actions** — selection-independent toolbar buttons (e.g. "New product") via `tableActions`
+- **Table actions** — selection-independent toolbar buttons (e.g. "New product") via `tableActions`, plus a free `toolbarEnd` slot for custom controls
 - **Custom renderers** — override any column with a `render` function
 - **Two data modes** — controlled (`data` prop) or self-managed (`request` prop for async fetching)
 - **Full style control** — CSS custom properties, `classNames` API, and `styles` prop for every table slot
@@ -229,6 +229,30 @@ const tableActions: TableAction[] = [
 <FloTable columns={columns} request={fetchProducts} showSearch tableActions={tableActions} />;
 ```
 
+### `toolbarEnd`: custom controls
+
+`toolbarEnd` is a free `ReactNode` slot rendered at the end side of the toolbar, just **before** `tableActions`. Use it for controls that are not plain buttons, such as a period picker that opens a popover or a native `<select>`.
+
+| Use | When |
+|-----|------|
+| `tableActions` | Plain buttons (label, optional icon, click handler). FloTable styles them and handles a11y. |
+| `toolbarEnd` | Anything else: pickers, selects, popovers, segmented controls. You render and style it. |
+
+```tsx
+<FloTable
+  columns={columns}
+  request={fetchRefunds}
+  toolbarEnd={<PeriodPicker value={period} onChange={setPeriod} />}
+  tableActions={[{ key: 'new', label: 'New refund', variant: 'primary', onClick: openCreate }]}
+/>
+```
+
+- The toolbar order is: filter bar (grows), inline bulk actions, `toolbarEnd`, `tableActions`. The first end-side group that is present gets `margin-inline-start: auto`, so both groups stay together at the end and mirror under RTL.
+- Popovers are safe. Neither the toolbar nor the slot wrapper sets `overflow`, and the wrapper (`.flotable__toolbar-end`) is `position: relative`, so a child's `position: absolute` panel anchors to it and can overlap the table.
+- The wrapper is a flex row (`gap: var(--flotable-toolbar-end-gap, 0.5rem)`) aligned with the filter pills (`align-self: center`).
+- When set (anything other than `null`, `undefined` or a boolean), the toolbar renders even if nothing else is in it. It is independent of row selection.
+- Style the wrapper with `classNames.toolbarEnd` / `styles.toolbarEnd`.
+
 ### `TableAction`
 
 | Field | Type | Default | Description |
@@ -250,6 +274,7 @@ const tableActions: TableAction[] = [
 | `tableActions` | Container `<div>` (`.flotable-table-actions`) |
 | `tableAction` | Each `<button>` (`.flotable-table-actions__btn`) |
 | `tableActionPrimary` | The `variant: 'primary'` button (`.flotable-table-actions__btn--primary`), applied on top of `tableAction` |
+| `toolbarEnd` | The `toolbarEnd` slot wrapper `<div>` (`.flotable__toolbar-end`) |
 
 CSS custom properties:
 
@@ -269,6 +294,7 @@ CSS custom properties:
 | `--flotable-table-action-primary-border-color` | `var(--flotable-table-action-primary-bg, #2563eb)` |
 | `--flotable-table-action-primary-hover-bg` | `#1d4ed8` |
 | `--flotable-table-action-focus-ring` | `#2563eb` (2px `:focus-visible` outline) |
+| `--flotable-toolbar-end-gap` | `0.5rem` (gap between `toolbarEnd` children) |
 
 ---
 
@@ -398,6 +424,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `childRowsLabels` | `ChildRowsLabels` | Expandable-rows text: `expand` (`'Expand row'`), `collapse` (`'Collapse row'`), `empty` (`'No items'`), `retry` (`'Retry'`), `loading` (`'Loading…'`) |
 | `labels` | `FloTableLabels` | Built-in text: `empty` (`'No data'`), `retry` (`'Retry'`), `searchPlaceholder` (`'Search…'`), `search` (`'Search'`), `selectRow` (`'Select row'`), `selectAllRows` (`'Select all rows'`), `moreActions` (`'More actions'`), `closeFilter` (`'Close filter'`), `clearFilter` (`(label) => 'Clear ' + label`), `filterAll` (`'All'`), `booleanTrue` (`'Yes'`), `booleanFalse` (`'No'`) |
 | `tableActions` | `TableAction[]` | Selection-independent buttons at the end of the toolbar (see [Table Actions](#table-actions)) |
+| `toolbarEnd` | `ReactNode` | Custom controls at the end of the toolbar, before `tableActions` (see [`toolbarEnd`](#toolbarend-custom-controls)) |
 | `renderInlineBulkActions` | `(ctx: BulkActionBarContext<T>) => ReactNode` | Custom bulk-action content inline in the toolbar; always receives the selection context. For selection-independent actions use `tableActions` |
 | `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
 | `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |

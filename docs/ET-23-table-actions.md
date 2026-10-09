@@ -217,3 +217,29 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 - [ ] Create the skill follow-up ticket under ET-1 (Task, label `flotable-skill`) titled `[Skill] Update flotable skill — tableActions prop for toolbar actions`. It must be self-contained: API, files, tokens, slots, which skill sections to update, and the PR link.
 - [ ] Add the skill ticket to `MEMORY.md`. ET-23 stays In Progress until the PR is merged.
 - [ ] Run `cd packages/flotable && npm run build && npm pack`, check that the `.tgz` is not tracked (add `*.tgz` to `.gitignore` only if you approve), and print its absolute path.
+
+## Addendum — `toolbarEnd` free slot
+
+Requested after PR #24 was opened. The ET-23 description has been updated to include it.
+
+**Overview.** `tableActions` covers plain buttons. TajirPro also needs custom controls in the toolbar, such as a period picker that opens a popover. The new prop is `toolbarEnd?: ReactNode`, rendered at the end side before `tableActions`.
+
+**Decisions**
+- The slot is a new `ToolbarEnd` component at `packages/flotable/src/FloTable/ToolbarEnd/ToolbarEnd.{tsx,css}`. It is toolbar-level, not part of the action bar. Its BEM class is `flotable__toolbar-end`, as requested.
+- `hasToolbarEnd = toolbarEnd != null && typeof toolbarEnd !== 'boolean'`. React renders nothing for `null`, `undefined` and booleans, so those values do not force the toolbar or create a wrapper. This also lets `cond && <Picker />` work as expected.
+- "`margin-inline-start: auto` on the first end-side group that exists" is done in CSS. Both `.flotable__toolbar-end` and `.flotable-table-actions` get it, and `.flotable__toolbar-end ~ .flotable-table-actions` resets it to `0`.
+- New token `--flotable-toolbar-end-gap` (default `0.5rem`) controls the gap between slot children, since the wrapper is a flex row.
+- The version stays at `0.1.12` because it has not been released yet.
+
+### Phase 5: [DEV] / [DOCS] `toolbarEnd`
+
+#### Task 5.1: Prop, slot component, wiring [15 min] — ✅ COMPLETE
+**Files:** `FloTable.types.ts` (`toolbarEnd` prop and the `toolbarEnd` classNames/styles slot), `ToolbarEnd/ToolbarEnd.tsx` and `.css` (new: wrapper with `position: relative`, `align-self: center`, a flex row and no `overflow`), `FloTable.tsx` (renders it after the inline bulk actions and before `TableActions`, and adds `hasToolbarEnd` to the toolbar condition), `FloTable.css` (end-side margin rules).
+
+#### Task 5.2: Demo [15 min] — ✅ COMPLETE
+**Files:** `apps/demo/src/components/TableActionsDemo/PeriodPicker/PeriodPicker.{tsx,css}` (new: a native `<select>` plus a toggle button opening an absolutely positioned panel), `TableActionsSection.tsx` (passes `toolbarEnd` in every section, plus an optional `withTableActions` flag), `TableActionsDemo.tsx` (adds a fifth section, "LTR — toolbarEnd only"), `TableActionsDemoData.ts` (LTR/RTL labels).
+
+#### Task 5.3: README, verification, delivery [15 min] — ✅ COMPLETE
+- Both READMEs: a `toolbarEnd` subsection with a "when to use which" table, a new slot row, a new token row and a Common Props row.
+- `typecheck` and `build` pass. The rendered HTML of all existing demo pages is identical to master, ignoring only the sidebar nav.
+- The PR body and ET-129 are updated, and the tarball is rebuilt.

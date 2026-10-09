@@ -59,7 +59,18 @@ const SEED: Record<Direction, Product[]> = {
 
 export const LABELS: Record<
   Direction,
-  { addRow: string; export: string; deleteSelected: string; newRowName: (id: number) => string; feedback: (action: string) => string; idle: string }
+  {
+    addRow: string;
+    export: string;
+    deleteSelected: string;
+    newRowName: (id: number) => string;
+    feedback: (action: string) => string;
+    idle: string;
+    period: string;
+    periods: string[];
+    periodDetails: string;
+    periodPanel: (period: string) => string;
+  }
 > = {
   ltr: {
     addRow: 'Add row',
@@ -68,6 +79,10 @@ export const LABELS: Record<
     newRowName: (id) => `New product #${id}`,
     feedback: (action) => `Last action: ${action}`,
     idle: 'No action clicked yet',
+    period: 'Period',
+    periods: ['This month', 'Last month', 'This year'],
+    periodDetails: 'Period details',
+    periodPanel: (period) => `Showing products for: ${period}. This panel is absolutely positioned inside toolbarEnd and overlaps the table without being clipped.`,
   },
   rtl: {
     addRow: 'إضافة صف',
@@ -76,6 +91,10 @@ export const LABELS: Record<
     newRowName: (id) => `منتج جديد #${id}`,
     feedback: (action) => `آخر إجراء: ${action}`,
     idle: 'لم يتم النقر على أي إجراء بعد',
+    period: 'الفترة',
+    periods: ['هذا الشهر', 'الشهر الماضي', 'هذه السنة'],
+    periodDetails: 'تفاصيل الفترة',
+    periodPanel: (period) => `عرض المنتجات لـ: ${period}. هذه اللوحة ذات موضع مطلق داخل toolbarEnd وتظهر فوق الجدول دون أن تُقصّ.`,
   },
 };
 

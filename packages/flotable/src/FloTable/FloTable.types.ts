@@ -238,6 +238,8 @@ export interface FloTableClassNames {
   tableAction?: string;
   /** Added to the table action `<button>` whose `variant` is `'primary'` (alongside `tableAction`) */
   tableActionPrimary?: string;
+  /** `toolbarEnd` slot wrapper `<div>` (`.flotable__toolbar-end`) */
+  toolbarEnd?: string;
 }
 
 /**
@@ -271,6 +273,7 @@ export interface FloTableStyles {
   tableAction?: FloTableStyleValue;
   /** Merged over `tableAction` for the `variant: 'primary'` button. */
   tableActionPrimary?: FloTableStyleValue;
+  toolbarEnd?: FloTableStyleValue;
 }
 
 /** Parameters passed to the `request` function on each fetch. */
@@ -368,8 +371,16 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
   /**
    * Table-level actions rendered at the end of the toolbar, after the filter bar and inline bulk actions.
    * Independent of row selection. When non-empty, the toolbar renders even if nothing else is in it.
+   * For custom controls (pickers, popovers) use `toolbarEnd`.
    */
   tableActions?: TableAction[];
+  /**
+   * Rendered at the end side of the toolbar, before `tableActions`. Independent of selection.
+   * Use it for custom controls such as a period picker; use `tableActions` for plain buttons.
+   * The wrapper is `position: relative` and never clips, so a child's absolutely positioned popover anchors to it.
+   * When set (anything but `null`, `undefined` or a boolean), the toolbar renders even if nothing else is in it.
+   */
+  toolbarEnd?: ReactNode;
   /** Custom class names for individual table parts. */
   classNames?: FloTableClassNames;
   /** Inline styles for individual table parts. CSS custom properties are accepted. */

@@ -6,6 +6,7 @@ import { FloTable } from 'flotable';
 import type { BulkAction, TableAction } from 'flotable';
 import { useTableState, COLUMNS, FILTER_DEFS, LABELS, PAGE_SIZE } from '../TableActionsDemoData';
 import type { Direction, Product } from '../TableActionsDemoData';
+import { PeriodPicker } from '../PeriodPicker/PeriodPicker';
 
 const PlusIcon = (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -18,9 +19,16 @@ interface TableActionsSectionProps {
   description: ReactNode;
   direction: Direction;
   withFilters: boolean;
+  withTableActions?: boolean;
 }
 
-export function TableActionsSection({ title, description, direction, withFilters }: TableActionsSectionProps) {
+export function TableActionsSection({
+  title,
+  description,
+  direction,
+  withFilters,
+  withTableActions = true,
+}: TableActionsSectionProps) {
   const labels = LABELS[direction];
   const { page, setPage, sortState, setSortState, filterState, setFilterState, sortedData, pageData, addRow, removeRows } =
     useTableState(direction);
@@ -73,7 +81,8 @@ export function TableActionsSection({ title, description, direction, withFilters
         sortState={sortState}
         onSortChange={setSortState}
         direction={direction}
-        tableActions={tableActions}
+        tableActions={withTableActions ? tableActions : undefined}
+        toolbarEnd={<PeriodPicker direction={direction} onChange={(p) => setLastAction(`${labels.period}: ${p}`)} />}
         {...(withFilters
           ? {
               filterDefs: FILTER_DEFS[direction],

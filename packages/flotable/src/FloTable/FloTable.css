@@ -277,9 +277,14 @@
   padding: 0;
 }
 
+.flotable-toolbar > .flotable__toolbar-end,
 .flotable-toolbar > .flotable-table-actions {
   flex: 0 0 auto;
   margin-inline-start: auto;
+}
+
+.flotable-toolbar > .flotable__toolbar-end ~ .flotable-table-actions {
+  margin-inline-start: 0;
 }
 
 .flotable-wrapper {
