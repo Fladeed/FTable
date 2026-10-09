@@ -8,12 +8,21 @@ interface RowActionsCellProps<T> {
   actions: RowAction<T>[];
   row: T;
   moreIcon?: ReactNode;
+  /** Accessible label of the overflow button. Defaults to `'More actions'`. */
+  moreActionsLabel?: string;
 }
 
-export function RowActionsCell<T>({ actions, row, moreIcon }: RowActionsCellProps<T>) {
+export function RowActionsCell<T>({ actions, row, moreIcon, moreActionsLabel }: RowActionsCellProps<T>) {
   const visibleActions = actions.filter((a) => a.visible?.(row) ?? true);
   if (visibleActions.length <= 3) {
     return <RowActionsInline actions={visibleActions} row={row} />;
   }
-  return <RowActionsOverflow actions={visibleActions} row={row} moreIcon={moreIcon} />;
+  return (
+    <RowActionsOverflow
+      actions={visibleActions}
+      row={row}
+      moreIcon={moreIcon}
+      moreActionsLabel={moreActionsLabel}
+    />
+  );
 }

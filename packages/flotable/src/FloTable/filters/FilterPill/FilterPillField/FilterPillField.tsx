@@ -1,4 +1,4 @@
-import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../../FloTable.types';
+import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import './FilterPillField.css';
 
@@ -13,6 +13,7 @@ interface FilterPillFieldProps {
   placeholder?: string;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
+  labels?: FloTableLabels;
 }
 
 export function FilterPillField({
@@ -26,7 +27,9 @@ export function FilterPillField({
   placeholder = '…',
   classNames,
   styles,
+  labels,
 }: FilterPillFieldProps) {
+  const allLabel = labels?.filterAll ?? 'All';
   return (
     <span className={`flotable-filter-pill__field${isClosing ? ' flotable-filter-pill__field--closing' : ''}`}>
       {!hideSeparator && (
@@ -41,9 +44,9 @@ export function FilterPillField({
           onChange={(e) => { onValueChange(def.key, e.target.value); onClose(def.key); }}
           autoFocus={isOpen && !isClosing}
         >
-          <option value="">All</option>
-          <option value="true">Yes</option>
-          <option value="false">No</option>
+          <option value="">{allLabel}</option>
+          <option value="true">{labels?.booleanTrue ?? 'Yes'}</option>
+          <option value="false">{labels?.booleanFalse ?? 'No'}</option>
         </select>
       )}
 
@@ -55,7 +58,7 @@ export function FilterPillField({
           onChange={(e) => { onValueChange(def.key, e.target.value); onClose(def.key); }}
           autoFocus={isOpen && !isClosing}
         >
-          <option value="">All</option>
+          <option value="">{allLabel}</option>
           {(def.options ?? []).map((opt) => (
             <option key={opt} value={opt}>{opt}</option>
           ))}
@@ -79,7 +82,7 @@ export function FilterPillField({
         type="button"
         className="flotable-filter-pill__close"
         onClick={() => onClose(def.key)}
-        aria-label="Close filter"
+        aria-label={labels?.closeFilter ?? 'Close filter'}
       >
         ×
       </button>

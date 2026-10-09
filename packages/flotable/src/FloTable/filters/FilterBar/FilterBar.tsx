@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import type { FilterDef, QuickFilterState, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
+import type { FilterDef, QuickFilterState, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../FloTable.types';
 import { cx } from '../../../utils/cx';
 import { FilterPill } from '../FilterPill/FilterPill';
 import { SearchPill } from '../SearchPill/SearchPill';
+import { SEARCH_KEY } from '../../tableUtils';
 import './FilterBar.css';
-
-const SEARCH_KEY = '__search__';
 
 interface FilterBarProps {
   filterDefs: FilterDef[];
@@ -17,9 +16,10 @@ interface FilterBarProps {
   filterMode?: 'live' | 'commit';
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
+  labels?: FloTableLabels;
 }
 
-export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, filterMode, classNames, styles }: FilterBarProps) {
+export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearch = false, filterMode, classNames, styles, labels }: FilterBarProps) {
   const resolvedMode = filterMode ?? 'commit';
 
   const [openKey, setOpenKey] = useState<string | null>(null);
@@ -119,6 +119,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
           onClose={() => closeKey(SEARCH_KEY)}
           classNames={classNames}
           styles={styles}
+          labels={labels}
         />
       )}
       {filterDefs.map((def) => (
@@ -134,6 +135,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
           onClose={closeKey}
           classNames={classNames}
           styles={styles}
+          labels={labels}
         />
       ))}
     </div>

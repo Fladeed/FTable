@@ -1,8 +1,9 @@
-import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../FloTable.types';
+import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../FloTable.types';
+import { SEARCH_KEY } from '../../tableUtils';
 import { FilterPill } from '../FilterPill/FilterPill';
 import './SearchPill.css';
 
-const SEARCH_DEF: FilterDef = { key: '__search__', label: '', type: 'text' };
+const SEARCH_DEF: FilterDef = { key: SEARCH_KEY, label: '', type: 'text' };
 
 function SearchIcon() {
   return (
@@ -23,6 +24,8 @@ interface SearchPillProps {
   onClose: () => void;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
+  /** Built-in text: `searchPlaceholder`, `search` (aria-label) and the filter button labels. */
+  labels?: FloTableLabels;
 }
 
 export function SearchPill({
@@ -35,6 +38,7 @@ export function SearchPill({
   onClose,
   classNames,
   styles,
+  labels,
 }: SearchPillProps) {
   return (
     <FilterPill
@@ -51,9 +55,10 @@ export function SearchPill({
       renderTriggerLabel={<SearchIcon />}
       renderActiveValue={(v) => <span className="flotable-filter-pill__active-value">{v}</span>}
       hideSeparator
-      placeholder="Search…"
+      placeholder={labels?.searchPlaceholder ?? 'Search…'}
       variant="search"
-      triggerAriaLabel="Search"
+      triggerAriaLabel={labels?.search ?? 'Search'}
+      labels={labels}
     />
   );
 }

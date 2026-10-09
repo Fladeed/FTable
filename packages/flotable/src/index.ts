@@ -28,4 +28,7 @@ export type {
   TableRowProps,
   TablePaginationProps,
   PaginationLabels,
+  ChildRowsLabels,
+  FloTableLabels,
+  ChildRequestFn,
 } from './FloTable/FloTable.types';

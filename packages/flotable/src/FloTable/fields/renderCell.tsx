@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ColumnDef } from '../FloTable.types';
+import type { ColumnDef, FloTableLabels } from '../FloTable.types';
 import { TextRenderer, type TextRendererValue } from './TextRenderer/TextRenderer';
 import { NumberRenderer, type NumberRendererValue } from './NumberRenderer/NumberRenderer';
 import { DateRenderer, type DateRendererValue } from './DateRenderer/DateRenderer';
@@ -8,8 +8,17 @@ import { BadgeRenderer, type BadgeRendererValue } from './BadgeRenderer/BadgeRen
 import { CurrencyRenderer, type CurrencyRendererValue } from './CurrencyRenderer/CurrencyRenderer';
 import { LinkRenderer, type LinkRendererValue } from './LinkRenderer/LinkRenderer';
 
-export function renderCell<T extends object>(col: ColumnDef<T>, row: T): ReactNode {
+export function renderCell<T extends object, C extends object = T>(
+  col: ColumnDef<T, C>,
+  row: T,
+  children?: C[],
+  labels?: FloTableLabels,
+): ReactNode {
   const value = (row as Record<string, unknown>)[col.key];
+
+  if (col.aggregate && children && children.length > 0) {
+    return col.aggregate(children, row);
+  }
 
   if (col.render) {
     return col.render(value as T[keyof T], row);
@@ -21,7 +30,13 @@ export function renderCell<T extends object>(col: ColumnDef<T>, row: T): ReactNo
     case 'date':
       return <DateRenderer value={value as DateRendererValue} locale={col.locale} />;
     case 'boolean':
-      return <BooleanRenderer value={value as BooleanRendererValue} />;
+      return (
+        <BooleanRenderer
+          value={value as BooleanRendererValue}
+          trueLabel={labels?.booleanTrue}
+          falseLabel={labels?.booleanFalse}
+        />
+      );
     case 'badge':
       return <BadgeRenderer value={value as BadgeRendererValue} badgeColors={col.badgeColors} />;
     case 'currency':
