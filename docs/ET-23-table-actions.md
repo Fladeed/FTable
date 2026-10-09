@@ -210,7 +210,7 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 
 ### Phase 4: Delivery
 
-#### Task 4.1: PR, skill ticket, tarball [15 min] — ⬜ TODO
+#### Task 4.1: PR, skill ticket, tarball [15 min] — ✅ COMPLETE
 
 **Subtasks:**
 - [ ] Push `feat/ET-23-table-actions` and open a PR against `master` titled `feat(ET-23): table-level actions in the FloTable toolbar`. The body covers the summary, API, files, the byte-for-byte guarantee and how to test.
