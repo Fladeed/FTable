@@ -167,12 +167,12 @@ const tableActions: TableAction[] = [
 | `tableActionPrimary` | The `variant: 'primary'` button (`.flotable-table-actions__btn--primary`), applied on top of `tableAction` |
 | `toolbarEnd` | The `toolbarEnd` slot wrapper `<div>` (`.flotable__toolbar-end`) |
 
-CSS custom properties:
+CSS custom properties. The colour tokens are part of the theme: their defaults derive from the core tokens, so they follow the built-in dark mode and `inheritTheme` with no extra setup. Setting any `--flotable-*` value below always wins.
 
 | Token | Default |
 |-------|---------|
-| `--flotable-accent-color` | `#2563eb` (shared accent; the primary button and focus ring fall back to it) |
-| `--flotable-accent-hover-color` | `#1d4ed8` (shared accent hover) |
+| `--flotable-accent-color` | follows `--flotable-link-color` (`#2563eb`; `#60a5fa` in dark mode; your `--primary` with `inheritTheme`). The primary button and focus ring use it |
+| `--flotable-accent-hover-color` | follows `--flotable-link-hover-color` (`#1d4ed8`) |
 | `--flotable-table-action-gap` | `0.5rem` |
 | `--flotable-table-action-icon-gap` | `0.375rem` |
 | `--flotable-table-action-padding` | `0.375rem 0.75rem` |
@@ -180,16 +180,16 @@ CSS custom properties:
 | `--flotable-table-action-font-size` | `var(--flotable-font-size, 0.875rem)` |
 | `--flotable-table-action-font-weight` | `500` |
 | `--flotable-table-action-line-height` | `1.25` |
-| `--flotable-table-action-color` | `var(--flotable-row-action-color, #374151)` |
-| `--flotable-table-action-bg` | `var(--flotable-bg, #ffffff)` |
-| `--flotable-table-action-border-color` | `var(--flotable-border-color, #e5e7eb)` |
-| `--flotable-table-action-hover-bg` | `var(--flotable-row-action-hover-bg, #f3f4f6)` |
-| `--flotable-table-action-hover-color` | `var(--flotable-row-action-hover-color, #111827)` |
-| `--flotable-table-action-primary-bg` | `var(--flotable-accent-color, #2563eb)` |
-| `--flotable-table-action-primary-color` | `#ffffff` |
-| `--flotable-table-action-primary-border-color` | `var(--flotable-table-action-primary-bg)` |
-| `--flotable-table-action-primary-hover-bg` | `var(--flotable-accent-hover-color, #1d4ed8)` |
-| `--flotable-table-action-focus-ring` | `var(--flotable-accent-color, #2563eb)` (`:focus-visible` outline colour) |
+| `--flotable-table-action-color` | follows `--flotable-row-action-color` (`#374151`) |
+| `--flotable-table-action-bg` | follows `--flotable-bg` (`#ffffff`) |
+| `--flotable-table-action-border-color` | follows `--flotable-border-color` (`#e5e7eb`) |
+| `--flotable-table-action-hover-bg` | follows `--flotable-row-action-hover-bg` (`#f3f4f6`) |
+| `--flotable-table-action-hover-color` | follows `--flotable-row-action-hover-color` (`#111827`) |
+| `--flotable-table-action-primary-bg` | follows `--flotable-accent-color` |
+| `--flotable-table-action-primary-color` | `#ffffff` (the table background in dark mode, for contrast) |
+| `--flotable-table-action-primary-border-color` | follows `--flotable-table-action-primary-bg` |
+| `--flotable-table-action-primary-hover-bg` | follows `--flotable-accent-hover-color` |
+| `--flotable-table-action-focus-ring` | follows `--flotable-accent-color` (`:focus-visible` outline colour) |
 | `--flotable-table-action-focus-ring-width` | `2px` |
 | `--flotable-table-action-focus-ring-offset` | `2px` |
 | `--flotable-table-action-disabled-opacity` | `0.4` |
