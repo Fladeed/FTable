@@ -108,7 +108,7 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 
 ### Phase 1: [DEV] Component and wiring (package)
 
-#### Task 1.1: Types and public export [10 min] — ⬜ TODO
+#### Task 1.1: Types and public export [10 min] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/FloTable.types.ts`: add the `TableAction` interface, the `tableActions` prop on `FloTableBaseProps`, and the three new slots on `FloTableClassNames` and `FloTableStyles`.
@@ -124,7 +124,7 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 - [ ] Add the same three keys as `FloTableStyleValue` to `FloTableStyles`.
 - [ ] Export `TableAction` from `src/index.ts`.
 
-#### Task 1.2: `TableActions` component and CSS [20 min] — ⬜ TODO
+#### Task 1.2: `TableActions` component and CSS [20 min] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/ActionBar/TableActions/TableActions.tsx` (new)
@@ -142,7 +142,7 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 - [ ] Render the icon as `<span className="flotable-table-actions__icon" aria-hidden="true">` before the label, and only when `action.icon != null`.
 - [ ] Write the CSS inside `@layer flotable` using the token table above: a flex container with `--flotable-table-action-gap` and `flex-wrap: wrap`, default button styles, primary modifier, hover (`:hover:not(:disabled)`), `:focus-visible` outline, `:disabled` dimming, and an icon span that is `inline-flex`. Use BEM classes only.
 
-#### Task 1.3: Wire into `FloTable` [10 min] — ⬜ TODO
+#### Task 1.3: Wire into `FloTable` [10 min] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/FloTable.tsx`: destructure `tableActions`, compute `hasTableActions`, extend the toolbar condition, and render `<TableActions>` last in the toolbar.
@@ -162,7 +162,7 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 
 ### Phase 2: [DEV] Demo page
 
-#### Task 2.1: `TableActionsDemo` and route [25 min] — ⬜ TODO
+#### Task 2.1: `TableActionsDemo` and route [25 min] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `apps/demo/src/app/table-actions/page.tsx` (new): a thin page that mounts `<TableActionsDemo />`.
@@ -186,7 +186,7 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 
 ### Phase 3: [DOCS] / [CONFIG] README and version
 
-#### Task 3.1: README updates (both copies) [15 min] — ⬜ TODO
+#### Task 3.1: README updates (both copies) [15 min] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `README.md` and `packages/flotable/README.md`, kept identical.
@@ -196,11 +196,11 @@ The change is additive and opt-in. Consumers that do not pass `tableActions` go 
 - [ ] In **Props Reference → Common Props**, add a `tableActions` row and a `renderInlineBulkActions` row. The second one's description ends with "For selection-independent actions use `tableActions`."
 - [ ] Add `/table-actions` to any demo page list in the README, if one exists.
 
-#### Task 3.2: Version bump [2 min] — ⬜ TODO
+#### Task 3.2: Version bump [2 min] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/package.json`: `0.1.11` → `0.1.12`.
-- `package-lock.json`: update the workspace entry for `packages/flotable`, if the lockfile records its version.
+- `package-lock.json`: not touched. Its workspace entry is already stale (`0.1.3`) and previous bumps did not update it.
 
 **Subtasks:**
 - [ ] Bump the version and run `npm install --package-lock-only` only if the lockfile carries the workspace version, to keep the lockfile consistent.

@@ -17,6 +17,7 @@ An open-source, **zero-dependency** table component built for ERP-style applicat
 - **Quick filters** — inline per-column filter pills in the header
 - **Sorting** — single-column sorting with visual indicators
 - **Pagination** — built-in page controls with configurable page size
+- **Table actions** — selection-independent toolbar buttons (e.g. "New product") via `tableActions`
 - **Custom renderers** — override any column with a `render` function
 - **Two data modes** — controlled (`data` prop) or self-managed (`request` prop for async fetching)
 - **Full style control** — CSS custom properties, `classNames` API, and `styles` prop for every table slot
@@ -97,6 +98,70 @@ Any column can use a custom `render` function to override the default renderer.
 
 ---
 
+## Table Actions
+
+`tableActions` renders buttons at the end of the toolbar, after the filter pills and any inline bulk actions. Use it for the page's main action ("New product", "New refund") and for other actions that do not depend on row selection ("Export", "Refresh").
+
+- Actions never receive row context and stay enabled while rows are selected and the bulk action bar is shown.
+- They are pushed to the end side with `margin-inline-start: auto`, so they move to the left under `direction="rtl"`.
+- When `tableActions` is non-empty, the toolbar renders even if there is no search, filter pill or bulk action. When it is omitted or empty, nothing changes.
+- Works in both data mode and request mode.
+
+```tsx
+import { FloTable } from 'flotable';
+import type { TableAction } from 'flotable';
+
+const tableActions: TableAction[] = [
+  { key: 'new', label: 'New product', icon: <PlusIcon />, variant: 'primary', onClick: () => openCreateDialog() },
+  { key: 'export', label: 'Export', onClick: () => exportCsv() },
+];
+
+<FloTable columns={columns} request={fetchProducts} showSearch tableActions={tableActions} />;
+```
+
+### `TableAction`
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `key` | `string` | — | Unique key (required) |
+| `label` | `string` | — | Button text (required). FloTable adds no text of its own, so translate it here |
+| `icon` | `ReactNode` | — | Rendered before the label, hidden from assistive tech |
+| `onClick` | `() => void` | — | Click handler (required). Receives no arguments |
+| `disabled` | `boolean` | `false` | Sets the `disabled` attribute on the button |
+| `variant` | `'primary' \| 'default'` | `'default'` | `'primary'` for the page's main action (one per table) |
+| `ariaLabel` | `string` | `label` | Accessible name when the label alone is not enough |
+
+### Styling
+
+`classNames` / `styles` slots:
+
+| Slot | Element |
+|------|---------|
+| `tableActions` | Container `<div>` (`.flotable-table-actions`) |
+| `tableAction` | Each `<button>` (`.flotable-table-actions__btn`) |
+| `tableActionPrimary` | The `variant: 'primary'` button (`.flotable-table-actions__btn--primary`), applied on top of `tableAction` |
+
+CSS custom properties:
+
+| Token | Default |
+|-------|---------|
+| `--flotable-table-action-gap` | `0.5rem` |
+| `--flotable-table-action-padding` | `0.375rem 0.75rem` |
+| `--flotable-table-action-radius` | `var(--flotable-row-action-radius, 4px)` |
+| `--flotable-table-action-font-size` | `var(--flotable-font-size, 0.875rem)` |
+| `--flotable-table-action-color` | `var(--flotable-row-action-color, #374151)` |
+| `--flotable-table-action-bg` | `var(--flotable-bg, #ffffff)` |
+| `--flotable-table-action-border-color` | `var(--flotable-border-color, #e5e7eb)` |
+| `--flotable-table-action-hover-bg` | `var(--flotable-row-action-hover-bg, #f3f4f6)` |
+| `--flotable-table-action-hover-color` | `var(--flotable-row-action-hover-color, #111827)` |
+| `--flotable-table-action-primary-bg` | `#2563eb` |
+| `--flotable-table-action-primary-color` | `#ffffff` |
+| `--flotable-table-action-primary-border-color` | `var(--flotable-table-action-primary-bg, #2563eb)` |
+| `--flotable-table-action-primary-hover-bg` | `#1d4ed8` |
+| `--flotable-table-action-focus-ring` | `#2563eb` (2px `:focus-visible` outline) |
+
+---
+
 ## Styling & Customization
 
 FloTable ships plain CSS wrapped in `@layer flotable`. Every visual token uses a CSS custom property with a fallback, so you can theme the entire table without touching source files.
@@ -155,6 +220,8 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `filterDefs` | `FilterDef[]` | Explicit filter pill definitions |
 | `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
 | `showSearch` | `boolean` | Show a global search input in the filter bar |
+| `tableActions` | `TableAction[]` | Selection-independent buttons at the end of the toolbar (see [Table Actions](#table-actions)) |
+| `renderInlineBulkActions` | `(ctx: BulkActionBarContext<T>) => ReactNode` | Custom bulk-action content inline in the toolbar; always receives the selection context. For selection-independent actions use `tableActions` |
 | `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
 | `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |
 
