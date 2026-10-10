@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, Ref } from 'react';
 import type { RowAction } from '../../FloTable.types';
+import { cx } from '../../../utils/cx';
+import { useFloTableTheme } from '../../theme/FloTableThemeContext';
 import './RowActionsDropdown.css';
 
 interface RowActionsDropdownProps<T> {
@@ -15,6 +17,7 @@ interface RowActionsDropdownProps<T> {
 export function RowActionsDropdown<T>({ actions, row, onClose, style, dropdownRef }: RowActionsDropdownProps<T>) {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const { inheritTheme } = useFloTableTheme();
 
   useEffect(() => {
     itemRefs.current[focusedIndex]?.focus();
@@ -44,7 +47,7 @@ export function RowActionsDropdown<T>({ actions, row, onClose, style, dropdownRe
   }, [actions.length, onClose]);
 
   return createPortal(
-    <div ref={dropdownRef} role="menu" className="flotable__row-actions-dropdown" style={style}>
+    <div ref={dropdownRef} role="menu" className={cx('flotable__row-actions-dropdown', inheritTheme && 'flotable__row-actions-dropdown--inherit')} style={style}>
       {actions.map((action, index) => (
           <button
             key={action.key}

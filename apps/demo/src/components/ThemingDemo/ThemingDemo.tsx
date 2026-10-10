@@ -20,6 +20,8 @@ interface TabConfig {
   description: string;
   /** Class applied to the wrapper div around the table — sets the host theme tokens. */
   wrapperClass?: string;
+  /** Opt the table into the host tokens set by `wrapperClass` (Layer 2). */
+  inheritTheme?: boolean;
   /** Override styles passed directly to FloTable — only used by the "override" tab. */
   flotableStyles?: Record<string, string>;
   /** Optional code preview to show beneath the table. */
@@ -31,14 +33,15 @@ const TABS: TabConfig[] = [
     id: 'plain',
     label: 'Plain',
     description:
-      'A bare <FloTable> with no styles prop and no parent tokens. The table picks up the demo app’s background/foreground via the alias chain, so toggling the global theme switcher (top right) flips it automatically — Layer 2 in action.',
+      'A bare <FloTable> with no styles prop and no inheritTheme. Nothing on the page leaks in: the table uses its own light and dark palettes, and the global theme switcher (top right) flips it through [data-theme="dark"] — Layer 1 in action.',
   },
   {
     id: 'shadcn',
     label: 'shadcn / ui',
     description:
-      'A parent div sets shadcn-style tokens (--background, --foreground, --primary, --border, --accent, --muted, --ring, --radius). The <FloTable> inside has zero styles prop — every color comes from those tokens via Layer 1’s alias chain. Dark variants swap automatically with the global toggle.',
+      'A parent div sets shadcn-style tokens (--background, --foreground, --primary, --border, --accent, --muted, --ring, --radius). The <FloTable> inside has inheritTheme and zero styles prop — every color comes from those tokens via Layer 2’s alias chain. Dark variants swap automatically with the global toggle.',
     wrapperClass: 'theming-shadcn',
+    inheritTheme: true,
     code: `.theming-shadcn {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -61,8 +64,9 @@ const TABS: TabConfig[] = [
     id: 'tailwind',
     label: 'Tailwind v4',
     description:
-      'Same idea, different naming convention. Tailwind v4’s @theme block exposes tokens as --color-background, --color-foreground, etc. The wrapper sets those, the table picks them up. Try toggling dark mode — the alias chain’s dark defaults activate, and any custom dark Tailwind tokens win on top.',
+      'Same idea, different naming convention. Tailwind v4’s @theme block exposes tokens as --color-background, --color-foreground, etc. The wrapper sets those and the table has inheritTheme, so it picks them up. Try toggling dark mode — the dark Tailwind tokens win over FloTable’s dark defaults.',
     wrapperClass: 'theming-tailwind',
+    inheritTheme: true,
     code: `.theming-tailwind {
   --color-background: #fdf6ec;
   --color-foreground: #1c1208;
@@ -85,7 +89,7 @@ const TABS: TabConfig[] = [
     id: 'override',
     label: 'Escape hatch',
     description:
-      'If you want full control, the existing styles / classNames API still works. Anything you set as --flotable-* beats every entry in the alias chain — no regressions for existing themes.',
+      'If you want full control, the existing styles / classNames API still works. Anything you set as --flotable-* beats both the dark palette and inherited tokens — no regressions for existing themes.',
     flotableStyles: {
       '--flotable-bg': '#0f172a',
       '--flotable-color': '#e2e8f0',
@@ -107,30 +111,31 @@ export function ThemingDemo() {
       <h1 className="theming__title">Theming</h1>
 
       <p className="theming__intro">
-        FloTable adapts to your app&apos;s theme automatically. There are three layers,
-        and most of the time you don&apos;t need to write any styling code at all.
+        FloTable ships with light and dark palettes and can optionally inherit your design
+        system&apos;s tokens. There are three layers, and most of the time you don&apos;t need
+        to write any styling code at all.
       </p>
 
       <ol className="theming__layers">
         <li>
-          <strong>Layer 1 — Ecosystem auto-pickup.</strong> Every core color/typography
-          token (background, foreground, border, primary, etc.) resolves through a chain
-          that includes well-known names from shadcn (<code>--background</code>,{' '}
-          <code>--foreground</code>, <code>--primary</code>…), Tailwind v4 (
-          <code>--color-background</code>, <code>--color-foreground</code>…), and MUI
-          CSS variables (<code>--mui-palette-*</code>). If your app already defines those,
-          the table picks them up — no <code>styles</code> prop needed.
+          <strong>Layer 1 — Built-in dark mode.</strong> The table flips to its dark palette
+          when a common selector is present on an ancestor: <code>.dark</code>,{' '}
+          <code>[data-theme=&quot;dark&quot;]</code> or <code>[data-mode=&quot;dark&quot;]</code>.
+          It never reads the OS preference itself, so light-only apps stay light. Use the
+          toggle in the top right to switch the whole demo app.
         </li>
         <li>
-          <strong>Layer 2 — Built-in dark mode.</strong> The table flips to dark
-          automatically when any common selector is present on an ancestor:{' '}
-          <code>.dark</code>, <code>[data-theme=&quot;dark&quot;]</code>,{' '}
-          <code>[data-mode=&quot;dark&quot;]</code>, or the OS preference. Use the toggle
-          in the top right to switch the whole demo app.
+          <strong>Layer 2 — Inherit your design system.</strong> Pass{' '}
+          <code>inheritTheme</code> and every core color/typography token falls back to
+          well-known names from shadcn (<code>--background</code>, <code>--foreground</code>,{' '}
+          <code>--primary</code>…), Tailwind v4 (<code>--color-background</code>…) and MUI
+          CSS variables (<code>--mui-palette-*</code>) before FloTable&apos;s defaults. Opt-in,
+          because those names are generic and legacy shadcn stores raw HSL channels.
         </li>
         <li>
-          <strong>Layer 3 — Adapter components</strong> for Antd / MUI when their tokens
-          live in JS instead of CSS variables. <em>(Shipping next.)</em>
+          <strong>Layer 3 — Explicit overrides.</strong> Any <code>--flotable-*</code> token
+          you set beats both layers above, via CSS on an ancestor or the{' '}
+          <code>styles</code> prop.
         </li>
       </ol>
 
@@ -158,6 +163,7 @@ export function ThemingDemo() {
           columns={COLUMNS}
           request={fetchData}
           pageSize={PAGE_SIZE}
+          inheritTheme={tab.inheritTheme}
           styles={tab.flotableStyles ? { wrapper: tab.flotableStyles as FloTableStyleValue } : undefined}
         />
       </div>

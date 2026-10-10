@@ -1,8 +1,8 @@
 /*
-   ShadcnTheme — proof that Layer 1 (alias chains) works in practice.
+   ShadcnTheme — proof that Layer 2 (inheritTheme) works in practice.
 
-   Set shadcn's standard tokens on the preview wrapper. FloTable's alias
-   chain resolves --flotable-bg, --flotable-color, --flotable-border-color,
+   Set shadcn's standard tokens on the preview wrapper. With inheritTheme,
+   FloTable's alias chain resolves --flotable-bg, --flotable-color, --flotable-border-color,
    --flotable-header-bg, --flotable-row-hover-bg, --flotable-link-color,
    --flotable-pill-active-color, --flotable-focus-ring, --flotable-border-radius,
    etc. from these automatically — no styles.root mapping required.

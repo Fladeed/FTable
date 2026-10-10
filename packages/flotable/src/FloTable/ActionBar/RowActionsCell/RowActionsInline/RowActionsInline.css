@@ -7,7 +7,7 @@
   border: none;
   border-radius: var(--flotable-row-action-radius, 4px);
   font-size: var(--flotable-font-size, 0.875rem);
-  color: var(--flotable-row-action-color, #374151);
+  color: var(--_flotable-row-action-color);
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
@@ -15,8 +15,8 @@
 }
 
 .flotable__row-actions-cell__btn:hover:not(:disabled) {
-  background: var(--flotable-row-action-hover-bg, #f3f4f6);
-  color: var(--flotable-row-action-hover-color, #111827);
+  background: var(--_flotable-row-action-hover-bg);
+  color: var(--_flotable-row-action-hover-color);
   text-decoration: underline;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .flotable__row-actions-cell__btn--danger:hover:not(:disabled) {
-  background: var(--flotable-danger-hover-bg, #fef2f2);
-  color: var(--flotable-danger-hover-color, #b91c1c);
+  background: var(--_flotable-danger-hover-bg);
+  color: var(--_flotable-danger-hover-color);
   text-decoration: underline;
 }

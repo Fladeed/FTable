@@ -48,14 +48,14 @@
   border: none;
   border-radius: 0.25rem;
   background: transparent;
-  color: var(--flotable-expander-color, #6b7280);
+  color: var(--_flotable-expander-color);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .flotable__expander-btn:hover {
-  background-color: var(--flotable-expander-hover-bg, #f3f4f6);
-  color: var(--flotable-expander-hover-color, #111827);
+  background-color: var(--_flotable-expander-hover-bg);
+  color: var(--_flotable-expander-hover-color);
 }
 
 .flotable__expander-chevron {

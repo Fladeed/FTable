@@ -6,6 +6,6 @@
 }
 
 .flotable-link:hover {
-  color: var(--flotable-link-hover-color, #1d4ed8);
+  color: var(--_flotable-link-hover-color);
 }
 }

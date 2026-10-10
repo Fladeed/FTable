@@ -32,7 +32,7 @@
 
 .flotable-go-to-page__input:focus {
   outline: none;
-  border-color: var(--flotable-pill-active-border-color, #93c5fd);
+  border-color: var(--_flotable-pill-active-border-color);
   box-shadow: 0 0 0 3px var(--_flotable-focus-ring);
 }
 

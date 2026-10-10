@@ -49,6 +49,7 @@ export function ThemePreview({ config, previewClass }: ThemePreviewProps) {
         onFilterChange={handleFilterChange}
         classNames={config.classNames}
         styles={config.styles}
+        inheritTheme={config.inheritTheme}
       />
     </div>
   );

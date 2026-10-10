@@ -339,6 +339,14 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
   styles?: FloTableStyles;
   /** Text direction for the table. Defaults to `'ltr'`. Set to `'rtl'` for right-to-left languages. */
   direction?: 'ltr' | 'rtl';
+  /**
+   * Opt in to inheriting the host app's design-system tokens. When `true`, the core colour and
+   * typography tokens fall back to well-known CSS variables — shadcn/ui (`--background`, `--border`,
+   * `--primary`…), Tailwind v4 `@theme` (`--color-background`…) and MUI CSS-variables mode
+   * (`--mui-palette-*`) — before FloTable's own defaults. Explicit `--flotable-*` tokens still win.
+   * Defaults to `false`.
+   */
+  inheritTheme?: boolean;
   /** Label for the trailing Actions column header. Defaults to `'Actions'`. */
   rowActionsLabel?: string;
   /** Labels for the pagination controls. Override any or all to translate or customise. */

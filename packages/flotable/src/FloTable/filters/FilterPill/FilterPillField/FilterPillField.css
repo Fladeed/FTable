@@ -1,6 +1,6 @@
 @layer flotable {
 .flotable-filter-pill__separator {
-  color: var(--flotable-pill-separator-color, #93c5fd);
+  color: var(--_flotable-pill-separator-color);
   font-weight: 400;
   padding: 0 0.125rem;
 }
@@ -43,7 +43,7 @@
 }
 
 .flotable-filter-pill__input::placeholder {
-  color: var(--flotable-pill-placeholder-color, #9ca3af);
+  color: var(--_flotable-pill-placeholder-color);
 }
 
 .flotable-filter-pill__close {
@@ -56,12 +56,12 @@
   margin-inline-start: 0.125rem;
   font-size: 1rem;
   line-height: 1;
-  color: var(--flotable-pill-close-color, #93c5fd);
+  color: var(--_flotable-pill-close-color);
   cursor: pointer;
   transition: color 0.15s ease;
 }
 
 .flotable-filter-pill__close:hover {
-  color: var(--flotable-pill-close-hover-color, #1d4ed8);
+  color: var(--_flotable-pill-close-hover-color);
 }
 }

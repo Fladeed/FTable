@@ -13,13 +13,13 @@
   border: none;
   border-radius: var(--flotable-row-action-radius, 4px);
   font-size: 1.1rem;
-  color: var(--flotable-row-action-color, #374151);
+  color: var(--_flotable-row-action-color);
   cursor: pointer;
   line-height: 1;
   transition: color 0.12s, background 0.12s;
 }
 
 .flotable__row-actions-cell__overflow-btn:hover {
-  background: var(--flotable-row-action-hover-bg, #f3f4f6);
-  color: var(--flotable-row-action-hover-color, #111827);
+  background: var(--_flotable-row-action-hover-bg);
+  color: var(--_flotable-row-action-hover-color);
 }

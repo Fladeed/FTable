@@ -13,9 +13,9 @@
      surface that tracks the theme. */
   background-color: var(
     --_flotable-badge-bg,
-    var(--flotable-badge-default-bg, #e5e7eb)
+    var(--_flotable-badge-default-bg)
   );
-  color: var(--flotable-badge-color, #111827);
+  color: var(--_flotable-badge-color);
 }
 
 /* Dark mode (Antd "filled preset" style): the badge hue lives in the
@@ -39,22 +39,5 @@
   );
   /* Compensate for the added 1px border so the badge keeps its size. */
   padding: calc(var(--flotable-badge-padding-v, 0.125rem) - 1px) calc(var(--flotable-badge-padding-h, 0.5rem) - 1px);
-}
-
-@media (prefers-color-scheme: dark) {
-  :where(:root:not(.light):not([data-theme="light"]):not([data-mode="light"])) .flotable-badge {
-    color: var(--_flotable-badge-bg, var(--_flotable-color));
-    background-color: color-mix(
-      in oklab,
-      var(--_flotable-badge-bg, var(--_flotable-border-color)) 18%,
-      transparent
-    );
-    border: 1px solid color-mix(
-      in oklab,
-      var(--_flotable-badge-bg, var(--_flotable-border-color)) 35%,
-      transparent
-    );
-    padding: calc(var(--flotable-badge-padding-v, 0.125rem) - 1px) calc(var(--flotable-badge-padding-h, 0.5rem) - 1px);
-  }
 }
 }

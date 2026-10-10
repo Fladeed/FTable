@@ -9,15 +9,17 @@ export const SHADCN_CONFIG: ThemeConfig = {
   description:
     'Clean and minimal. Implementation note: the entire colour palette comes from shadcn-style tokens ' +
     '(--background, --foreground, --primary, --border, --muted, --accent, --ring, --radius) defined on the ' +
-    'preview wrapper — FloTable’s alias chain picks them up with zero --flotable-* mapping. Only structural ' +
+    'preview wrapper — with inheritTheme, FloTable picks them up with zero --flotable-* mapping. Only structural ' +
     'choices (rounded outer border, refined typography, outlined pagination buttons) live in the styles prop.',
   overrides: [
+    'inheritTheme',
     'CSS: --background, --foreground, --primary, --border, --muted, --accent, --ring, --radius',
     'wrapper: border + borderRadius',
     'headerCell: fontWeight 500',
     'paginationButton: outlined',
   ],
   classNames: {},
+  inheritTheme: true,
   styles: {
     wrapper: {
       border: '1px solid #e2e8f0',

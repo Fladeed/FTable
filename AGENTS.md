@@ -157,21 +157,24 @@ Rules:
 - The `src/app/` demo pages may use any styling approach (plain CSS, inline styles) — but still **no Tailwind**.
 - **Never style HTML tags directly** (`th`, `td`, `thead`, `tr`, etc.). Every element that needs styling must have an explicit class. Use BEM-style names: `.flotable__header`, `.flotable__cell`, etc.
 
-### Theme Alias Chains (`--_flotable-*`)
+### Theme tokens (`--flotable-*` vs `--_flotable-*`)
 
-Core color/typography tokens are wired into a private `--_flotable-X` indirection defined in `FloTable.css`. The chain looks like:
+Every **colour / typography** token is resolved once in `FloTable.css` into a private `--_flotable-X` custom property:
 
 ```
---_flotable-bg = var(--flotable-bg, var(--background, var(--color-background, var(--mui-palette-background-default, var(--_flotable-bg-default)))))
+--_flotable-X = var(--flotable-X, var(--_flotable-X-default))
 ```
+
+- `--flotable-X` (no underscore) is the **public** consumer knob. The library never declares it — not even in the dark-mode block — so a consumer value set on any ancestor always wins.
+- `--_flotable-X-default` holds the library default and is the **only** thing the dark-mode block (`.dark`, `[data-theme="dark"]`, `[data-mode="dark"]`) swaps. The package never uses `prefers-color-scheme`.
+- With the `inheritTheme` prop (`.flotable-root--inherit`), the 15 core tokens additionally fall back to ecosystem names (shadcn `--background`, Tailwind v4 `--color-background`, MUI `--mui-palette-*`) between the consumer value and the default. Ecosystem chains live **only** in that opt-in block.
 
 **Rules for sub-component CSS:**
 
-- For the ~15 **aliased core tokens** (bg, color, muted-color, border-color, header-bg, header-hover-bg, row-hover-bg, link-color, danger-color, error-color, focus-ring, border-radius, font-family, sort-active-color, pill-active-color), **always read `var(--_flotable-X)`** — never `var(--flotable-X, fallback)`. The chain definition in `FloTable.css` is the single source of truth.
-- For non-aliased tokens (paddings, font-sizes, badge-specific, dropdown-specific, etc.), keep the existing `var(--flotable-X, fallback)` pattern.
-- When adding a new core token, extend the chain in `FloTable.css` (chain definition + light default + dark default in the dark mode block) AND its derived non-aliased token defaults if any.
-- Dark mode block in `FloTable.css` only swaps the `--_flotable-X-default` values (and re-points non-aliased pill/dropdown/skeleton tokens to derive from core). Do not duplicate or fight this from sub-component CSS.
-- Sub-components rendered via portal (e.g. `RowActionsDropdown`) need the chain definition replicated on their root selector since they live outside the `.flotable-root` subtree.
+- Colour tokens: **always read `var(--_flotable-X)`**, never `var(--flotable-X, fallback)`. Adding a colour token means adding its light `-default`, its resolved line and (when it should change) its dark `-default` in `FloTable.css` — nothing else.
+- Size / spacing / font-size / z-index tokens (paddings, `--flotable-pill-radius`, `--flotable-font-size`, …) keep the `var(--flotable-X, fallback)` pattern.
+- Dark derived colours (hovers, fills, accents) are expressed from the core tokens via `var(--_flotable-…)` / `color-mix()` rather than new hex values, so a host primary colour propagates.
+- The chain is declared on every styling host: `.flotable-root`, `.flotable-wrapper`, the portaled `.flotable__row-actions-dropdown` and the standalone `.flotable-filter-pill`. A new portaled or standalone component must be added to those selector lists, and a portaled one must read `useFloTableTheme()` to apply its `--inherit` modifier class.
 
 ---
 
