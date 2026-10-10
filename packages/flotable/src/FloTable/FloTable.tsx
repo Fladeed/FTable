@@ -31,7 +31,10 @@ import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
+import { TableActions } from './ActionBar/TableActions/TableActions';
+import { ToolbarEnd } from './ToolbarEnd/ToolbarEnd';
 import { cx } from '../utils/cx';
+import { hasRenderableContent } from '../utils/hasRenderableContent';
 import { FloTableThemeContext } from './theme/FloTableThemeContext';
 import './FloTable.css';
 
@@ -59,6 +62,8 @@ function FloTableImpl<T extends object, C extends object = T>(
     selectionCountLabel,
     renderBulkActionBar,
     renderInlineBulkActions,
+    tableActions,
+    toolbarEnd,
     classNames,
     styles,
     direction,
@@ -291,6 +296,15 @@ function FloTableImpl<T extends object, C extends object = T>(
 
   const pageRowKeys = data.map((row, index) => getRowKey(row, rowKey, index));
   const selectedOnPage = pageRowKeys.filter((k) => selectedKeys.has(k));
+
+  useEffect(() => {
+    if (selectedKeys.size === 0) return;
+    const present = new Set(pageRowKeys);
+    const kept = [...selectedKeys].filter((k) => present.has(k));
+    if (kept.length === selectedKeys.size) return;
+    setSelectedKeys(new Set(kept));
+    onSelectionChange?.(kept);
+  }, [data, rowKey]);
   const selectionState =
     selectedOnPage.length === 0
       ? 'none'
@@ -385,6 +399,8 @@ function FloTableImpl<T extends object, C extends object = T>(
   const hasBulkActions = (bulkActions?.length ?? 0) > 0;
   const hasCustomBar = typeof renderBulkActionBar === 'function';
   const hasInlineBar = typeof renderInlineBulkActions === 'function';
+  const hasTableActions = (tableActions?.length ?? 0) > 0;
+  const hasToolbarEnd = hasRenderableContent(toolbarEnd);
   const hasSelection = selectedKeys.size > 0;
   const hasFilterBar = showSearch || effectiveFilterDefs.length > 0;
 
@@ -402,7 +418,7 @@ function FloTableImpl<T extends object, C extends object = T>(
       <div
         className={cx('flotable-root', inheritTheme && 'flotable-root--inherit', classNames?.root)}
         style={styles?.root} dir={direction}>
-        {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
+        {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || hasToolbarEnd || hasTableActions) && (
           <div className="flotable-toolbar">
             <FilterBar
               filterDefs={effectiveFilterDefs}
@@ -427,6 +443,18 @@ function FloTableImpl<T extends object, C extends object = T>(
               />
             )}
             {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+            {(hasToolbarEnd || hasTableActions) && (
+              <div className="flotable-toolbar__end-group">
+                {hasToolbarEnd && (
+                  <ToolbarEnd classNames={classNames} styles={styles}>
+                    {toolbarEnd}
+                  </ToolbarEnd>
+                )}
+                {hasTableActions && (
+                  <TableActions actions={tableActions!} classNames={classNames} styles={styles} />
+                )}
+              </div>
+            )}
           </div>
         )}
         {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}

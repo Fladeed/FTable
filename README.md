@@ -17,6 +17,7 @@ An open-source, **zero-dependency** table component built for ERP-style applicat
 - **Quick filters** — inline per-column filter pills in the header
 - **Sorting** — single-column sorting with visual indicators
 - **Pagination** — built-in page controls with configurable page size
+- **Table actions** — selection-independent toolbar buttons (e.g. "New product") via `tableActions`, plus a free `toolbarEnd` slot for custom controls
 - **Custom renderers** — override any column with a `render` function
 - **Two data modes** — controlled (`data` prop) or self-managed (`request` prop for async fetching)
 - **Full style control** — CSS custom properties, `classNames` API, and `styles` prop for every table slot
@@ -97,6 +98,106 @@ Any column can use a custom `render` function to override the default renderer.
 
 ---
 
+## Table Actions
+
+`tableActions` renders buttons at the end of the toolbar, after the filter pills and any inline bulk actions. Use it for the page's main action ("New product", "New refund") and for other actions that do not depend on row selection ("Export", "Refresh").
+
+- Actions never receive row context and stay enabled while rows are selected and the bulk action bar is shown.
+- They are pushed to the end side with `margin-inline-start: auto`, so they move to the left under `direction="rtl"`.
+- Disabled actions use the `disabled` attribute. Use `variant: 'primary'` for at most one action per table.
+- When `tableActions` is non-empty, the toolbar renders even if there is no search, filter pill or bulk action. When it is omitted or empty, nothing changes.
+- Works in both data mode and request mode.
+
+```tsx
+import { FloTable } from 'flotable';
+import type { TableAction } from 'flotable';
+
+const tableActions: TableAction[] = [
+  { key: 'new', label: 'New product', icon: <PlusIcon />, variant: 'primary', onClick: () => openCreateDialog() },
+  { key: 'export', label: 'Export', onClick: () => exportCsv() },
+];
+
+<FloTable columns={columns} request={fetchProducts} showSearch tableActions={tableActions} />;
+```
+
+### `toolbarEnd`: custom controls
+
+`toolbarEnd` is a free `ReactNode` slot rendered at the end side of the toolbar, just **before** `tableActions`. Use it for controls that are not plain buttons, such as a period picker that opens a popover or a native `<select>`.
+
+| Use | When |
+|-----|------|
+| `tableActions` | Plain buttons (label, optional icon, click handler). FloTable styles them and handles a11y. |
+| `toolbarEnd` | Anything else: pickers, selects, popovers, segmented controls. You render and style it. |
+
+```tsx
+<FloTable
+  columns={columns}
+  request={fetchRefunds}
+  toolbarEnd={<PeriodPicker value={period} onChange={setPeriod} />}
+  tableActions={[{ key: 'new', label: 'New refund', variant: 'primary', onClick: openCreate }]}
+/>
+```
+
+- The toolbar order is: filter bar (grows), inline bulk actions, then an end group holding `toolbarEnd` followed by `tableActions`. The end group (`.flotable-toolbar__end-group`) has `margin-inline-start: auto`, so both stay together at the end, wrap as a unit on narrow screens, and mirror under RTL.
+- Popovers are safe. Neither the toolbar nor the slot wrapper sets `overflow`, and the wrapper (`.flotable__toolbar-end`) is `position: relative`, so a child's `position: absolute` panel anchors to it and can overlap the table.
+- The wrapper is a flex row (`gap: var(--flotable-toolbar-end-gap, 0.5rem)`) aligned with the filter pills (`align-self: center`).
+- When it has visible content, the toolbar renders even if nothing else is in it. `null`, `undefined`, booleans, `''`, `0` and empty fragments or arrays count as empty, so `items.length && <Picker />` is safe. It is independent of row selection.
+- Style the wrapper with `classNames.toolbarEnd` / `styles.toolbarEnd`.
+
+### `TableAction`
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `key` | `string` | — | Unique key (required) |
+| `label` | `string` | — | Button text (required). FloTable adds no text of its own, so translate it here |
+| `icon` | `ReactNode` | — | Rendered before the label, hidden from assistive tech |
+| `onClick` | `() => void` | — | Click handler (required). Receives no arguments |
+| `disabled` | `boolean` | `false` | Sets the `disabled` attribute on the button |
+| `variant` | `'primary' \| 'default'` | `'default'` | `'primary'` for the page's main action (one per table) |
+| `ariaLabel` | `string` | `label` | Accessible name when the label alone is not enough |
+
+### Styling
+
+`classNames` / `styles` slots:
+
+| Slot | Element |
+|------|---------|
+| `tableActions` | Container `<div>` (`.flotable-table-actions`) |
+| `tableAction` | Each `<button>` (`.flotable-table-actions__btn`) |
+| `tableActionPrimary` | The `variant: 'primary'` button (`.flotable-table-actions__btn--primary`), applied on top of `tableAction` |
+| `toolbarEnd` | The `toolbarEnd` slot wrapper `<div>` (`.flotable__toolbar-end`) |
+
+CSS custom properties. The colour tokens are part of the theme: their defaults derive from the core tokens, so they follow the built-in dark mode and `inheritTheme` with no extra setup. Setting any `--flotable-*` value below always wins.
+
+| Token | Default |
+|-------|---------|
+| `--flotable-accent-color` | follows `--flotable-link-color` (`#2563eb`; `#60a5fa` in dark mode; your `--primary` with `inheritTheme`). The primary button and focus ring use it |
+| `--flotable-accent-hover-color` | follows `--flotable-link-hover-color` (`#1d4ed8`) |
+| `--flotable-table-action-gap` | `0.5rem` |
+| `--flotable-table-action-icon-gap` | `0.375rem` |
+| `--flotable-table-action-padding` | `0.375rem 0.75rem` |
+| `--flotable-table-action-radius` | `var(--flotable-row-action-radius, 4px)` |
+| `--flotable-table-action-font-size` | `var(--flotable-font-size, 0.875rem)` |
+| `--flotable-table-action-font-weight` | `500` |
+| `--flotable-table-action-line-height` | `1.25` |
+| `--flotable-table-action-color` | follows `--flotable-row-action-color` (`#374151`) |
+| `--flotable-table-action-bg` | follows `--flotable-bg` (`#ffffff`) |
+| `--flotable-table-action-border-color` | follows `--flotable-border-color` (`#e5e7eb`) |
+| `--flotable-table-action-hover-bg` | follows `--flotable-row-action-hover-bg` (`#f3f4f6`) |
+| `--flotable-table-action-hover-color` | follows `--flotable-row-action-hover-color` (`#111827`) |
+| `--flotable-table-action-primary-bg` | follows `--flotable-accent-color` |
+| `--flotable-table-action-primary-color` | `#ffffff` (the table background in dark mode, for contrast) |
+| `--flotable-table-action-primary-border-color` | follows `--flotable-table-action-primary-bg` |
+| `--flotable-table-action-primary-hover-bg` | follows `--flotable-accent-hover-color` |
+| `--flotable-table-action-focus-ring` | follows `--flotable-accent-color` (`:focus-visible` outline colour) |
+| `--flotable-table-action-focus-ring-width` | `2px` |
+| `--flotable-table-action-focus-ring-offset` | `2px` |
+| `--flotable-table-action-disabled-opacity` | `0.4` |
+| `--flotable-toolbar-end-gap` | `0.5rem` (gap between `toolbarEnd` children) |
+| `--flotable-toolbar-end-group-gap` | `0.75rem` (gap between the `toolbarEnd` slot and `tableActions`) |
+
+---
+
 ## Styling & Customization
 
 FloTable ships plain CSS wrapped in `@layer flotable`. Every visual token uses a CSS custom property with a fallback, so you can theme the entire table without touching source files.
@@ -155,6 +256,9 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `filterDefs` | `FilterDef[]` | Explicit filter pill definitions |
 | `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
 | `showSearch` | `boolean` | Show a global search input in the filter bar |
+| `tableActions` | `TableAction[]` | Selection-independent buttons at the end of the toolbar (see [Table Actions](#table-actions)) |
+| `toolbarEnd` | `ReactNode` | Custom controls at the end of the toolbar, before `tableActions` (see [`toolbarEnd`](#toolbarend-custom-controls)) |
+| `renderInlineBulkActions` | `(ctx: BulkActionBarContext<T>) => ReactNode` | Custom bulk-action content inline in the toolbar; always receives the selection context. For selection-independent actions use `tableActions` |
 | `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
 | `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |
 

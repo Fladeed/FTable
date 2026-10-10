@@ -20,6 +20,7 @@ export type {
   RowAction,
   BulkAction,
   BulkActionBarContext,
+  TableAction,
   FloTableClassNames,
   FloTableStyleValue,
   FloTableStyles,

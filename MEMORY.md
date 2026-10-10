@@ -21,7 +21,7 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-16 | Task | View persistence via localStorage | To Do | https://fladeed.atlassian.net/browse/ET-16 |
 | ET-17 | Task | Remote persistence adapter (pluggable ViewStorageAdapter interface) | To Do | https://fladeed.atlassian.net/browse/ET-17 |
 | ET-21 | Task | Custom classNames and styles API for table slots (antd-style) + shadcn demo | Done ✓ | https://fladeed.atlassian.net/browse/ET-21 |
-| ET-23 | Task | ActionBar — Table-level actions (independent of row selection) | To Do | https://fladeed.atlassian.net/browse/ET-23 |
+| ET-23 | Task | ActionBar — Table-level actions (independent of row selection) | In Progress | https://fladeed.atlassian.net/browse/ET-23 |
 | ET-24 | Task | Row selection system (checkboxes, select-all, selectedRows state) | To Do | https://fladeed.atlassian.net/browse/ET-24 |
 | ET-25 | Task | ActionBar — Single-row actions (row context menu / inline actions) | To Do | https://fladeed.atlassian.net/browse/ET-25 |
 | ET-26 | Task | ActionBar — Bulk actions for selected rows (blocked by ET-24) | To Do | https://fladeed.atlassian.net/browse/ET-26 |
@@ -44,6 +44,9 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-110 | Bug | RowActionsOverflow dropdown items never fire onClick (portal vs. outside-click handler race) | Done ✓ | https://fladeed.atlassian.net/browse/ET-110 |
 | ET-84 | Task | FloTable theming — auto-pickup from host theme + dark mode | In Review | https://fladeed.atlassian.net/browse/ET-84 |
 | ET-85 | Task | [Skill] Update flotable skill — theming alias chains + dark mode | To Do | https://fladeed.atlassian.net/browse/ET-85 |
+| ET-129 | Task | [Skill] Update flotable skill — tableActions prop and toolbarEnd slot | To Do | https://fladeed.atlassian.net/browse/ET-129 |
+| ET-130 | Task | FloTable: shared base button style for action buttons (BulkActionBar, TableActions, row actions) | To Do | https://fladeed.atlassian.net/browse/ET-130 |
+| ET-131 | Task | FloTable: make --flotable-accent-color drive all accent-coloured tokens (sort, link, pills) | To Do | https://fladeed.atlassian.net/browse/ET-131 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net

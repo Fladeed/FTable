@@ -85,6 +85,18 @@
   --_flotable-expander-color-default: #6b7280;
   --_flotable-expander-hover-bg-default: #f3f4f6;
   --_flotable-expander-hover-color-default: #111827;
+  --_flotable-accent-color-default: var(--_flotable-link-color);
+  --_flotable-accent-hover-color-default: var(--_flotable-link-hover-color);
+  --_flotable-table-action-bg-default: var(--_flotable-bg);
+  --_flotable-table-action-color-default: var(--_flotable-row-action-color);
+  --_flotable-table-action-border-color-default: var(--_flotable-border-color);
+  --_flotable-table-action-hover-bg-default: var(--_flotable-row-action-hover-bg);
+  --_flotable-table-action-hover-color-default: var(--_flotable-row-action-hover-color);
+  --_flotable-table-action-primary-bg-default: var(--_flotable-accent-color);
+  --_flotable-table-action-primary-color-default: #ffffff;
+  --_flotable-table-action-primary-border-color-default: var(--_flotable-table-action-primary-bg);
+  --_flotable-table-action-primary-hover-bg-default: var(--_flotable-accent-hover-color);
+  --_flotable-table-action-focus-ring-default: var(--_flotable-accent-color);
 
   /* Resolved values — consumer token > default */
   --_flotable-bg: var(--flotable-bg, var(--_flotable-bg-default));
@@ -139,6 +151,18 @@
   --_flotable-expander-color: var(--flotable-expander-color, var(--_flotable-expander-color-default));
   --_flotable-expander-hover-bg: var(--flotable-expander-hover-bg, var(--_flotable-expander-hover-bg-default));
   --_flotable-expander-hover-color: var(--flotable-expander-hover-color, var(--_flotable-expander-hover-color-default));
+  --_flotable-accent-color: var(--flotable-accent-color, var(--_flotable-accent-color-default));
+  --_flotable-accent-hover-color: var(--flotable-accent-hover-color, var(--_flotable-accent-hover-color-default));
+  --_flotable-table-action-bg: var(--flotable-table-action-bg, var(--_flotable-table-action-bg-default));
+  --_flotable-table-action-color: var(--flotable-table-action-color, var(--_flotable-table-action-color-default));
+  --_flotable-table-action-border-color: var(--flotable-table-action-border-color, var(--_flotable-table-action-border-color-default));
+  --_flotable-table-action-hover-bg: var(--flotable-table-action-hover-bg, var(--_flotable-table-action-hover-bg-default));
+  --_flotable-table-action-hover-color: var(--flotable-table-action-hover-color, var(--_flotable-table-action-hover-color-default));
+  --_flotable-table-action-primary-bg: var(--flotable-table-action-primary-bg, var(--_flotable-table-action-primary-bg-default));
+  --_flotable-table-action-primary-color: var(--flotable-table-action-primary-color, var(--_flotable-table-action-primary-color-default));
+  --_flotable-table-action-primary-border-color: var(--flotable-table-action-primary-border-color, var(--_flotable-table-action-primary-border-color-default));
+  --_flotable-table-action-primary-hover-bg: var(--flotable-table-action-primary-hover-bg, var(--_flotable-table-action-primary-hover-bg-default));
+  --_flotable-table-action-focus-ring: var(--flotable-table-action-focus-ring, var(--_flotable-table-action-focus-ring-default));
 }
 
 /*
@@ -277,6 +301,18 @@
   padding: 0;
 }
 
+/* CRITICAL: no `overflow` — `toolbarEnd` children may open absolutely positioned popovers. */
+.flotable-toolbar__end-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--flotable-toolbar-end-group-gap, 0.75rem);
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-inline-start: auto;
+}
+
 .flotable-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -365,5 +401,6 @@
   --_flotable-expander-color-default: var(--_flotable-muted-color);
   --_flotable-expander-hover-bg-default: var(--_flotable-row-hover-bg);
   --_flotable-expander-hover-color-default: var(--_flotable-color);
+  --_flotable-table-action-primary-color-default: var(--_flotable-bg);
 }
 }

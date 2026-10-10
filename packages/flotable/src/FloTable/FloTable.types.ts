@@ -28,6 +28,27 @@ export interface BulkAction<T = Record<string, unknown>> {
   style?: CSSProperties;
 }
 
+/**
+ * A table-level action rendered at the end of the toolbar (e.g. "New product", "Export").
+ * Independent of row selection: never receives row context and stays enabled while rows are selected.
+ */
+export interface TableAction {
+  /** Unique key for this action. */
+  key: string;
+  /** Label shown on the button. */
+  label: string;
+  /** Optional icon rendered before the label. */
+  icon?: ReactNode;
+  /** Called when the user clicks the button. Receives no arguments. */
+  onClick: () => void;
+  /** When true, the button is rendered with the `disabled` attribute. Defaults to `false`. */
+  disabled?: boolean;
+  /** 'primary' for the page's main action (one per table), 'default' otherwise. Defaults to 'default'. */
+  variant?: 'primary' | 'default';
+  /** Accessible name when the label alone is not enough. Defaults to `label`. */
+  ariaLabel?: string;
+}
+
 /** A single per-row action rendered in the trailing Actions column. */
 export interface RowAction<T = Record<string, unknown>> {
   /** Unique key for this action. */
@@ -211,6 +232,14 @@ export interface FloTableClassNames {
   bulkActionBarActions?: string;
   /** "Clear selection" `<button>` */
   bulkActionBarClear?: string;
+  /** TableActions container `<div>` at the end of the toolbar */
+  tableActions?: string;
+  /** Each table action `<button>` */
+  tableAction?: string;
+  /** Added to the table action `<button>` whose `variant` is `'primary'` (alongside `tableAction`) */
+  tableActionPrimary?: string;
+  /** `toolbarEnd` slot wrapper `<div>` (`.flotable__toolbar-end`) */
+  toolbarEnd?: string;
 }
 
 /**
@@ -240,6 +269,11 @@ export interface FloTableStyles {
   bulkActionBarCount?: FloTableStyleValue;
   bulkActionBarActions?: FloTableStyleValue;
   bulkActionBarClear?: FloTableStyleValue;
+  tableActions?: FloTableStyleValue;
+  tableAction?: FloTableStyleValue;
+  /** Merged over `tableAction` for the `variant: 'primary'` button. */
+  tableActionPrimary?: FloTableStyleValue;
+  toolbarEnd?: FloTableStyleValue;
 }
 
 /** Parameters passed to the `request` function on each fetch. */
@@ -307,7 +341,10 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
   selectable?: boolean;
   /** The row property used as the unique key for selection. Defaults to "id". */
   rowKey?: string;
-  /** Called with the array of selected row keys on every selection change. */
+  /**
+   * Called with the array of selected row keys on every selection change, including when selected rows
+   * disappear from `data` (e.g. after a bulk delete or a refresh): their keys are dropped from the selection.
+   */
   onSelectionChange?: (selectedKeys: string[]) => void;
   /** Bulk action buttons shown in the BulkActionBar when rows are selected. */
   bulkActions?: BulkAction<T>[];
@@ -331,8 +368,23 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
    * Renders custom bulk-action content inside the toolbar, inline with the filter bar.
    * Always called (even when nothing is selected — `count` will be 0).
    * Use `count` to decide whether to enable or disable your buttons.
+   * For actions that do not depend on selection, use `tableActions`.
    */
   renderInlineBulkActions?: (ctx: BulkActionBarContext<T>) => ReactNode;
+  /**
+   * Table-level actions rendered at the end of the toolbar, after the filter bar and inline bulk actions.
+   * Independent of row selection. When non-empty, the toolbar renders even if nothing else is in it.
+   * For custom controls (pickers, popovers) use `toolbarEnd`.
+   */
+  tableActions?: TableAction[];
+  /**
+   * Rendered at the end side of the toolbar, before `tableActions`. Independent of selection.
+   * Use it for custom controls such as a period picker; use `tableActions` for plain buttons.
+   * The wrapper is `position: relative` and never clips, so a child's absolutely positioned popover anchors to it.
+   * The toolbar renders when this has visible content, even if nothing else is in it. `null`, `undefined`,
+   * booleans, `''`, `0` and empty fragments or arrays count as empty, so `items.length && <Picker />` is safe.
+   */
+  toolbarEnd?: ReactNode;
   /** Custom class names for individual table parts. */
   classNames?: FloTableClassNames;
   /** Inline styles for individual table parts. CSS custom properties are accepted. */

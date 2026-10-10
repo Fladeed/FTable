@@ -1,0 +1,11 @@
+@layer flotable {
+/* CRITICAL: no `overflow` here — children may open absolutely positioned popovers that anchor to this wrapper. */
+.flotable__toolbar-end {
+  position: relative;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--flotable-toolbar-end-gap, 0.5rem);
+}
+}

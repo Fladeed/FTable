@@ -1,0 +1,41 @@
+.table-actions-demo__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--demo-fg);
+}
+
+.table-actions-demo__subtitle {
+  color: var(--demo-fg-muted);
+  margin: 0 0 2rem;
+  line-height: 1.6;
+}
+
+.table-actions-demo__section {
+  margin-bottom: 3rem;
+}
+
+.table-actions-demo__section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.375rem;
+  color: var(--demo-fg);
+}
+
+.table-actions-demo__section-desc {
+  color: var(--demo-fg-muted);
+  font-size: 0.875rem;
+  margin: 0 0 0.75rem;
+  line-height: 1.6;
+}
+
+.table-actions-demo__feedback {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 6px 14px;
+  background: var(--demo-info-bg);
+  border: 1px solid var(--demo-info-border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--demo-info-fg);
+}
