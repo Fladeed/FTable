@@ -7,7 +7,7 @@
 .flotable__child-fullspan {
   padding: 0;
   border: none;
-  background-color: var(--flotable-child-bg, #f9fafb);
+  background-color: var(--_flotable-child-bg);
 }
 
 .flotable__child-collapser {
@@ -42,33 +42,33 @@
   max-height: var(--flotable-child-scroll-max-height, 11.25rem);
   overflow-y: auto;
   overflow-x: hidden;
-  border-top: 1px solid var(--flotable-child-border, #eef0f2);
-  border-bottom: 1px solid var(--flotable-child-border, #eef0f2);
+  border-top: 1px solid var(--_flotable-child-border);
+  border-bottom: 1px solid var(--_flotable-child-border);
 }
 
 .flotable__child-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--flotable-child-bg, #f9fafb);
+  background-color: var(--_flotable-child-bg);
 }
 
 .flotable__child-row > td {
   vertical-align: middle;
-  background-color: var(--flotable-child-bg, #f9fafb);
+  background-color: var(--_flotable-child-bg);
 }
 
 .flotable__child-row:not(:last-child) > td {
-  border-bottom: 1px solid var(--flotable-child-border, #eef0f2);
+  border-bottom: 1px solid var(--_flotable-child-border);
 }
 
 .flotable__child-row--match > td {
-  background-color: var(--flotable-child-match-bg, #fef9c3);
+  background-color: var(--_flotable-child-match-bg);
 }
 
 .flotable__child-cell {
   padding: var(--flotable-child-cell-padding, 0.5rem 0.875rem);
   font-size: var(--flotable-child-font-size, 0.8125rem);
-  color: var(--flotable-child-color, #374151);
+  color: var(--_flotable-child-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -88,7 +88,7 @@
   transform: translateY(-50%);
   width: 2px;
   height: var(--flotable-child-accent-height, 60%);
-  background-color: var(--flotable-child-accent, #d1d5db);
+  background-color: var(--_flotable-child-accent);
 }
 
 /* Full-width child rows: sentinel, loading, error, empty states. */
@@ -106,24 +106,24 @@
   align-items: center;
   gap: 0.75rem;
   font-size: var(--flotable-child-font-size, 0.8125rem);
-  color: var(--flotable-muted-color, #6b7280);
+  color: var(--_flotable-muted-color);
 }
 
 .flotable__child-state--error {
-  color: var(--flotable-error-color, #b91c1c);
+  color: var(--_flotable-error-color);
 }
 
 .flotable__child-retry {
   padding: 0.25rem 0.625rem;
-  border: 1px solid var(--flotable-border-color, #e5e7eb);
+  border: 1px solid var(--_flotable-border-color);
   border-radius: 0.25rem;
-  background: var(--flotable-bg, #ffffff);
+  background: var(--_flotable-bg);
   color: inherit;
   font: inherit;
   cursor: pointer;
 }
 
 .flotable__child-retry:hover {
-  background: var(--flotable-row-hover-bg, #f3f4f6);
+  background: var(--_flotable-row-hover-bg);
 }
 }

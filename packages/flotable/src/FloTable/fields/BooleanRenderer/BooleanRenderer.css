@@ -5,10 +5,10 @@
 }
 
 .flotable-boolean--true {
-  color: var(--flotable-boolean-true-color, #16a34a);
+  color: var(--_flotable-boolean-true-color);
 }
 
 .flotable-boolean--false {
-  color: var(--flotable-boolean-false-color, #dc2626);
+  color: var(--_flotable-boolean-false-color);
 }
 }

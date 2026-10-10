@@ -19,9 +19,9 @@
   border-radius: var(--flotable-skeleton-radius, 0.25rem);
   background: linear-gradient(
     90deg,
-    var(--flotable-skeleton-base, #e5e7eb) 25%,
-    var(--flotable-skeleton-highlight, #f3f4f6) 50%,
-    var(--flotable-skeleton-base, #e5e7eb) 75%
+    var(--_flotable-skeleton-base) 25%,
+    var(--_flotable-skeleton-highlight) 50%,
+    var(--_flotable-skeleton-base) 75%
   );
   background-size: 200% 100%;
   animation: flotable-shimmer 1.4s ease-in-out infinite;

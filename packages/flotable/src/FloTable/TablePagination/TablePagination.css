@@ -6,22 +6,22 @@
   gap: 0.75rem;
   padding: 0.5rem 0.25rem;
   font-size: var(--flotable-pagination-font-size, 0.8125rem);
-  color: var(--flotable-muted-color, #6b7280);
+  color: var(--_flotable-muted-color);
 }
 
 .flotable-pagination__btn {
   padding: 0.25rem 0.75rem;
-  border: 1px solid var(--flotable-border-color, #e5e7eb);
-  border-radius: var(--flotable-border-radius, 0.375rem);
-  background-color: var(--flotable-bg, #ffffff);
-  color: var(--flotable-color, #111827);
+  border: 1px solid var(--_flotable-border-color);
+  border-radius: var(--_flotable-border-radius);
+  background-color: var(--_flotable-bg);
+  color: var(--_flotable-color);
   font-size: var(--flotable-pagination-font-size, 0.8125rem);
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
 .flotable-pagination__btn:hover:not(:disabled) {
-  background-color: var(--flotable-row-hover-bg, #f3f4f6);
+  background-color: var(--_flotable-row-hover-bg);
 }
 
 .flotable-pagination__btn:disabled {

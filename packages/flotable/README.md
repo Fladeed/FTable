@@ -209,29 +209,82 @@ The box height is set with the `--flotable-child-scroll-max-height` CSS variable
 
 ---
 
-## Styling & Customization
+## Theming
 
-FloTable ships plain CSS wrapped in `@layer flotable`. Every visual token uses a CSS custom property with a fallback, so you can theme the entire table without touching source files.
+FloTable ships with a light palette, a built-in dark palette, and an optional bridge to your design system's CSS variables. Every colour is a CSS custom property, so there are three layers, from "no config" to "full control":
 
-### CSS Custom Properties
+### Layer 1 — Built-in dark mode (zero config)
 
-Override tokens on the root element or via the `styles` prop:
+The table switches to its dark palette when any of these common conventions is present on an ancestor (`<html>`, `<body>` or any wrapper):
+
+- `.dark` (Tailwind `dark:` variant, shadcn/ui)
+- `[data-theme="dark"]` (next-themes default, Ant Design, most custom toggles)
+- `[data-mode="dark"]`
+
+FloTable never reads `prefers-color-scheme` itself, so a light-only app stays light whatever the OS setting. For OS-driven dark mode, have your theme toggle set one of the selectors above ([next-themes](https://github.com/pacocoursey/next-themes) does this for you). Filter pills, dropdowns, skeletons, badges and child rows derive their dark colours from the core palette, so the whole component flips coherently.
+
+### Layer 2 — Inherit your design system (`inheritTheme`)
+
+Pass `inheritTheme` and the core colour / typography tokens fall back to the well-known CSS variables of popular design systems before FloTable's own defaults:
+
+| FloTable token | shadcn / ui | Tailwind v4 `@theme` | MUI (CSS variables mode) |
+|---|---|---|---|
+| bg | `--background` | `--color-background` | `--mui-palette-background-default` |
+| color | `--foreground` | `--color-foreground` | `--mui-palette-text-primary` |
+| muted | `--muted-foreground` | `--color-muted-foreground` | `--mui-palette-text-secondary` |
+| border | `--border` | `--color-border` | `--mui-palette-divider` |
+| header bg | `--muted` | `--color-muted` | — |
+| row hover | `--accent` | `--color-accent` | — |
+| primary / link | `--primary` | `--color-primary` | `--mui-palette-primary-main` |
+| danger | `--destructive` | `--color-destructive` | `--mui-palette-error-main` |
+| focus ring | `--ring` | `--color-ring` | — |
+| radius | `--radius` | `--radius` | — |
+| font-family | — | `--font-sans` | — |
+
+```tsx
+// Inherits the surrounding shadcn / Tailwind tokens — no styles prop needed.
+<FloTable inheritTheme columns={columns} data={data} totalRows={data.length} page={1} onPageChange={setPage} />
+```
+
+This is opt-in on purpose: the names are generic (an app may define `--border` or `--primary` for unrelated reasons), and shadcn projects on Tailwind v3 store bare HSL channels (`--background: 0 0% 100%`) that are not valid colours on their own.
+
+**Legacy shadcn (HSL channels).** Instead of `inheritTheme`, bridge the tokens explicitly:
 
 ```css
-.my-table {
-  --flotable-border-color: #e5e7eb;
-  --flotable-header-bg: #f9fafb;
-  --flotable-row-hover-bg: #f3f4f6;
-  --flotable-font-size: 14px;
+.flotable-root {
+  --flotable-bg: hsl(var(--background));
+  --flotable-color: hsl(var(--foreground));
+  --flotable-border-color: hsl(var(--border));
+  /* … */
 }
 ```
 
-### classNames API
+Newer shadcn (oklch values) and Tailwind v4 `@theme` work with `inheritTheme` as-is.
 
-Pass custom class names to any table slot:
+### Layer 3 — Explicit overrides
+
+A `--flotable-*` token always wins over both the dark palette and inherited tokens, so you can pin any single value without giving up the rest. Set them on any ancestor in CSS, or per instance:
+
+**Via the `styles` prop:**
 
 ```tsx
 <FloTable
+  // ...
+  styles={{
+    wrapper: {
+      '--flotable-bg': '#0f172a',
+      '--flotable-color': '#e2e8f0',
+      '--flotable-row-hover-bg': '#1e293b',
+    },
+  }}
+/>
+```
+
+**Via `classNames` for class-based styling** (e.g. utility frameworks):
+
+```tsx
+<FloTable
+  // ...
   classNames={{
     root: 'my-table',
     header: 'my-header',
@@ -240,9 +293,12 @@ Pass custom class names to any table slot:
     pagination: 'my-pagination',
     filterBar: 'my-filters',
   }}
-  // ...
 />
 ```
+
+### Private tokens (`--_flotable-*`)
+
+Anything prefixed with an underscore (`--_flotable-bg`, `--_flotable-pill-bg-default`, …) is internal plumbing: the resolved value of a public token after the override → inherit → default chain. These names are **not** part of the public API, may change in any release, and must not be set by consumers — always set the un-prefixed `--flotable-*` token instead.
 
 ### Tailwind CSS Integration
 
@@ -280,6 +336,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `labels` | `FloTableLabels` | Built-in text: `empty` (`'No data'`), `retry` (`'Retry'`), `searchPlaceholder` (`'Search…'`), `search` (`'Search'`), `selectRow` (`'Select row'`), `selectAllRows` (`'Select all rows'`), `moreActions` (`'More actions'`), `closeFilter` (`'Close filter'`), `clearFilter` (`(label) => 'Clear ' + label`), `filterAll` (`'All'`), `booleanTrue` (`'Yes'`), `booleanFalse` (`'No'`) |
 | `classNames` | `FloTableClassNames` | Custom CSS classes for each table slot |
 | `styles` | `FloTableStyles` | Inline styles / CSS custom properties for each slot |
+| `inheritTheme` | `boolean` | Inherit shadcn / Tailwind v4 / MUI CSS variables for the core colour tokens (default `false`) |
 
 ### Data Mode Props
 

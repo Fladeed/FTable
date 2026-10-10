@@ -54,4 +54,6 @@ export interface ThemeConfig {
   overrides: string[];
   classNames: FloTableClassNames;
   styles: FloTableStyles;
+  /** Pass `inheritTheme` to the table so it picks up design-system tokens set on the preview wrapper. */
+  inheritTheme?: boolean;
 }

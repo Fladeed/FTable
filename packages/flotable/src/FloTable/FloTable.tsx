@@ -3,6 +3,7 @@ import {
   useEffect,
   useRef,
   useCallback,
+  useMemo,
   forwardRef,
   useImperativeHandle,
 } from 'react';
@@ -31,6 +32,7 @@ import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
 import { cx } from '../utils/cx';
+import { FloTableThemeContext } from './theme/FloTableThemeContext';
 import './FloTable.css';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -60,6 +62,7 @@ function FloTableImpl<T extends object, C extends object = T>(
     classNames,
     styles,
     direction,
+    inheritTheme = false,
     rowActionsLabel,
     paginationLabels,
     showPageInput,
@@ -392,96 +395,102 @@ function FloTableImpl<T extends object, C extends object = T>(
     clearSelection,
   };
 
+  const themeContextValue = useMemo(() => ({ inheritTheme }), [inheritTheme]);
+
   return (
-    <div className={classNames?.root} style={styles?.root} dir={direction}>
-      {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
-        <div className="flotable-toolbar">
-          <FilterBar
-            filterDefs={effectiveFilterDefs}
-            activeFilters={quickFilters}
-            onFilterChange={handleFilterChange}
-            showSearch={showSearch}
-            filterMode={filterMode}
-            classNames={classNames}
-            styles={styles}
-            labels={labels}
-          />
-          {!hasCustomBar && hasBulkActions && (
-            <BulkActionBar
-              actions={bulkActions!}
-              selectedRows={selectedRows}
-              onClearSelection={clearSelection}
-              clearSelectionLabel={clearSelectionLabel}
-              clearSelectionIcon={clearSelectionIcon}
-              selectionCountLabel={selectionCountLabel}
+    <FloTableThemeContext.Provider value={themeContextValue}>
+      <div
+        className={cx('flotable-root', inheritTheme && 'flotable-root--inherit', classNames?.root)}
+        style={styles?.root} dir={direction}>
+        {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar) && (
+          <div className="flotable-toolbar">
+            <FilterBar
+              filterDefs={effectiveFilterDefs}
+              activeFilters={quickFilters}
+              onFilterChange={handleFilterChange}
+              showSearch={showSearch}
+              filterMode={filterMode}
               classNames={classNames}
               styles={styles}
+              labels={labels}
             />
-          )}
-          {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+            {!hasCustomBar && hasBulkActions && (
+              <BulkActionBar
+                actions={bulkActions!}
+                selectedRows={selectedRows}
+                onClearSelection={clearSelection}
+                clearSelectionLabel={clearSelectionLabel}
+                clearSelectionIcon={clearSelectionIcon}
+                selectionCountLabel={selectionCountLabel}
+                classNames={classNames}
+                styles={styles}
+              />
+            )}
+            {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
+          </div>
+        )}
+        {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
+        <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
+          <table ref={tableRef} className={cx('flotable', classNames?.table)} style={styles?.table}>
+            <TableHeader
+              columns={columns}
+              sortState={sortState}
+              onSort={handleSort}
+              rowActions={rowActions}
+              rowActionsLabel={rowActionsLabel}
+              selectable={selectable}
+              selectionState={selectionState}
+              onToggleAll={handleToggleAll}
+              expandable={isExpandable}
+              classNames={classNames}
+              styles={styles}
+              labels={labels}
+            />
+            <TableBody
+              columns={columns}
+              rows={data}
+              rowActions={rowActions}
+              rowActionsMoreIcon={rowActionsMoreIcon}
+              selectable={selectable}
+              selectedKeys={selectedKeys}
+              rowKey={rowKey}
+              onToggleRow={handleToggleRow}
+              classNames={classNames}
+              styles={styles}
+              isLoading={isLoading}
+              isRefreshing={isRefreshing}
+              loadingRowCount={pageSize}
+              error={fetchError}
+              onRetry={() => setRetryCount((c) => c + 1)}
+              getChildren={getChildren}
+              childRequest={childRequest}
+              rowHasChildren={rowHasChildren}
+              childPageSize={childPageSize}
+              childRowKey={childRowKey}
+              childColumns={childColumns}
+              expandedKeys={expandedKeys}
+              onToggleExpand={handleToggleExpand}
+              expandOn={expandOn}
+              searchQuery={searchQuery}
+              columnWidths={columnWidths}
+              childRowsLabels={childRowsLabels}
+              labels={labels}
+            />
+          </table>
         </div>
-      )}
-      {hasCustomBar && hasSelection && renderBulkActionBar(bulkBarContext)}
-      <div className={cx('flotable-wrapper', classNames?.wrapper)} style={styles?.wrapper}>
-        <table ref={tableRef} className={cx('flotable', classNames?.table)} style={styles?.table}>
-          <TableHeader
-            columns={columns}
-            sortState={sortState}
-            onSort={handleSort}
-            rowActions={rowActions}
-            rowActionsLabel={rowActionsLabel}
-            selectable={selectable}
-            selectionState={selectionState}
-            onToggleAll={handleToggleAll}
-            expandable={isExpandable}
-            classNames={classNames}
-            styles={styles}
-            labels={labels}
-          />
-          <TableBody
-            columns={columns}
-            rows={data}
-            rowActions={rowActions}
-            rowActionsMoreIcon={rowActionsMoreIcon}
-            selectable={selectable}
-            selectedKeys={selectedKeys}
-            rowKey={rowKey}
-            onToggleRow={handleToggleRow}
-            classNames={classNames}
-            styles={styles}
-            isLoading={isLoading}
-            isRefreshing={isRefreshing}
-            loadingRowCount={pageSize}
-            error={fetchError}
-            onRetry={() => setRetryCount((c) => c + 1)}
-            getChildren={getChildren}
-            childRequest={childRequest}
-            rowHasChildren={rowHasChildren}
-            childPageSize={childPageSize}
-            childRowKey={childRowKey}
-            childColumns={childColumns}
-            expandedKeys={expandedKeys}
-            onToggleExpand={handleToggleExpand}
-            expandOn={expandOn}
-            searchQuery={searchQuery}
-            columnWidths={columnWidths}
-            childRowsLabels={childRowsLabels}
-            labels={labels}
-          />
-        </table>
+        <TablePagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPrev={() => handlePageChange(page - 1)}
+          onNext={() => handlePageChange(page + 1)}
+          onGoToPage={handlePageChange}
+          showPageInput={showPageInput}
+          labels={paginationLabels}
+          classNames={classNames}
+          styles={styles}
+        />
       </div>
-      <TablePagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPrev={() => handlePageChange(page - 1)}
-        onNext={() => handlePageChange(page + 1)}
-        onGoToPage={handlePageChange}
-        showPageInput={showPageInput}
-        labels={paginationLabels}
-        classNames={classNames}
-        styles={styles}
-      />
-    </div>
+    </FloTableThemeContext.Provider>
   );
 }
 
