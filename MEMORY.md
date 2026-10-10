@@ -45,6 +45,8 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-84 | Task | FloTable theming — auto-pickup from host theme + dark mode | In Review | https://fladeed.atlassian.net/browse/ET-84 |
 | ET-85 | Task | [Skill] Update flotable skill — theming alias chains + dark mode | To Do | https://fladeed.atlassian.net/browse/ET-85 |
 | ET-129 | Task | [Skill] Update flotable skill — tableActions prop and toolbarEnd slot | To Do | https://fladeed.atlassian.net/browse/ET-129 |
+| ET-130 | Task | FloTable: shared base button style for action buttons (BulkActionBar, TableActions, row actions) | To Do | https://fladeed.atlassian.net/browse/ET-130 |
+| ET-131 | Task | FloTable: make --flotable-accent-color drive all accent-coloured tokens (sort, link, pills) | To Do | https://fladeed.atlassian.net/browse/ET-131 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net
