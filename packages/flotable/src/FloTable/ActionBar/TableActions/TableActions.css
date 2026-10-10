@@ -9,15 +9,15 @@
 .flotable-table-actions__btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--flotable-table-action-icon-gap, 0.375rem);
   padding: var(--flotable-table-action-padding, 0.375rem 0.75rem);
   background: var(--flotable-table-action-bg, var(--flotable-bg, #ffffff));
   border: 1px solid var(--flotable-table-action-border-color, var(--flotable-border-color, #e5e7eb));
   border-radius: var(--flotable-table-action-radius, var(--flotable-row-action-radius, 4px));
   font-family: inherit;
   font-size: var(--flotable-table-action-font-size, var(--flotable-font-size, 0.875rem));
-  font-weight: 500;
-  line-height: 1.25;
+  font-weight: var(--flotable-table-action-font-weight, 500);
+  line-height: var(--flotable-table-action-line-height, 1.25);
   color: var(--flotable-table-action-color, var(--flotable-row-action-color, #374151));
   cursor: pointer;
   white-space: nowrap;
@@ -30,24 +30,28 @@
 }
 
 .flotable-table-actions__btn--primary {
-  background: var(--flotable-table-action-primary-bg, #2563eb);
-  border-color: var(--flotable-table-action-primary-border-color, var(--flotable-table-action-primary-bg, #2563eb));
+  background: var(--flotable-table-action-primary-bg, var(--flotable-accent-color, #2563eb));
+  border-color: var(
+    --flotable-table-action-primary-border-color,
+    var(--flotable-table-action-primary-bg, var(--flotable-accent-color, #2563eb))
+  );
   color: var(--flotable-table-action-primary-color, #ffffff);
 }
 
 .flotable-table-actions__btn--primary:hover:not(:disabled) {
-  background: var(--flotable-table-action-primary-hover-bg, #1d4ed8);
-  border-color: var(--flotable-table-action-primary-hover-bg, #1d4ed8);
+  background: var(--flotable-table-action-primary-hover-bg, var(--flotable-accent-hover-color, #1d4ed8));
+  border-color: var(--flotable-table-action-primary-hover-bg, var(--flotable-accent-hover-color, #1d4ed8));
   color: var(--flotable-table-action-primary-color, #ffffff);
 }
 
 .flotable-table-actions__btn:focus-visible {
-  outline: 2px solid var(--flotable-table-action-focus-ring, #2563eb);
-  outline-offset: 2px;
+  outline: var(--flotable-table-action-focus-ring-width, 2px) solid
+    var(--flotable-table-action-focus-ring, var(--flotable-accent-color, #2563eb));
+  outline-offset: var(--flotable-table-action-focus-ring-offset, 2px);
 }
 
 .flotable-table-actions__btn:disabled {
-  opacity: 0.4;
+  opacity: var(--flotable-table-action-disabled-opacity, 0.4);
   cursor: not-allowed;
 }
 

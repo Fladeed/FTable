@@ -20,6 +20,7 @@ interface TableActionsSectionProps {
   direction: Direction;
   withFilters: boolean;
   withTableActions?: boolean;
+  withToolbarEnd?: boolean;
 }
 
 export function TableActionsSection({
@@ -28,6 +29,7 @@ export function TableActionsSection({
   direction,
   withFilters,
   withTableActions = true,
+  withToolbarEnd = true,
 }: TableActionsSectionProps) {
   const labels = LABELS[direction];
   const { page, setPage, sortState, setSortState, filterState, setFilterState, sortedData, pageData, addRow, removeRows } =
@@ -82,7 +84,11 @@ export function TableActionsSection({
         onSortChange={setSortState}
         direction={direction}
         tableActions={withTableActions ? tableActions : undefined}
-        toolbarEnd={<PeriodPicker direction={direction} onChange={(p) => setLastAction(`${labels.period}: ${p}`)} />}
+        toolbarEnd={
+          withToolbarEnd ? (
+            <PeriodPicker direction={direction} onChange={(p) => setLastAction(`${labels.period}: ${p}`)} />
+          ) : undefined
+        }
         {...(withFilters
           ? {
               filterDefs: FILTER_DEFS[direction],

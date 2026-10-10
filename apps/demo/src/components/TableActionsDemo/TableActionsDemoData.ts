@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { ColumnDef, FilterDef, SortState, QuickFilterState } from 'flotable';
 import { applySorting, applyFilters } from '../../utils/demoUtils';
 
@@ -118,6 +118,11 @@ export function useTableState(direction: Direction) {
       return [...prev, { id, name: LABELS[direction].newRowName(id), category, price: 0, inStock: true }];
     });
   }
+
+  useEffect(() => {
+    const lastPage = Math.max(1, Math.ceil(sortedData.length / PAGE_SIZE));
+    if (page > lastPage) setPage(lastPage);
+  }, [sortedData.length, page]);
 
   function removeRows(ids: number[]) {
     setRows((prev) => prev.filter((r) => !ids.includes(r.id)));

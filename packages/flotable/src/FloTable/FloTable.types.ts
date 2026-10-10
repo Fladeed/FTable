@@ -341,7 +341,10 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
   selectable?: boolean;
   /** The row property used as the unique key for selection. Defaults to "id". */
   rowKey?: string;
-  /** Called with the array of selected row keys on every selection change. */
+  /**
+   * Called with the array of selected row keys on every selection change, including when selected rows
+   * disappear from `data` (e.g. after a bulk delete or a refresh): their keys are dropped from the selection.
+   */
   onSelectionChange?: (selectedKeys: string[]) => void;
   /** Bulk action buttons shown in the BulkActionBar when rows are selected. */
   bulkActions?: BulkAction<T>[];
@@ -378,7 +381,8 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
    * Rendered at the end side of the toolbar, before `tableActions`. Independent of selection.
    * Use it for custom controls such as a period picker; use `tableActions` for plain buttons.
    * The wrapper is `position: relative` and never clips, so a child's absolutely positioned popover anchors to it.
-   * When set (anything but `null`, `undefined` or a boolean), the toolbar renders even if nothing else is in it.
+   * The toolbar renders when this has visible content, even if nothing else is in it. `null`, `undefined`,
+   * booleans, `''`, `0` and empty fragments or arrays count as empty, so `items.length && <Picker />` is safe.
    */
   toolbarEnd?: ReactNode;
   /** Custom class names for individual table parts. */

@@ -35,6 +35,7 @@ export function TableActionsDemo() {
         }
         direction="ltr"
         withFilters={false}
+        withToolbarEnd={false}
       />
       <TableActionsSection
         title="RTL — مع عوامل التصفية"
@@ -52,6 +53,7 @@ export function TableActionsDemo() {
         description={<>RTL with only <code>tableActions</code> in the toolbar.</>}
         direction="rtl"
         withFilters={false}
+        withToolbarEnd={false}
       />
       <TableActionsSection
         title="LTR — toolbarEnd only"

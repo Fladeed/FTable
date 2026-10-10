@@ -104,6 +104,7 @@ Any column can use a custom `render` function to override the default renderer.
 
 - Actions never receive row context and stay enabled while rows are selected and the bulk action bar is shown.
 - They are pushed to the end side with `margin-inline-start: auto`, so they move to the left under `direction="rtl"`.
+- Disabled actions use the `disabled` attribute. Use `variant: 'primary'` for at most one action per table.
 - When `tableActions` is non-empty, the toolbar renders even if there is no search, filter pill or bulk action. When it is omitted or empty, nothing changes.
 - Works in both data mode and request mode.
 
@@ -137,10 +138,10 @@ const tableActions: TableAction[] = [
 />
 ```
 
-- The toolbar order is: filter bar (grows), inline bulk actions, `toolbarEnd`, `tableActions`. The first end-side group that is present gets `margin-inline-start: auto`, so both groups stay together at the end and mirror under RTL.
+- The toolbar order is: filter bar (grows), inline bulk actions, then an end group holding `toolbarEnd` followed by `tableActions`. The end group (`.flotable-toolbar__end-group`) has `margin-inline-start: auto`, so both stay together at the end, wrap as a unit on narrow screens, and mirror under RTL.
 - Popovers are safe. Neither the toolbar nor the slot wrapper sets `overflow`, and the wrapper (`.flotable__toolbar-end`) is `position: relative`, so a child's `position: absolute` panel anchors to it and can overlap the table.
 - The wrapper is a flex row (`gap: var(--flotable-toolbar-end-gap, 0.5rem)`) aligned with the filter pills (`align-self: center`).
-- When set (anything other than `null`, `undefined` or a boolean), the toolbar renders even if nothing else is in it. It is independent of row selection.
+- When it has visible content, the toolbar renders even if nothing else is in it. `null`, `undefined`, booleans, `''`, `0` and empty fragments or arrays count as empty, so `items.length && <Picker />` is safe. It is independent of row selection.
 - Style the wrapper with `classNames.toolbarEnd` / `styles.toolbarEnd`.
 
 ### `TableAction`
@@ -170,21 +171,30 @@ CSS custom properties:
 
 | Token | Default |
 |-------|---------|
+| `--flotable-accent-color` | `#2563eb` (shared accent; the primary button and focus ring fall back to it) |
+| `--flotable-accent-hover-color` | `#1d4ed8` (shared accent hover) |
 | `--flotable-table-action-gap` | `0.5rem` |
+| `--flotable-table-action-icon-gap` | `0.375rem` |
 | `--flotable-table-action-padding` | `0.375rem 0.75rem` |
 | `--flotable-table-action-radius` | `var(--flotable-row-action-radius, 4px)` |
 | `--flotable-table-action-font-size` | `var(--flotable-font-size, 0.875rem)` |
+| `--flotable-table-action-font-weight` | `500` |
+| `--flotable-table-action-line-height` | `1.25` |
 | `--flotable-table-action-color` | `var(--flotable-row-action-color, #374151)` |
 | `--flotable-table-action-bg` | `var(--flotable-bg, #ffffff)` |
 | `--flotable-table-action-border-color` | `var(--flotable-border-color, #e5e7eb)` |
 | `--flotable-table-action-hover-bg` | `var(--flotable-row-action-hover-bg, #f3f4f6)` |
 | `--flotable-table-action-hover-color` | `var(--flotable-row-action-hover-color, #111827)` |
-| `--flotable-table-action-primary-bg` | `#2563eb` |
+| `--flotable-table-action-primary-bg` | `var(--flotable-accent-color, #2563eb)` |
 | `--flotable-table-action-primary-color` | `#ffffff` |
-| `--flotable-table-action-primary-border-color` | `var(--flotable-table-action-primary-bg, #2563eb)` |
-| `--flotable-table-action-primary-hover-bg` | `#1d4ed8` |
-| `--flotable-table-action-focus-ring` | `#2563eb` (2px `:focus-visible` outline) |
+| `--flotable-table-action-primary-border-color` | `var(--flotable-table-action-primary-bg)` |
+| `--flotable-table-action-primary-hover-bg` | `var(--flotable-accent-hover-color, #1d4ed8)` |
+| `--flotable-table-action-focus-ring` | `var(--flotable-accent-color, #2563eb)` (`:focus-visible` outline colour) |
+| `--flotable-table-action-focus-ring-width` | `2px` |
+| `--flotable-table-action-focus-ring-offset` | `2px` |
+| `--flotable-table-action-disabled-opacity` | `0.4` |
 | `--flotable-toolbar-end-gap` | `0.5rem` (gap between `toolbarEnd` children) |
+| `--flotable-toolbar-end-group-gap` | `0.75rem` (gap between the `toolbarEnd` slot and `tableActions`) |
 
 ---
 
