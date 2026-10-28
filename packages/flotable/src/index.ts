@@ -17,6 +17,7 @@ export type {
   SortDirection,
   QuickFilterState,
   FilterDef,
+  FilterOption,
   FilterInputType,
   RowAction,
   BulkAction,

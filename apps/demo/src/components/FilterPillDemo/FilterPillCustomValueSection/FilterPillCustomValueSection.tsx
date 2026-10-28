@@ -5,7 +5,6 @@ import type { FilterDef } from 'flotable';
 import { useFilterPill } from '../useFilterPill';
 import './FilterPillCustomValueSection.css';
 
-const DEF_BOOLEAN: FilterDef = { key: 'active', label: 'Active', type: 'boolean' };
 const DEF_SELECT: FilterDef = {
   key: 'status3',
   label: 'Priority',
@@ -14,7 +13,6 @@ const DEF_SELECT: FilterDef = {
 };
 
 export function FilterPillCustomValueSection() {
-  const bool = useFilterPill();
   const select = useFilterPill();
 
   return (
@@ -25,25 +23,6 @@ export function FilterPillCustomValueSection() {
         inside the trigger — great for badges, icons, or color-coded chips.
       </p>
       <div className="filter-pill-demo__preview">
-        <FilterPill
-          def={DEF_BOOLEAN}
-          value={bool.value}
-          isOpen={bool.isOpen}
-          isClosing={bool.isClosing}
-          onPillClick={bool.handlePillClick}
-          onValueChange={bool.handleValueChange}
-          onClear={bool.handleClear}
-          onClose={bool.handleClose}
-          renderActiveValue={(v: string) => (
-            <span
-              className={`pill-value-badge ${
-                v === 'true' ? 'pill-value-badge--active' : 'pill-value-badge--inactive'
-              }`}
-            >
-              {v === 'true' ? '✓ Yes' : '✗ No'}
-            </span>
-          )}
-        />
         <FilterPill
           def={DEF_SELECT}
           value={select.value}

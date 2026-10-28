@@ -1,4 +1,10 @@
-import type { ColumnDef, ColumnType, FilterInputType, RequestDeps } from './FloTable.types';
+import type {
+  ColumnDef,
+  ColumnType,
+  FilterInputType,
+  FilterOption,
+  RequestDeps,
+} from './FloTable.types';
 
 export function nextSortDirection(current: 'asc' | 'desc' | null): 'asc' | 'desc' | null {
   if (current === null) return 'asc';
@@ -52,4 +58,9 @@ export function depsEqual(a: RequestDeps | undefined, b: RequestDeps | undefined
   if (a === b) return true;
   if (a === undefined || b === undefined || a.length !== b.length) return false;
   return a.every((value, index) => Object.is(value, b[index]));
+}
+
+/** Normalises a select-filter option to `{ value, label }` (a plain string is both). */
+export function toFilterOption(option: string | FilterOption): FilterOption {
+  return typeof option === 'string' ? { value: option, label: option } : option;
 }

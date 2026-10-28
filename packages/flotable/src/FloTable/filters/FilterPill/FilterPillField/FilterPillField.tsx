@@ -1,5 +1,6 @@
 import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
+import { toFilterOption } from '../../../tableUtils';
 import './FilterPillField.css';
 
 interface FilterPillFieldProps {
@@ -36,20 +37,6 @@ export function FilterPillField({
         <span className="flotable-filter-pill__separator" aria-hidden="true">:</span>
       )}
 
-      {def.type === 'boolean' && (
-        <select
-          className={cx('flotable-filter-pill__input', classNames?.filterPillInput)}
-          style={styles?.filterPillInput}
-          value={value}
-          onChange={(e) => { onValueChange(def.key, e.target.value); onClose(def.key); }}
-          autoFocus={isOpen && !isClosing}
-        >
-          <option value="">{allLabel}</option>
-          <option value="true">{labels?.booleanTrue ?? 'Yes'}</option>
-          <option value="false">{labels?.booleanFalse ?? 'No'}</option>
-        </select>
-      )}
-
       {def.type === 'select' && (
         <select
           className={cx('flotable-filter-pill__input', classNames?.filterPillInput)}
@@ -59,8 +46,8 @@ export function FilterPillField({
           autoFocus={isOpen && !isClosing}
         >
           <option value="">{allLabel}</option>
-          {(def.options ?? []).map((opt) => (
-            <option key={opt} value={opt}>{opt}</option>
+          {(def.options ?? []).map(toFilterOption).map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
       )}

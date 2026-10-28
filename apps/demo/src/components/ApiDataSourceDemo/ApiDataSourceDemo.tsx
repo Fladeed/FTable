@@ -46,7 +46,7 @@ const ALL_PRODUCTS: Product[] = [
 ];
 
 const FILTER_DEFS: FilterDef[] = [
-  { key: 'inStock', label: 'In Stock', type: 'boolean', options: ['true', 'false'] },
+  { key: 'inStock', label: 'In Stock', type: 'boolean' },
 ];
 
 // Defined outside the component so the reference is stable

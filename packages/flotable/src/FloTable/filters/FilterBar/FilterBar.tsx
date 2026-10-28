@@ -96,12 +96,20 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
     }
   }
 
-  function handleClear(key: string) {
+  function applyNow(key: string, value: string) {
     const next = { ...localFiltersRef.current };
-    delete next[key];
+    if (value === '') {
+      delete next[key];
+    } else {
+      next[key] = value;
+    }
     localFiltersRef.current = next;
     setLocalFilters(next);
     onFilterChange(next);
+  }
+
+  function handleClear(key: string) {
+    applyNow(key, '');
   }
 
   if (!showSearch && filterDefs.length === 0) return null;
@@ -130,7 +138,7 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, showSearc
           isOpen={openKey === def.key}
           isClosing={closingKey === def.key}
           onPillClick={handlePillClick}
-          onValueChange={handleValueChange}
+          onValueChange={def.type === 'boolean' ? applyNow : handleValueChange}
           onClear={handleClear}
           onClose={closeKey}
           classNames={classNames}

@@ -112,12 +112,22 @@ export interface ColumnDef<T extends object, C extends object = T> {
 
 export type FilterInputType = 'text' | 'number' | 'date' | 'boolean' | 'select';
 
+/** A select-filter option whose display text differs from the filtered value (e.g. a translation). */
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
 export interface FilterDef {
   key: string;
   label: string;
+  /** `'boolean'` renders a toggle pill: one click filters on `'true'`, a second click clears it. */
   type: FilterInputType;
-  /** Option values for the 'select' input type. */
-  options?: string[];
+  /**
+   * Options for the 'select' input type. A plain string is both value and label; use
+   * `{ value, label }` to show translated text while filtering on the raw value.
+   */
+  options?: Array<string | FilterOption>;
 }
 
 /** Flat map of filter key → active string value. An absent key means no filter is applied. */

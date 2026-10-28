@@ -122,6 +122,33 @@ Any column can use a custom `render` function to override the default renderer.
 
 ---
 
+## Filter Pills
+
+| `FilterDef.type` | Pill behaviour |
+|------------------|----------------|
+| `text` / `number` / `date` | Opens an inline input |
+| `select` | Opens a dropdown: an "All" option (`labels.filterAll`), then `options` |
+| `boolean` | A **toggle**: one click filters on `'true'`, a second click clears it. No dropdown. |
+
+Boolean pills apply right away, even when `filterMode` is `'commit'`. A `'false'` value set from code (for example through `initialQuickFilters`) still shows as active, with `labels.booleanFalse`, and a click clears it.
+
+For a translated select, give each option a `{ value, label }`. The pill shows the label and filters on the value:
+
+```tsx
+<FloTable
+  filterDefs={[{
+    key: 'status', label: 'Statut', type: 'select',
+    options: [{ value: 'paid', label: 'Payé' }, { value: 'refunded', label: 'Remboursé' }],
+  }]}
+  labels={{ filterAll: 'Tous' }}
+  …
+/>
+```
+
+Plain string options (`options: ['Low', 'High']`) still work. The string is used as both the value and the label.
+
+---
+
 ## Expandable Rows (Parent / Child)
 
 Pass `getChildren` to turn any row into an expandable **parent** that reveals inline **child**
@@ -445,7 +472,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 |------|------|-------------|
 | `columns` | `ColumnDef<T>[]` | Column definitions (required) |
 | `pageSize` | `number` | Rows per page (default: 10) |
-| `filterDefs` | `FilterDef[]` | Explicit filter pill definitions |
+| `filterDefs` | `FilterDef[]` | Explicit filter pill definitions. See [Filter Pills](#filter-pills) |
 | `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
 | `showSearch` | `boolean` | Show a global search input in the filter bar |
 | `getChildren` | `(row: T) => C[] \| undefined` | Data mode: returns a row's children; enables expandable rows |

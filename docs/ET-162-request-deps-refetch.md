@@ -202,3 +202,39 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 - [ ] Create `[Skill] Update flotable skill — requestDeps re-fetch contract` under ET-1, with the label `flotable-skill` and the type Task, giving the prop shape, behaviour, changed files and the skill sections to update, plus the PR link. Add it to MEMORY.md.
 - [ ] After the merge: run `npm publish` from `packages/flotable` (the `prepublishOnly` script builds it), then check `npm view flotable version` → `0.2.2`. **Ask before publishing.**
 - [ ] Mark ET-162 Done in Jira and in MEMORY.md.
+
+### Phase 4: Filter pills — boolean toggle + translatable select options (added to the same PR on request)
+
+#### Task 4.1: Tests (red) [20m] — ✅ COMPLETE
+
+**Files to create or modify:**
+- `packages/flotable/src/FloTable/filters/FilterBar/FilterBar.test.tsx` (new).
+
+**Subtasks:**
+- [x] Boolean pill: renders a `button[aria-pressed=false]` and no combobox.
+- [x] Boolean pill, commit mode: one click → `onFilterChange({ inStock: 'true' })` once, no dropdown.
+- [x] Boolean pill, live mode: one click → applied immediately (no 300ms debounce).
+- [x] Boolean pill active: `aria-pressed=true`, text is just the label; second click → `onFilterChange({})`.
+- [x] Boolean pill with a programmatic `'false'` value: pressed, shows `labels.booleanFalse`.
+- [x] Toggling keeps the other active filters.
+- [x] Select with `{ value, label }` options: the dropdown shows `labels.filterAll` then the labels.
+- [x] Select: choosing an option filters on its value.
+- [x] Select, closed and active: shows the option label, not the raw value.
+- [x] Select with plain string options: unchanged behaviour.
+
+#### Task 4.2: Implementation [30m] — ✅ COMPLETE
+
+**Files to create or modify:**
+- `FloTable.types.ts`: new `FilterOption { value; label }`; `FilterDef.options?: Array<string | FilterOption>`.
+- `index.ts`: export `FilterOption`.
+- `tableUtils.ts`: `toFilterOption`.
+- `filters/FilterPill/FilterPillToggle/FilterPillToggle.tsx` + `.css` (new): the toggle button (`aria-pressed`).
+- `filters/FilterPill/FilterPill.tsx`: boolean pills render `FilterPillToggle`, never open, have no clear button, and call `onValueChange(key, active ? '' : 'true')`.
+- `filters/FilterPill/FilterPillField/FilterPillField.tsx`: remove the boolean `<select>`; select options use `{ value, label }`.
+- `filters/FilterPill/FilterPillTrigger/FilterPillTrigger.tsx`: `formatActiveValue` shows the select option's label.
+- `filters/FilterBar/FilterBar.tsx`: `applyNow` (used by boolean pills and clear), which applies immediately in both modes.
+
+#### Task 4.3: Docs & demos [15m] — ✅ COMPLETE
+
+- README: a new "Filter Pills" section (toggle behaviour, `{ value, label }` options, `filterAll`).
+- Demo: removed the obsolete `options: ['true', 'false']` and the dropdown-only boolean pill from the custom-value section.
