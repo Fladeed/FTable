@@ -9,7 +9,7 @@ page reload.
 
 Fix: add an optional `requestDeps` prop. It holds **primitive values only** and is compared
 element by element. When any of them changes, FloTable resets to page 1 and fetches exactly once,
-keeping the current sort and quick filters. Ships as **flotable 0.2.2** (patch).
+keeping the current sort and quick filters. Ships as **flotable 0.3.0** (minor).
 
 Jira: https://fladeed.atlassian.net/browse/ET-162 (Bug, parent ET-5)
 
@@ -24,8 +24,8 @@ so a new `request` is stored but never called until the next page, sort or filte
 **What npm 0.2.1 contains.** It was published 2026-10-11 at 00:37 (+0100), five minutes after the
 ET-23 merge. A build of current master is **byte-identical** to the 0.2.1 tarball (`index.mjs`,
 `index.js`, `index.css`, `index.d.ts`). So 0.2.1 already ships ET-117 (expandable rows), ET-84
-(theming and dark mode) and ET-23 (table actions). The 0.2.2 release notes only need to cover this
-fix.
+(theming and dark mode) and ET-23 (table actions). The 0.3.0 release notes only need to cover this
+PR.
 
 ### Decisions (settled with the user)
 
@@ -36,8 +36,9 @@ fix.
    The type enforces primitives only:
    `ReadonlyArray<string | number | boolean | null | undefined>`.
 2. **Page reset is always on** (not configurable), the same as sort and filter changes today.
-3. **Version 0.2.2 (patch).** The change is purely additive. Without `requestDeps` the behaviour
-   is byte-for-byte unchanged, so `^0.2.1` consumers are unaffected.
+3. **Version 0.3.0 (minor).** It was first planned as 0.2.2, then changed to a minor when the boolean
+   filter pill became a toggle (a visible UX change). In 0.x, `^0.2.1` does not pull in 0.3.0, so
+   consumers upgrade on purpose.
 4. **Test tooling:** add `vitest`, `jsdom` and `@testing-library/react` as **devDependencies of
    `packages/flotable` only**. These packages are never bundled, so the published package stays
    zero-dependency. Record the exception in AGENTS.md.
@@ -193,14 +194,14 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 #### Task 3.3: Version bump, PR, skill ticket, publish [20m] — 🚧 IN PROGRESS
 
 **Files to create or modify:**
-- `packages/flotable/package.json`: `0.2.1` → `0.2.2`.
+- `packages/flotable/package.json`: `0.2.1` → `0.3.0`.
 - `MEMORY.md`: set ET-162 to Done ✓ after the merge, and add the `[Skill]` ticket row.
 
 **Subtasks:**
-- [ ] Bump the version to `0.2.2`.
-- [ ] Push the branch `fix/ET-162-request-deps-refetch` and open a PR to `master`. Release notes: "0.2.2 — adds `requestDeps` (request mode re-fetches on query change). No other changes vs 0.2.1 (0.2.1 already contains ET-117, ET-84, ET-23)."
-- [ ] Create `[Skill] Update flotable skill — requestDeps re-fetch contract` under ET-1, with the label `flotable-skill` and the type Task, giving the prop shape, behaviour, changed files and the skill sections to update, plus the PR link. Add it to MEMORY.md.
-- [ ] After the merge: run `npm publish` from `packages/flotable` (the `prepublishOnly` script builds it), then check `npm view flotable version` → `0.2.2`. **Ask before publishing.**
+- [x] Bump the version to `0.3.0`.
+- [x] Push the branch `fix/ET-162-request-deps-refetch` and open a PR to `master` (#25). Release notes: "0.3.0 — adds `requestDeps`; boolean filter pills are one-click toggles; select options accept `{ value, label }`. No other changes vs 0.2.1 (0.2.1 already contains ET-117, ET-84, ET-23)."
+- [x] Create `[Skill] Update flotable skill — requestDeps re-fetch contract` under ET-1, with the label `flotable-skill` and the type Task, giving the prop shape, behaviour, changed files and the skill sections to update, plus the PR link. Add it to MEMORY.md.
+- [ ] After the merge: run `npm publish` from `packages/flotable` (the `prepublishOnly` script builds it), then check `npm view flotable version` → `0.3.0`. **Ask before publishing.**
 - [ ] Mark ET-162 Done in Jira and in MEMORY.md.
 
 ### Phase 4: Filter pills — boolean toggle + translatable select options (added to the same PR on request)
