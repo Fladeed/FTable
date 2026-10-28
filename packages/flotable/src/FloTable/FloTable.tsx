@@ -120,8 +120,6 @@ function FloTableImpl<T extends object, C extends object = T>(
     requestRef.current = (props as FloTableRequestProps<T, C>).request;
   }
 
-  // A `requestDeps` change resets page + selection and bumps `requestEpoch` during render, so the
-  // fetch effect below runs once with page 1 (never twice). Primitive deps can't loop.
   const requestDeps = isReqMode ? (props as FloTableRequestProps<T, C>).requestDeps : undefined;
   const [prevRequestDeps, setPrevRequestDeps] = useState(requestDeps);
   const [requestEpoch, setRequestEpoch] = useState(0);
