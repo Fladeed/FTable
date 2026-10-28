@@ -290,6 +290,9 @@ export interface FloTableRequestResult<T extends object> {
   totalRows: number;
 }
 
+/** Primitive values the `request` query depends on — see `FloTableRequestProps.requestDeps`. */
+export type RequestDeps = ReadonlyArray<string | number | boolean | null | undefined>;
+
 /** Async function signature for the `request` prop. */
 export type FloTableRequestFn<T extends object> = (
   params: FloTableRequestParams<T>,
@@ -489,8 +492,21 @@ export interface FloTableDataProps<T extends object, C extends object = T>
  */
 export interface FloTableRequestProps<T extends object, C extends object = T>
   extends FloTableBaseProps<T, C> {
-  /** Async function called on mount and on every sort / filter / pagination change. */
+  /**
+   * Async function called on mount, on every sort / filter / pagination change, and whenever
+   * `requestDeps` changes. The latest `request` is always used, but a new `request` identity
+   * alone never triggers a fetch — pass `requestDeps` for that.
+   */
   request: FloTableRequestFn<T>;
+  /**
+   * Values the query depends on (period, store, scope…). When any element changes
+   * (compared with `Object.is`), the table resets to page 1, keeps the current sort and quick
+   * filters, clears the row selection and calls `request` once.
+   *
+   * Primitives only, so an inline array literal is safe and can never cause a fetch loop.
+   * Convert dates with `toISOString()`. Default: `undefined` (no automatic re-fetch).
+   */
+  requestDeps?: RequestDeps;
   /** Seeds the internal quick-filter state on mount. Resets to this value on remount (e.g. via a `key` change). */
   initialQuickFilters?: QuickFilterState;
   /** Seeds the internal sort state on mount. Resets to this value on remount (e.g. via a `key` change). */

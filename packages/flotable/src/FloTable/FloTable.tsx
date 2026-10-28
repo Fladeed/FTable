@@ -24,6 +24,7 @@ import {
   columnTypeToFilterInputType,
   rowMatchesQuery,
   getRowKey,
+  depsEqual,
   SEARCH_KEY,
 } from './tableUtils';
 import { TableHeader } from './TableHeader/TableHeader';
@@ -119,6 +120,24 @@ function FloTableImpl<T extends object, C extends object = T>(
     requestRef.current = (props as FloTableRequestProps<T, C>).request;
   }
 
+  // A `requestDeps` change resets page + selection and bumps `requestEpoch` during render, so the
+  // fetch effect below runs once with page 1 (never twice). Primitive deps can't loop.
+  const requestDeps = isReqMode ? (props as FloTableRequestProps<T, C>).requestDeps : undefined;
+  const [prevRequestDeps, setPrevRequestDeps] = useState(requestDeps);
+  const [requestEpoch, setRequestEpoch] = useState(0);
+  if (!depsEqual(prevRequestDeps, requestDeps)) {
+    setPrevRequestDeps(requestDeps);
+    setInternalPage(1);
+    setSelectedKeys(new Set());
+    setRequestEpoch((e) => e + 1);
+  }
+
+  const onSelectionChangeRef = useRef(onSelectionChange);
+  onSelectionChangeRef.current = onSelectionChange;
+  useEffect(() => {
+    if (requestEpoch > 0) onSelectionChangeRef.current?.([]);
+  }, [requestEpoch]);
+
   const pageRef = useRef(internalPage);
   const sortStateRef = useRef(internalSortState);
   const filtersRef = useRef(internalFilters);
@@ -167,7 +186,16 @@ function FloTableImpl<T extends object, C extends object = T>(
   useEffect(() => {
     if (!isReqMode || !requestRef.current) return;
     fireRequest({ silent: false });
-  }, [isReqMode, internalPage, internalSortState, internalFilters, pageSize, retryCount, fireRequest]);
+  }, [
+    isReqMode,
+    internalPage,
+    internalSortState,
+    internalFilters,
+    pageSize,
+    retryCount,
+    requestEpoch,
+    fireRequest,
+  ]);
 
   useImperativeHandle(
     ref,

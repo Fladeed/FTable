@@ -42,7 +42,7 @@ function Table(props: {
   requestDeps?: RequestDeps;
   tableRef?: React.Ref<FloTableHandle<Refund>>;
   selectable?: boolean;
-  onSelectionChange?: (rows: Refund[]) => void;
+  onSelectionChange?: (selectedKeys: string[]) => void;
   initialSort?: { key: keyof Refund & string; direction: 'asc' | 'desc' };
   initialQuickFilters?: Record<string, string>;
 }) {
@@ -105,7 +105,7 @@ describe('FloTable request mode — requestDeps', () => {
   });
 
   it('never loops with an inline request arrow and stable requestDeps', async () => {
-    const spy = vi.fn(async () => rows('row'));
+    const spy = mockRequest();
     const { rerender } = render(<Table request={(p) => spy(p)} requestDeps={['7d']} />);
     await waitFor(() => expect(spy).toHaveBeenCalledTimes(1));
 
