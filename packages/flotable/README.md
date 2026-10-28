@@ -80,6 +80,30 @@ function App() {
 />
 ```
 
+#### Re-fetching when your query changes (`requestDeps`)
+
+FloTable re-fetches on its own for page, sort and filter changes. When the query also depends on state *outside* the table (a period picker, the selected store, a scope), list those values in `requestDeps`. When any of them changes, the table goes back to page 1, keeps the current sort and quick filters (including the search text), clears the row selection and calls `request` once.
+
+```tsx
+const [period, setPeriod] = useState('7d');
+
+const request = useMemo<FloTableRequestFn<Refund>>(
+  () => (params) => api.refunds({ ...params, period, storeId }),
+  [period, storeId],
+);
+
+<FloTable
+  columns={columns}
+  request={request}
+  requestDeps={[period, storeId]}
+  toolbarEnd={<PeriodPicker value={period} onChange={setPeriod} />}
+/>;
+```
+
+- `requestDeps` takes **primitives only** (`string | number | boolean | null | undefined`), compared with `Object.is`. An inline array literal is fine, and it can never cause a fetch loop. Convert dates with `toISOString()`.
+- A new `request` function on its own does **not** trigger a fetch, so an inline `request` arrow is safe. The latest `request` is always the one called.
+- Without `requestDeps`, nothing re-fetches when outside state changes. Call `ref.refresh()` instead if you need to.
+
 ---
 
 ## Column Types
@@ -459,7 +483,8 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `request` | `FloTableRequestFn<T>` | Async function called on mount and on every state change |
+| `request` | `FloTableRequestFn<T>` | Async function called on mount, on every page / sort / filter change, and when `requestDeps` changes |
+| `requestDeps` | `RequestDeps` | Primitive values the query depends on (period, store…). Any change resets to page 1 and re-fetches once. Default: `undefined` |
 
 ---
 

@@ -92,7 +92,7 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 
 ### Phase 0: Test tooling `[CONFIG]`
 
-#### Task 0.1: Add Vitest + React Testing Library to packages/flotable [20m] — ⬜ TODO
+#### Task 0.1: Add Vitest + React Testing Library to packages/flotable [20m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/package.json`: add devDependencies `vitest`, `jsdom`, `@testing-library/react`, and the scripts `"test": "vitest run"` and `"test:watch": "vitest"`.
@@ -111,7 +111,7 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 
 ### Phase 1: Failing tests `[TEST]`
 
-#### Task 1.1: Write `requestDeps` re-fetch tests (red) [45m] — ⬜ TODO
+#### Task 1.1: Write `requestDeps` re-fetch tests (red) [45m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/FloTable.requestDeps.test.tsx` (new).
@@ -136,7 +136,7 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 
 ### Phase 2: Implementation `[DEV]`
 
-#### Task 2.1: Add the `requestDeps` prop type [10m] — ⬜ TODO
+#### Task 2.1: Add the `requestDeps` prop type [10m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/FloTable.types.ts`: add `RequestDeps` and `FloTableRequestProps.requestDeps`, and update the JSDoc for `request`.
@@ -149,7 +149,7 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 - [ ] Add `requestDeps?: RequestDeps` to `FloTableRequestProps`. The JSDoc must say: values the query depends on (period, store, scope…); when any element changes (compared with `Object.is`), the table resets to page 1, keeps sort and quick filters, clears the selection and calls `request` once; primitives only (convert Dates with `toISOString()`); default `undefined` (no automatic re-fetch, as in 0.2.1).
 - [ ] Update the `request` JSDoc: "called on mount, on every sort / filter / pagination change, and whenever `requestDeps` changes. Always the latest `request` is used."
 
-#### Task 2.2: Implement `depsEqual` and the re-fetch in FloTable [30m] — ⬜ TODO
+#### Task 2.2: Implement `depsEqual` and the re-fetch in FloTable [30m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/tableUtils.ts`: add `depsEqual(a?: RequestDeps, b?: RequestDeps): boolean`.
@@ -167,7 +167,7 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 
 ### Phase 3: Docs, demo & release `[DOCS]` / `[CONFIG]`
 
-#### Task 3.1: README + AGENTS.md [15m] — ⬜ TODO
+#### Task 3.1: README + AGENTS.md [15m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/README.md`: add a `requestDeps` row to the request-props table (near line 462) and a short "Re-fetching when your query changes" example (period picker in `tableActions`), stating that it uses primitives only and does not loop.
@@ -178,7 +178,7 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 - [ ] Add the README example section with the `useMemo` + `requestDeps` snippet.
 - [ ] Update AGENTS.md as described above.
 
-#### Task 3.2: Demo: period picker on the API data source page [20m] — ⬜ TODO
+#### Task 3.2: Demo: period picker on the API data source page [20m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `apps/demo/src/components/ApiDataSourceDemo/ApiDataSourceDemo.tsx`: add a simple inline `<select>` (for example "Last 7 days / This month / This year") in `tableActions`, filter the mock fetch by it, and pass `requestDeps={[period]}`.
@@ -190,7 +190,7 @@ const request = useMemo(() => (p) => api.refunds({ ...p, period, storeId }), [pe
 - [ ] Pass `requestDeps={[period]}` and render the select via `tableActions`.
 - [ ] Check in the browser: go to page 3, switch the period, and confirm that one request is logged, page 1 is shown, and sort and search are kept.
 
-#### Task 3.3: Version bump, PR, skill ticket, publish [20m] — ⬜ TODO
+#### Task 3.3: Version bump, PR, skill ticket, publish [20m] — 🚧 IN PROGRESS
 
 **Files to create or modify:**
 - `packages/flotable/package.json`: `0.2.1` → `0.2.2`.
