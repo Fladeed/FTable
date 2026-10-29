@@ -27,7 +27,6 @@ export function FilterPillCustomValueSection() {
           def={DEF_SELECT}
           value={select.value}
           isOpen={select.isOpen}
-          isClosing={select.isClosing}
           onPillClick={select.handlePillClick}
           onValueChange={select.handleValueChange}
           onClear={select.handleClear}

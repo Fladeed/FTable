@@ -25,11 +25,13 @@
      - .flotable-wrapper               overrides via styles.wrapper
      - .flotable__row-actions-dropdown portaled to document.body
      - .flotable-filter-pill           usable standalone outside a table
+     - .flotable-search                usable standalone outside a table
 */
 .flotable-root,
 .flotable-wrapper,
 .flotable__row-actions-dropdown,
-.flotable-filter-pill {
+.flotable-filter-pill,
+.flotable-search {
   /* Light defaults — core tokens */
   --_flotable-bg-default: #ffffff;
   --_flotable-color-default: #111827;
@@ -60,6 +62,7 @@
   --_flotable-pill-close-hover-color-default: #1d4ed8;
   --_flotable-pill-placeholder-color-default: #9ca3af;
   --_flotable-pill-separator-color-default: #93c5fd;
+  --_flotable-pill-option-hover-bg-default: #f3f4f6;
   --_flotable-row-action-color-default: #374151;
   --_flotable-row-action-hover-bg-default: #f3f4f6;
   --_flotable-row-action-hover-color-default: #111827;
@@ -126,6 +129,7 @@
   --_flotable-pill-close-hover-color: var(--flotable-pill-close-hover-color, var(--_flotable-pill-close-hover-color-default));
   --_flotable-pill-placeholder-color: var(--flotable-pill-placeholder-color, var(--_flotable-pill-placeholder-color-default));
   --_flotable-pill-separator-color: var(--flotable-pill-separator-color, var(--_flotable-pill-separator-color-default));
+  --_flotable-pill-option-hover-bg: var(--flotable-pill-option-hover-bg, var(--_flotable-pill-option-hover-bg-default));
   --_flotable-row-action-color: var(--flotable-row-action-color, var(--_flotable-row-action-color-default));
   --_flotable-row-action-hover-bg: var(--flotable-row-action-hover-bg, var(--_flotable-row-action-hover-bg-default));
   --_flotable-row-action-hover-color: var(--flotable-row-action-hover-color, var(--_flotable-row-action-hover-color-default));
@@ -176,6 +180,7 @@
 .flotable-root--inherit,
 .flotable-root--inherit .flotable-wrapper,
 .flotable-root--inherit .flotable-filter-pill,
+.flotable-root--inherit .flotable-search,
 .flotable__row-actions-dropdown--inherit {
   --_flotable-bg: var(
     --flotable-bg,
@@ -343,14 +348,20 @@
 .dark .flotable-wrapper,
 .dark .flotable__row-actions-dropdown,
 .dark .flotable-filter-pill,
+.dark .flotable-search,
 [data-theme="dark"] .flotable-root,
 [data-theme="dark"] .flotable-wrapper,
 [data-theme="dark"] .flotable__row-actions-dropdown,
 [data-theme="dark"] .flotable-filter-pill,
+[data-theme="dark"] .flotable-search,
 [data-mode="dark"] .flotable-root,
 [data-mode="dark"] .flotable-wrapper,
 [data-mode="dark"] .flotable__row-actions-dropdown,
-[data-mode="dark"] .flotable-filter-pill {
+[data-mode="dark"] .flotable-filter-pill,
+[data-mode="dark"] .flotable-search {
+  /* Native controls (date picker, scrollbars) follow the dark theme. */
+  color-scheme: dark;
+
   /* Core */
   --_flotable-bg-default: #0a0a0a;
   --_flotable-color-default: #ededed;
@@ -379,6 +390,7 @@
   --_flotable-pill-close-hover-color-default: color-mix(in oklab, var(--_flotable-pill-active-color) 70%, white);
   --_flotable-pill-placeholder-color-default: var(--_flotable-muted-color);
   --_flotable-pill-separator-color-default: var(--_flotable-pill-active-color);
+  --_flotable-pill-option-hover-bg-default: color-mix(in oklab, var(--_flotable-color) 10%, transparent);
   --_flotable-row-action-color-default: var(--_flotable-color);
   --_flotable-row-action-hover-bg-default: var(--_flotable-row-hover-bg);
   --_flotable-row-action-hover-color-default: var(--_flotable-color);

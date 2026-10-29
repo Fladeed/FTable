@@ -1,7 +1,9 @@
+import { useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import { toFilterOption } from '../../../tableUtils';
+import { FilterPillReveal } from '../FilterPillReveal/FilterPillReveal';
 import './FilterPillTrigger.css';
 
 export function formatActiveValue(def: FilterDef, value: string, labels?: FloTableLabels): string {
@@ -19,7 +21,6 @@ interface FilterPillTriggerProps {
   def: FilterDef;
   value: string;
   isOpen: boolean;
-  isClosing: boolean;
   onClick: (key: string) => void;
   renderTriggerLabel?: ReactNode;
   renderActiveValue?: (value: string) => ReactNode;
@@ -33,7 +34,6 @@ export function FilterPillTrigger({
   def,
   value,
   isOpen,
-  isClosing,
   onClick,
   renderTriggerLabel,
   renderActiveValue,
@@ -43,6 +43,9 @@ export function FilterPillTrigger({
   labels,
 }: FilterPillTriggerProps) {
   const isActive = value !== '';
+  const lastValueRef = useRef(value);
+  if (isActive) lastValueRef.current = value;
+  const shownValue = lastValueRef.current;
 
   return (
     <button
@@ -54,10 +57,12 @@ export function FilterPillTrigger({
       aria-label={ariaLabel}
     >
       {renderTriggerLabel ?? <span className="flotable-filter-pill__label">{def.label}</span>}
-      {isActive && !isOpen && !isClosing && (
-        renderActiveValue
-          ? renderActiveValue(value)
-          : <span className="flotable-filter-pill__active-value">: {formatActiveValue(def, value, labels)}</span>
+      {shownValue !== '' && (
+        <FilterPillReveal shown={isActive && (!isOpen || def.type === 'select')} className="flotable-filter-pill__active-value-wrap">
+          {renderActiveValue
+            ? renderActiveValue(shownValue)
+            : <span className="flotable-filter-pill__active-value">: {formatActiveValue(def, shownValue, labels)}</span>}
+        </FilterPillReveal>
       )}
     </button>
   );

@@ -49,7 +49,6 @@ export function FilterPillCustomTriggerSection() {
           def={DEF_DATE}
           value={date.value}
           isOpen={date.isOpen}
-          isClosing={date.isClosing}
           onPillClick={date.handlePillClick}
           onValueChange={date.handleValueChange}
           onClear={date.handleClear}
@@ -65,7 +64,6 @@ export function FilterPillCustomTriggerSection() {
           def={DEF_SELECT}
           value={select.value}
           isOpen={select.isOpen}
-          isClosing={select.isClosing}
           onPillClick={select.handlePillClick}
           onValueChange={select.handleValueChange}
           onClear={select.handleClear}

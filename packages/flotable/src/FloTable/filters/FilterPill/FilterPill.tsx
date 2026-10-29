@@ -5,13 +5,15 @@ import { FilterPillTrigger } from './FilterPillTrigger/FilterPillTrigger';
 import { FilterPillField } from './FilterPillField/FilterPillField';
 import { FilterPillClear } from './FilterPillClear/FilterPillClear';
 import { FilterPillToggle } from './FilterPillToggle/FilterPillToggle';
+import { FilterPillReveal } from './FilterPillReveal/FilterPillReveal';
 import './FilterPill.css';
 
 export interface FilterPillProps {
   def: FilterDef;
   value: string;
   isOpen: boolean;
-  isClosing: boolean;
+  /** @deprecated Ignored. Pills now close instantly; kept so existing callers still compile. */
+  isClosing?: boolean;
   onPillClick: (key: string) => void;
   onValueChange: (key: string, value: string) => void;
   onClear: (key: string) => void;
@@ -30,7 +32,7 @@ export interface FilterPillProps {
   variant?: string;
   /** aria-label for the trigger button. Defaults to undefined (no aria-label). */
   triggerAriaLabel?: string;
-  /** Built-in text (boolean values, "All" option, close / clear button labels). */
+  /** Built-in text (boolean values, close / clear button labels). */
   labels?: FloTableLabels;
 }
 
@@ -38,7 +40,6 @@ export function FilterPill({
   def,
   value,
   isOpen,
-  isClosing,
   onPillClick,
   onValueChange,
   onClear,
@@ -90,16 +91,15 @@ export function FilterPill({
         variant && `flotable-filter-pill--${variant}`,
         classNames?.filterPill,
         isActive && 'flotable-filter-pill--active',
-        (isOpen || isClosing) && 'flotable-filter-pill--open',
+        isOpen && 'flotable-filter-pill--open',
       )}
       style={styles?.filterPill}
-      onClick={!isOpen && !isClosing ? () => onPillClick(def.key) : undefined}
+      onClick={!isOpen ? () => onPillClick(def.key) : undefined}
     >
       <FilterPillTrigger
         def={def}
         value={value}
         isOpen={isOpen}
-        isClosing={isClosing}
         onClick={onPillClick}
         renderTriggerLabel={renderTriggerLabel}
         renderActiveValue={renderActiveValue}
@@ -109,30 +109,28 @@ export function FilterPill({
         labels={labels}
       />
 
-      {(isOpen || isClosing) && (
-        <FilterPillField
-          def={def}
-          value={value}
-          isOpen={isOpen}
-          isClosing={isClosing}
-          onValueChange={onValueChange}
-          onClose={onClose}
-          hideSeparator={hideSeparator}
-          placeholder={placeholder}
-          classNames={classNames}
-          styles={styles}
-          labels={labels}
-        />
-      )}
+      <FilterPillField
+        def={def}
+        value={value}
+        isOpen={isOpen}
+        onValueChange={onValueChange}
+        onClear={onClear}
+        onClose={onClose}
+        hideSeparator={hideSeparator || def.type === 'select'}
+        placeholder={placeholder}
+        classNames={classNames}
+        styles={styles}
+        labels={labels}
+      />
 
-      {isActive && !isOpen && !isClosing && (
+      <FilterPillReveal shown={isActive && !isOpen}>
         <FilterPillClear
           filterKey={def.key}
           label={def.label}
           onClear={onClear}
           ariaLabel={labels?.clearFilter}
         />
-      )}
+      </FilterPillReveal>
     </div>
   );
 }

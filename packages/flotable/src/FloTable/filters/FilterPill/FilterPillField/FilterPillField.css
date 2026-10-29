@@ -6,28 +6,8 @@
 }
 
 .flotable-filter-pill__field {
-  display: inline-flex;
-  align-items: center;
   gap: 0.25rem;
-  overflow: hidden;
-  max-width: 0;
-  opacity: 0;
-  animation: flotable-pill-expand 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-.flotable-filter-pill__field--closing {
-  animation: flotable-pill-collapse 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-@keyframes flotable-pill-expand {
-  from { max-width: 0; opacity: 0; }
-  to   { max-width: 260px; opacity: 1; }
-}
-
-@keyframes flotable-pill-collapse {
-  0%   { max-width: 260px; opacity: 1; }
-  15%  { opacity: 0; }
-  100% { max-width: 0; opacity: 0; }
+  padding-inline-start: 0.25rem;
 }
 
 .flotable-filter-pill__input {
@@ -40,6 +20,36 @@
   color: inherit;
   width: var(--flotable-pill-input-width, 120px);
   min-width: 60px;
+}
+
+@supports (field-sizing: content) {
+  .flotable-filter-pill__input {
+    field-sizing: content;
+    width: auto;
+    min-width: var(--flotable-pill-input-width, 120px);
+    max-width: 16rem;
+  }
+}
+
+.flotable-filter-pill__input--number {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.flotable-filter-pill__input--number::-webkit-inner-spin-button,
+.flotable-filter-pill__input--number::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.flotable-filter-pill__input--date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.12s ease;
+}
+
+.flotable-filter-pill__input--date::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 .flotable-filter-pill__input::placeholder {
