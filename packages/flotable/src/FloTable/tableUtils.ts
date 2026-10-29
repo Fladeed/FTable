@@ -1,4 +1,10 @@
-import type { ColumnDef, ColumnType, FilterInputType } from './FloTable.types';
+import type {
+  ColumnDef,
+  ColumnType,
+  FilterInputType,
+  FilterOption,
+  RequestDeps,
+} from './FloTable.types';
 
 export function nextSortDirection(current: 'asc' | 'desc' | null): 'asc' | 'desc' | null {
   if (current === null) return 'asc';
@@ -42,4 +48,19 @@ export const SEARCH_KEY = '__search__';
 export function getRowKey<T extends object>(row: T, rowKey: string, index: number): string {
   const raw = (row as Record<string, unknown>)[rowKey];
   return raw == null ? String(index) : String(raw);
+}
+
+/**
+ * Element-wise `Object.is` comparison of two `requestDeps` arrays. `undefined` only equals
+ * `undefined`; a length change counts as a change.
+ */
+export function depsEqual(a: RequestDeps | undefined, b: RequestDeps | undefined): boolean {
+  if (a === b) return true;
+  if (a === undefined || b === undefined || a.length !== b.length) return false;
+  return a.every((value, index) => Object.is(value, b[index]));
+}
+
+/** Normalises a select-filter option to `{ value, label }` (a plain string is both). */
+export function toFilterOption(option: string | FilterOption): FilterOption {
+  return typeof option === 'string' ? { value: option, label: option } : option;
 }

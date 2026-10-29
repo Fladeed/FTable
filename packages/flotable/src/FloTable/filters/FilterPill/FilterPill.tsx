@@ -4,6 +4,7 @@ import { cx } from '../../../utils/cx';
 import { FilterPillTrigger } from './FilterPillTrigger/FilterPillTrigger';
 import { FilterPillField } from './FilterPillField/FilterPillField';
 import { FilterPillClear } from './FilterPillClear/FilterPillClear';
+import { FilterPillToggle } from './FilterPillToggle/FilterPillToggle';
 import './FilterPill.css';
 
 export interface FilterPillProps {
@@ -53,6 +54,34 @@ export function FilterPill({
   labels,
 }: FilterPillProps) {
   const isActive = value !== '';
+
+  if (def.type === 'boolean') {
+    const toggle = () => onValueChange(def.key, isActive ? '' : 'true');
+    return (
+      <div
+        className={cx(
+          'flotable-filter-pill',
+          variant && `flotable-filter-pill--${variant}`,
+          classNames?.filterPill,
+          isActive && 'flotable-filter-pill--active',
+        )}
+        style={styles?.filterPill}
+        onClick={toggle}
+      >
+        <FilterPillToggle
+          def={def}
+          value={value}
+          onToggle={toggle}
+          renderTriggerLabel={renderTriggerLabel}
+          renderActiveValue={renderActiveValue}
+          classNames={classNames}
+          styles={styles}
+          ariaLabel={triggerAriaLabel}
+          labels={labels}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

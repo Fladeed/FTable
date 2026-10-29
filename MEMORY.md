@@ -47,6 +47,8 @@ Running memory of relevant project context, decisions, and tracking info.
 | ET-129 | Task | [Skill] Update flotable skill — tableActions prop and toolbarEnd slot | To Do | https://fladeed.atlassian.net/browse/ET-129 |
 | ET-130 | Task | FloTable: shared base button style for action buttons (BulkActionBar, TableActions, row actions) | To Do | https://fladeed.atlassian.net/browse/ET-130 |
 | ET-131 | Task | FloTable: make --flotable-accent-color drive all accent-coloured tokens (sort, link, pills) | To Do | https://fladeed.atlassian.net/browse/ET-131 |
+| ET-162 | Bug | Request-mode FloTable does not re-fetch when the query inputs change (add requestDeps) | In Review | https://fladeed.atlassian.net/browse/ET-162 |
+| ET-163 | Task | [Skill] Update flotable skill — requestDeps re-fetch contract | To Do | https://fladeed.atlassian.net/browse/ET-163 |
 
 - **Project:** Fladeed Engineering Toolkit (ET)
 - **Cloud:** fladeed.atlassian.net

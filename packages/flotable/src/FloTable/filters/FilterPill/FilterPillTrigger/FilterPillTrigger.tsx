@@ -1,11 +1,16 @@
 import type { ReactNode } from 'react';
 import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
+import { toFilterOption } from '../../../tableUtils';
 import './FilterPillTrigger.css';
 
 export function formatActiveValue(def: FilterDef, value: string, labels?: FloTableLabels): string {
   if (def.type === 'boolean') {
     return value === 'true' ? labels?.booleanTrue ?? 'Yes' : labels?.booleanFalse ?? 'No';
+  }
+  if (def.type === 'select') {
+    const match = (def.options ?? []).map(toFilterOption).find((opt) => opt.value === value);
+    return match?.label ?? value;
   }
   return value;
 }

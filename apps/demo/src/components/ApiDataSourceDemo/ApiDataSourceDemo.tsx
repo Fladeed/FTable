@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { FloTable } from 'flotable';
 import type { ColumnDef, FilterDef, FloTableHandle, FloTableRequestFn } from 'flotable';
 import { simulateFetch } from '../../utils/demoUtils';
@@ -46,7 +46,7 @@ const ALL_PRODUCTS: Product[] = [
 ];
 
 const FILTER_DEFS: FilterDef[] = [
-  { key: 'inStock', label: 'In Stock', type: 'boolean', options: ['true', 'false'] },
+  { key: 'inStock', label: 'In Stock', type: 'boolean' },
 ];
 
 // Defined outside the component so the reference is stable
@@ -65,8 +65,20 @@ const refDemoProducts: Product[] = ALL_PRODUCTS.map((p) => ({ ...p }));
 const fetchRefDemoProducts: FloTableRequestFn<Product> = simulateFetch(refDemoProducts, 800);
 let nextRefDemoId = ALL_PRODUCTS.length + 1;
 
+const CATEGORIES = ['All', 'Electronics', 'Furniture', 'Accessories', 'Storage'];
+
 export function ApiDataSourceDemo() {
   const refDemoTableRef = useRef<FloTableHandle<Product>>(null);
+  const [category, setCategory] = useState('All');
+
+  const fetchByCategory = useMemo<FloTableRequestFn<Product>>(
+    () =>
+      simulateFetch(
+        category === 'All' ? ALL_PRODUCTS : ALL_PRODUCTS.filter((p) => p.category === category),
+        800,
+      ),
+    [category],
+  );
 
   function handleEditFirstRow() {
     refDemoTableRef.current?.updateRow(
@@ -148,6 +160,37 @@ export function ApiDataSourceDemo() {
           request={fetchProducts}
           pageSize={5}
           initialSort={{ key: 'price', direction: 'desc' }}
+        />
+      </section>
+
+      <section className="api-demo__section">
+        <h2 className="api-demo__section-title">Re-fetch on outside state (requestDeps)</h2>
+        <p className="api-demo__description">
+          When the query depends on state outside the table, like this category picker, list
+          those values in <code>requestDeps</code>. Changing one goes back to page 1, keeps the
+          current sort and search, and calls <code>request</code> once. Go to page 3, sort by
+          price, then pick another category to see it.
+        </p>
+        <FloTable<Product>
+          columns={COLUMNS}
+          request={fetchByCategory}
+          requestDeps={[category]}
+          pageSize={3}
+          showSearch={true}
+          toolbarEnd={
+            <select
+              className="api-demo__select"
+              aria-label="Category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          }
         />
       </section>
 

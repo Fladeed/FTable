@@ -80,6 +80,30 @@ function App() {
 />
 ```
 
+#### Re-fetching when your query changes (`requestDeps`)
+
+FloTable re-fetches on its own for page, sort and filter changes. When the query also depends on state *outside* the table (a period picker, the selected store, a scope), list those values in `requestDeps`. When any of them changes, the table goes back to page 1, keeps the current sort and quick filters (including the search text), clears the row selection and calls `request` once.
+
+```tsx
+const [period, setPeriod] = useState('7d');
+
+const request = useMemo<FloTableRequestFn<Refund>>(
+  () => (params) => api.refunds({ ...params, period, storeId }),
+  [period, storeId],
+);
+
+<FloTable
+  columns={columns}
+  request={request}
+  requestDeps={[period, storeId]}
+  toolbarEnd={<PeriodPicker value={period} onChange={setPeriod} />}
+/>;
+```
+
+- `requestDeps` takes **primitives only** (`string | number | boolean | null | undefined`), compared with `Object.is`. An inline array literal is fine, and it can never cause a fetch loop. Convert dates with `toISOString()`.
+- A new `request` function on its own does **not** trigger a fetch, so an inline `request` arrow is safe. The latest `request` is always the one called.
+- Without `requestDeps`, nothing re-fetches when outside state changes. Call `ref.refresh()` instead if you need to.
+
 ---
 
 ## Column Types
@@ -95,6 +119,33 @@ function App() {
 | `link` | Clickable URL | — |
 
 Any column can use a custom `render` function to override the default renderer.
+
+---
+
+## Filter Pills
+
+| `FilterDef.type` | Pill behaviour |
+|------------------|----------------|
+| `text` / `number` / `date` | Opens an inline input |
+| `select` | Opens a dropdown: an "All" option (`labels.filterAll`), then `options` |
+| `boolean` | A **toggle**: one click filters on `'true'`, a second click clears it. No dropdown. |
+
+Boolean pills apply right away, even when `filterMode` is `'commit'`. A `'false'` value set from code (for example through `initialQuickFilters`) still shows as active, with `labels.booleanFalse`, and a click clears it.
+
+For a translated select, give each option a `{ value, label }`. The pill shows the label and filters on the value:
+
+```tsx
+<FloTable
+  filterDefs={[{
+    key: 'status', label: 'Statut', type: 'select',
+    options: [{ value: 'paid', label: 'Payé' }, { value: 'refunded', label: 'Remboursé' }],
+  }]}
+  labels={{ filterAll: 'Tous' }}
+  …
+/>
+```
+
+Plain string options (`options: ['Low', 'High']`) still work. The string is used as both the value and the label.
 
 ---
 
@@ -421,7 +472,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 |------|------|-------------|
 | `columns` | `ColumnDef<T>[]` | Column definitions (required) |
 | `pageSize` | `number` | Rows per page (default: 10) |
-| `filterDefs` | `FilterDef[]` | Explicit filter pill definitions |
+| `filterDefs` | `FilterDef[]` | Explicit filter pill definitions. See [Filter Pills](#filter-pills) |
 | `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
 | `showSearch` | `boolean` | Show a global search input in the filter bar |
 | `getChildren` | `(row: T) => C[] \| undefined` | Data mode: returns a row's children; enables expandable rows |
@@ -459,7 +510,8 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `request` | `FloTableRequestFn<T>` | Async function called on mount and on every state change |
+| `request` | `FloTableRequestFn<T>` | Async function called on mount, on every page / sort / filter change, and when `requestDeps` changes |
+| `requestDeps` | `RequestDeps` | Primitive values the query depends on (period, store…). Any change resets to page 1 and re-fetches once. Default: `undefined` |
 
 ---
 

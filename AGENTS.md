@@ -19,6 +19,12 @@ FloTable is an open-source, ERP-focused table component built with **zero extern
 - Do not use styling libraries (tailwind plugins, styled-components, etc.).
 - If a utility is needed, implement it inline or in a small helper file.
 - Tailwind CSS (already configured with Next.js) is acceptable for base styling utilities.
+- **Test-only exception:** `vitest`, `jsdom` and `@testing-library/react` are allowed as **devDependencies of `packages/flotable`**. They must only be imported from `*.test.ts(x)` files, never from shipped source, so the published package stays zero-dependency.
+
+### Testing
+- Run `npm test` (root) or `npm test --workspace=packages/flotable`.
+- Tests live next to the code they cover as `*.test.ts` / `*.test.tsx` (e.g. `FloTable/FloTable.requestDeps.test.tsx`).
+- Bug fixes and behaviour changes in the package are written test-first.
 
 ---
 

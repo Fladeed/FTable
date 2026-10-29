@@ -112,12 +112,22 @@ export interface ColumnDef<T extends object, C extends object = T> {
 
 export type FilterInputType = 'text' | 'number' | 'date' | 'boolean' | 'select';
 
+/** A select-filter option whose display text differs from the filtered value (e.g. a translation). */
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
 export interface FilterDef {
   key: string;
   label: string;
+  /** `'boolean'` renders a toggle pill: one click filters on `'true'`, a second click clears it. */
   type: FilterInputType;
-  /** Option values for the 'select' input type. */
-  options?: string[];
+  /**
+   * Options for the 'select' input type. A plain string is both value and label; use
+   * `{ value, label }` to show translated text while filtering on the raw value.
+   */
+  options?: Array<string | FilterOption>;
 }
 
 /** Flat map of filter key → active string value. An absent key means no filter is applied. */
@@ -289,6 +299,9 @@ export interface FloTableRequestResult<T extends object> {
   data: T[];
   totalRows: number;
 }
+
+/** Primitive values the `request` query depends on — see `FloTableRequestProps.requestDeps`. */
+export type RequestDeps = ReadonlyArray<string | number | boolean | null | undefined>;
 
 /** Async function signature for the `request` prop. */
 export type FloTableRequestFn<T extends object> = (
@@ -489,8 +502,21 @@ export interface FloTableDataProps<T extends object, C extends object = T>
  */
 export interface FloTableRequestProps<T extends object, C extends object = T>
   extends FloTableBaseProps<T, C> {
-  /** Async function called on mount and on every sort / filter / pagination change. */
+  /**
+   * Async function called on mount, on every sort / filter / pagination change, and whenever
+   * `requestDeps` changes. The latest `request` is always used, but a new `request` identity
+   * alone never triggers a fetch — pass `requestDeps` for that.
+   */
   request: FloTableRequestFn<T>;
+  /**
+   * Values the query depends on (period, store, scope…). When any element changes
+   * (compared with `Object.is`), the table resets to page 1, keeps the current sort and quick
+   * filters, clears the row selection and calls `request` once.
+   *
+   * Primitives only, so an inline array literal is safe and can never cause a fetch loop.
+   * Convert dates with `toISOString()`. Default: `undefined` (no automatic re-fetch).
+   */
+  requestDeps?: RequestDeps;
   /** Seeds the internal quick-filter state on mount. Resets to this value on remount (e.g. via a `key` change). */
   initialQuickFilters?: QuickFilterState;
   /** Seeds the internal sort state on mount. Resets to this value on remount (e.g. via a `key` change). */
