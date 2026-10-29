@@ -126,8 +126,8 @@ Any column can use a custom `render` function to override the default renderer.
 
 | `FilterDef.type` | Pill behaviour |
 |------------------|----------------|
-| `text` / `number` / `date` | Opens an inline input |
-| `select` | Opens a dropdown: an "All" option (`labels.filterAll`), then `options` |
+| `text` / `number` / `date` | Expands into an inline input. Number inputs have no spin buttons and use a decimal keyboard on mobile |
+| `select` | Expands and opens a themed option list: an "All" option (`labels.filterAll`), then `options`. Keyboard: ↑/↓, Home/End, Enter/Space, type-ahead |
 | `boolean` | A **toggle**: one click filters on `'true'`, a second click clears it. No dropdown. |
 
 Boolean pills apply right away, even when `filterMode` is `'commit'`. A `'false'` value set from code (for example through `initialQuickFilters`) still shows as active, with `labels.booleanFalse`, and a click clears it.
@@ -146,6 +146,38 @@ For a translated select, give each option a `{ value, label }`. The pill shows t
 ```
 
 Plain string options (`options: ['Low', 'High']`) still work. The string is used as both the value and the label.
+
+Pills expand and collapse in place with a short width animation (no animation with `prefers-reduced-motion`). Only one pill is open at a time. Clicking anywhere outside the open pill, pressing Escape, or opening another pill closes it; in `'commit'` mode that also applies its value.
+
+### Global search (`showSearch`)
+
+`showSearch` renders a search input at the start of the toolbar's end group, before `toolbarEnd` and `tableActions`. The value is stored under the reserved `__search__` key of the quick filters. It is applied 300 ms after the last keystroke, or right away on Enter or when cleared, whatever the `filterMode`. Text comes from `labels.searchPlaceholder`, `labels.search` (aria-label) and `labels.clearFilter`.
+
+`SearchInput` is also exported for use outside a table: `<SearchInput value={q} onChange={setQ} debounceMs={300} />`.
+
+### Search & pill styling
+
+| Slot (`classNames` / `styles`) | Element |
+|------|---------|
+| `search` | Search wrapper `<div>` (`.flotable-search`) |
+| `searchInput` | Search `<input>` (`.flotable-search__input`) |
+| `filterPill` | Each pill container (`.flotable-filter-pill`) |
+| `filterPillTrigger` | Pill label `<button>` |
+| `filterPillInput` | The pill's `<input>`, or the select pill's `role="combobox"` element |
+
+| Token | Default |
+|-------|---------|
+| `--flotable-search-width` | `14rem` |
+| `--flotable-search-radius` | `var(--flotable-pill-radius, 6px)` |
+| `--flotable-pill-open-duration` | `220ms` |
+| `--flotable-pill-close-duration` | `160ms` |
+| `--flotable-pill-option-hover-bg` | `#f3f4f6` (derived from `--flotable-color` in dark mode) |
+| `--flotable-pill-menu-z` | `30` (z-index of the select option list) |
+| `--flotable-pill-menu-max-height` | `16rem` |
+
+The search input and the option list reuse the pill and dropdown colour tokens (`--flotable-pill-*`, `--flotable-dropdown-bg`, `--flotable-dropdown-border-color`, `--flotable-dropdown-shadow`), so they follow dark mode and `inheritTheme`.
+
+> **Upgrading:** the `SearchPill` export was removed. Use `showSearch` (or `SearchInput`). `FilterPill`'s `isClosing` prop is deprecated and ignored.
 
 ---
 
@@ -474,7 +506,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `pageSize` | `number` | Rows per page (default: 10) |
 | `filterDefs` | `FilterDef[]` | Explicit filter pill definitions. See [Filter Pills](#filter-pills) |
 | `autoFilters` | `boolean` | Auto-generate filter pills from `filterable` columns |
-| `showSearch` | `boolean` | Show a global search input in the filter bar |
+| `showSearch` | `boolean` | Show a global search input at the start of the toolbar end group, before `toolbarEnd` / `tableActions`. Debounced 300 ms (see [Global search](#global-search-showsearch)) |
 | `getChildren` | `(row: T) => C[] \| undefined` | Data mode: returns a row's children; enables expandable rows |
 | `childRequest` | `(row, { page, pageSize }) => Promise<{ data: C[]; totalRows: number }>` | Request mode: lazily fetch a parent's children |
 | `rowHasChildren` | `(row: T) => boolean` | Request mode: chevron visibility before children load |

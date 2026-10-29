@@ -217,7 +217,7 @@ New hooks for consumers: `classNames.search` / `styles.search` (wrapper) and
 
 ### Phase 3: Docs [DOCS]
 
-#### Task 3.1: README + skill ticket [20m] — ⬜ TODO
+#### Task 3.1: README + skill ticket [20m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/README.md` — props table (`showSearch` row), `classNames`/`styles` keys, CSS tokens section, mention of `SearchPill` → `SearchInput`.
