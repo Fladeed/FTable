@@ -112,3 +112,56 @@ describe('FilterBar select pill — option labels', () => {
     expect(onFilterChange).toHaveBeenCalledWith({ cat: 'B' });
   });
 });
+
+describe('FilterBar pill open/close', () => {
+  const name: FilterDef = { key: 'name', label: 'Name', type: 'text' };
+
+  it('opens and closes a text pill instantly', () => {
+    renderBar([name]);
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    expect(screen.getByRole('textbox')).toBeTruthy();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it('commits on outside click in commit mode and closes instantly', () => {
+    const { onFilterChange } = renderBar([name], {}, { filterMode: 'commit' });
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'bob' } });
+    fireEvent.mouseDown(document.body);
+    expect(onFilterChange).toHaveBeenCalledTimes(1);
+    expect(onFilterChange).toHaveBeenCalledWith({ name: 'bob' });
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it('keeps only one pill open when switching', () => {
+    renderBar([name, status]);
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.getAllByRole('combobox')).toHaveLength(1);
+  });
+
+  it('commits the previous pill when switching in commit mode', () => {
+    const { onFilterChange } = renderBar([name, status], {}, { filterMode: 'commit' });
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'bob' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
+    expect(onFilterChange).toHaveBeenCalledWith({ name: 'bob' });
+  });
+
+  it('reopens immediately after closing', () => {
+    renderBar([name]);
+    const trigger = screen.getByRole('button', { name: 'Name' });
+    fireEvent.click(trigger);
+    fireEvent.click(trigger);
+    expect(screen.queryByRole('textbox')).toBeNull();
+    fireEvent.click(trigger);
+    expect(screen.getByRole('textbox')).toBeTruthy();
+  });
+
+  it('never renders a searchbox', () => {
+    renderBar([name]);
+    expect(screen.queryByRole('searchbox')).toBeNull();
+  });
+});
