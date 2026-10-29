@@ -98,8 +98,9 @@ describe('FilterBar select pill — option labels', () => {
 
   it('shows the option label as the active value when closed', () => {
     renderBar([status], { status: 'refunded' });
-    expect(screen.getByText(/Remboursé/)).toBeTruthy();
-    expect(screen.queryByText(/refunded/)).toBeNull();
+    const trigger = screen.getByRole('button', { name: /^Statut/ });
+    expect(trigger.textContent).toContain('Remboursé');
+    expect(trigger.textContent).not.toContain('refunded');
   });
 
   it('still accepts plain string options', () => {
@@ -132,6 +133,22 @@ describe('FilterBar pill open/close', () => {
     expect(onFilterChange).toHaveBeenCalledTimes(1);
     expect(onFilterChange).toHaveBeenCalledWith({ name: 'bob' });
     expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it('closes and commits when clicking empty space inside the filter bar', () => {
+    const { onFilterChange, container } = renderBar([name, status], {}, { filterMode: 'commit' });
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'bob' } });
+    fireEvent.mouseDown(container.querySelector('.flotable-filter-bar')!);
+    expect(onFilterChange).toHaveBeenCalledWith({ name: 'bob' });
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it('stays open when clicking inside the open pill', () => {
+    renderBar([name]);
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    fireEvent.mouseDown(screen.getByRole('textbox'));
+    expect(screen.getByRole('textbox')).toBeTruthy();
   });
 
   it('keeps only one pill open when switching', () => {

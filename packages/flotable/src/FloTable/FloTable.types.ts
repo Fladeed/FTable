@@ -162,7 +162,7 @@ export interface FloTableLabels {
   retry?: string;
   /** Placeholder of the global search input. Defaults to `'Search…'`. */
   searchPlaceholder?: string;
-  /** Accessible label of the global search pill. Defaults to `'Search'`. */
+  /** Accessible label of the global search input. Defaults to `'Search'`. */
   search?: string;
   /** Accessible label of a row's selection checkbox. Defaults to `'Select row'`. */
   selectRow?: string;
@@ -234,6 +234,10 @@ export interface FloTableClassNames {
   filterPillTrigger?: string;
   /** Filter pill `<input>` or `<select>` */
   filterPillInput?: string;
+  /** Global search wrapper `<div>` (`.flotable-search`) */
+  search?: string;
+  /** Global search `<input>` */
+  searchInput?: string;
   /** BulkActionBar container `<div>` */
   bulkActionBar?: string;
   /** "N rows selected" `<span>` */
@@ -275,6 +279,8 @@ export interface FloTableStyles {
   filterPill?: FloTableStyleValue;
   filterPillTrigger?: FloTableStyleValue;
   filterPillInput?: FloTableStyleValue;
+  search?: FloTableStyleValue;
+  searchInput?: FloTableStyleValue;
   bulkActionBar?: FloTableStyleValue;
   bulkActionBarCount?: FloTableStyleValue;
   bulkActionBarActions?: FloTableStyleValue;
@@ -337,13 +343,16 @@ interface FloTableBaseProps<T extends object, C extends object = T> {
   filterDefs?: FilterDef[];
   /** When true, auto-generates pills from columns that have filterable: true. Merged with filterDefs. */
   autoFilters?: boolean;
-  /** When true, renders a global search input at the start of the filter bar. Value stored under the reserved key '__search__'. */
+  /**
+   * When true, renders a global search input at the start of the toolbar's end group (before `toolbarEnd` and `tableActions`).
+   * Value stored under the reserved key '__search__'. Applied 300ms after the last keystroke, or immediately on Enter / clear.
+   */
   showSearch?: boolean;
   /**
    * Controls when onFilterChange (and in request mode, the request function) is fired.
    * - 'commit' (default) — fires only when the pill is closed (Enter key, Escape, outside click, or clear button).
    * - 'live' — fires on every keystroke (previous behaviour).
-   * The global search pill is always live regardless of this setting.
+   * The global search input is not affected by this setting.
    */
   filterMode?: 'live' | 'commit';
   /** Per-row action buttons rendered in a trailing "Actions" column. */

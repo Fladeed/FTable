@@ -3,7 +3,6 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
   padding: var(--flotable-pill-padding, 0.3125rem 0.625rem);
   min-height: var(--flotable-pill-height, 2rem);
   font-size: var(--flotable-pill-font-size, 0.875rem);
@@ -13,7 +12,11 @@
   border: 1px solid var(--_flotable-pill-border-color);
   border-radius: var(--flotable-pill-radius, 6px);
   white-space: nowrap;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.flotable-filter-pill:hover:not(.flotable-filter-pill--open):not(.flotable-filter-pill--active) {
+  border-color: var(--_flotable-pill-open-border-color);
 }
 
 .flotable-filter-pill--active {
@@ -23,6 +26,7 @@
 }
 
 .flotable-filter-pill--open {
+  cursor: default;
   border-color: var(--_flotable-pill-open-border-color);
   box-shadow: 0 0 0 3px var(--_flotable-focus-ring);
 }

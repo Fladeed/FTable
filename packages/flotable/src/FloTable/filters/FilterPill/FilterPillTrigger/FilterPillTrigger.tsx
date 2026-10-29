@@ -19,7 +19,6 @@ interface FilterPillTriggerProps {
   def: FilterDef;
   value: string;
   isOpen: boolean;
-  isClosing: boolean;
   onClick: (key: string) => void;
   renderTriggerLabel?: ReactNode;
   renderActiveValue?: (value: string) => ReactNode;
@@ -33,7 +32,6 @@ export function FilterPillTrigger({
   def,
   value,
   isOpen,
-  isClosing,
   onClick,
   renderTriggerLabel,
   renderActiveValue,
@@ -54,7 +52,7 @@ export function FilterPillTrigger({
       aria-label={ariaLabel}
     >
       {renderTriggerLabel ?? <span className="flotable-filter-pill__label">{def.label}</span>}
-      {isActive && !isOpen && !isClosing && (
+      {isActive && !isOpen && (
         renderActiveValue
           ? renderActiveValue(value)
           : <span className="flotable-filter-pill__active-value">: {formatActiveValue(def, value, labels)}</span>

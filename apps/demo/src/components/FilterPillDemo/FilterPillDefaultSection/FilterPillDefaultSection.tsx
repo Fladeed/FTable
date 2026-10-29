@@ -28,7 +28,6 @@ export function FilterPillDefaultSection() {
           def={DEF_TEXT}
           value={text.value}
           isOpen={text.isOpen}
-          isClosing={text.isClosing}
           onPillClick={text.handlePillClick}
           onValueChange={text.handleValueChange}
           onClear={text.handleClear}
@@ -38,7 +37,6 @@ export function FilterPillDefaultSection() {
           def={DEF_SELECT}
           value={select.value}
           isOpen={select.isOpen}
-          isClosing={select.isClosing}
           onPillClick={select.handlePillClick}
           onValueChange={select.handleValueChange}
           onClear={select.handleClear}

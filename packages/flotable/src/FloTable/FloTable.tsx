@@ -31,6 +31,7 @@ import { TableHeader } from './TableHeader/TableHeader';
 import { TableBody } from './TableBody/TableBody';
 import { TablePagination } from './TablePagination/TablePagination';
 import { FilterBar } from './filters/FilterBar/FilterBar';
+import { SearchInput } from './filters/SearchInput/SearchInput';
 import { BulkActionBar } from './ActionBar/BulkActionBar/BulkActionBar';
 import { TableActions } from './ActionBar/TableActions/TableActions';
 import { ToolbarEnd } from './ToolbarEnd/ToolbarEnd';
@@ -412,6 +413,17 @@ function FloTableImpl<T extends object, C extends object = T>(
     }
   }
 
+  function handleSearchChange(value: string) {
+    if ((quickFilters[SEARCH_KEY] ?? '') === value) return;
+    const next = { ...quickFilters };
+    if (value === '') {
+      delete next[SEARCH_KEY];
+    } else {
+      next[SEARCH_KEY] = value;
+    }
+    handleFilterChange(next);
+  }
+
   function handlePageChange(newPage: number) {
     setSelectedKeys(new Set());
     onSelectionChange?.([]);
@@ -428,7 +440,8 @@ function FloTableImpl<T extends object, C extends object = T>(
   const hasTableActions = (tableActions?.length ?? 0) > 0;
   const hasToolbarEnd = hasRenderableContent(toolbarEnd);
   const hasSelection = selectedKeys.size > 0;
-  const hasFilterBar = showSearch || effectiveFilterDefs.length > 0;
+  const hasFilterBar = effectiveFilterDefs.length > 0;
+  const hasEndGroup = showSearch || hasToolbarEnd || hasTableActions;
 
   const bulkBarContext: BulkActionBarContext<T> = {
     selectedRows,
@@ -444,13 +457,12 @@ function FloTableImpl<T extends object, C extends object = T>(
       <div
         className={cx('flotable-root', inheritTheme && 'flotable-root--inherit', classNames?.root)}
         style={styles?.root} dir={direction}>
-        {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || hasToolbarEnd || hasTableActions) && (
+        {(hasFilterBar || (!hasCustomBar && hasBulkActions) || hasInlineBar || hasEndGroup) && (
           <div className="flotable-toolbar">
             <FilterBar
               filterDefs={effectiveFilterDefs}
               activeFilters={quickFilters}
               onFilterChange={handleFilterChange}
-              showSearch={showSearch}
               filterMode={filterMode}
               classNames={classNames}
               styles={styles}
@@ -469,8 +481,17 @@ function FloTableImpl<T extends object, C extends object = T>(
               />
             )}
             {hasInlineBar && renderInlineBulkActions!(bulkBarContext)}
-            {(hasToolbarEnd || hasTableActions) && (
+            {hasEndGroup && (
               <div className="flotable-toolbar__end-group">
+                {showSearch && (
+                  <SearchInput
+                    value={quickFilters[SEARCH_KEY] ?? ''}
+                    onChange={handleSearchChange}
+                    classNames={classNames}
+                    styles={styles}
+                    labels={labels}
+                  />
+                )}
                 {hasToolbarEnd && (
                   <ToolbarEnd classNames={classNames} styles={styles}>
                     {toolbarEnd}

@@ -25,11 +25,13 @@
      - .flotable-wrapper               overrides via styles.wrapper
      - .flotable__row-actions-dropdown portaled to document.body
      - .flotable-filter-pill           usable standalone outside a table
+     - .flotable-search                usable standalone outside a table
 */
 .flotable-root,
 .flotable-wrapper,
 .flotable__row-actions-dropdown,
-.flotable-filter-pill {
+.flotable-filter-pill,
+.flotable-search {
   /* Light defaults — core tokens */
   --_flotable-bg-default: #ffffff;
   --_flotable-color-default: #111827;
@@ -176,6 +178,7 @@
 .flotable-root--inherit,
 .flotable-root--inherit .flotable-wrapper,
 .flotable-root--inherit .flotable-filter-pill,
+.flotable-root--inherit .flotable-search,
 .flotable__row-actions-dropdown--inherit {
   --_flotable-bg: var(
     --flotable-bg,
@@ -343,14 +346,17 @@
 .dark .flotable-wrapper,
 .dark .flotable__row-actions-dropdown,
 .dark .flotable-filter-pill,
+.dark .flotable-search,
 [data-theme="dark"] .flotable-root,
 [data-theme="dark"] .flotable-wrapper,
 [data-theme="dark"] .flotable__row-actions-dropdown,
 [data-theme="dark"] .flotable-filter-pill,
+[data-theme="dark"] .flotable-search,
 [data-mode="dark"] .flotable-root,
 [data-mode="dark"] .flotable-wrapper,
 [data-mode="dark"] .flotable__row-actions-dropdown,
-[data-mode="dark"] .flotable-filter-pill {
+[data-mode="dark"] .flotable-filter-pill,
+[data-mode="dark"] .flotable-search {
   /* Core */
   --_flotable-bg-default: #0a0a0a;
   --_flotable-color-default: #ededed;

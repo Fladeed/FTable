@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import { toFilterOption } from '../../../tableUtils';
@@ -7,7 +8,6 @@ interface FilterPillFieldProps {
   def: FilterDef;
   value: string;
   isOpen: boolean;
-  isClosing: boolean;
   onValueChange: (key: string, value: string) => void;
   onClose: (key: string) => void;
   hideSeparator?: boolean;
@@ -21,7 +21,6 @@ export function FilterPillField({
   def,
   value,
   isOpen,
-  isClosing,
   onValueChange,
   onClose,
   hideSeparator = false,
@@ -31,8 +30,19 @@ export function FilterPillField({
   labels,
 }: FilterPillFieldProps) {
   const allLabel = labels?.filterAll ?? 'All';
+  const controlRef = useRef<HTMLInputElement & HTMLSelectElement>(null);
+
+  useEffect(() => {
+    if (isOpen) controlRef.current?.focus({ preventScroll: true });
+  }, [isOpen]);
+
   return (
-    <span className={`flotable-filter-pill__field${isClosing ? ' flotable-filter-pill__field--closing' : ''}`}>
+    <span
+      className={cx('flotable-filter-pill__field-wrap', isOpen && 'flotable-filter-pill__field-wrap--open')}
+      aria-hidden={!isOpen}
+      inert={!isOpen}
+    >
+    <span className="flotable-filter-pill__field">
       {!hideSeparator && (
         <span className="flotable-filter-pill__separator" aria-hidden="true">:</span>
       )}
@@ -43,7 +53,7 @@ export function FilterPillField({
           style={styles?.filterPillInput}
           value={value}
           onChange={(e) => { onValueChange(def.key, e.target.value); onClose(def.key); }}
-          autoFocus={isOpen && !isClosing}
+          ref={controlRef}
         >
           <option value="">{allLabel}</option>
           {(def.options ?? []).map(toFilterOption).map((opt) => (
@@ -61,7 +71,7 @@ export function FilterPillField({
           onChange={(e) => onValueChange(def.key, e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') onClose(def.key); }}
           placeholder={placeholder}
-          autoFocus={isOpen && !isClosing}
+          ref={controlRef}
         />
       )}
 
@@ -73,6 +83,7 @@ export function FilterPillField({
       >
         ×
       </button>
+    </span>
     </span>
   );
 }

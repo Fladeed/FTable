@@ -5,29 +5,37 @@
   padding: 0 0.125rem;
 }
 
+.flotable-filter-pill__field-wrap {
+  display: inline-grid;
+  grid-template-columns: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-columns var(--flotable-pill-close-duration, 160ms) cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 100ms ease;
+}
+
+.flotable-filter-pill__field-wrap--open {
+  grid-template-columns: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-columns var(--flotable-pill-open-duration, 220ms) cubic-bezier(0.2, 0, 0, 1),
+    opacity 160ms ease 40ms;
+}
+
 .flotable-filter-pill__field {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  min-width: 0;
   overflow: hidden;
-  max-width: 0;
-  opacity: 0;
-  animation: flotable-pill-expand 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  padding-inline-start: 0.25rem;
 }
 
-.flotable-filter-pill__field--closing {
-  animation: flotable-pill-collapse 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-@keyframes flotable-pill-expand {
-  from { max-width: 0; opacity: 0; }
-  to   { max-width: 260px; opacity: 1; }
-}
-
-@keyframes flotable-pill-collapse {
-  0%   { max-width: 260px; opacity: 1; }
-  15%  { opacity: 0; }
-  100% { max-width: 0; opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .flotable-filter-pill__field-wrap,
+  .flotable-filter-pill__field-wrap--open {
+    transition: none;
+  }
 }
 
 .flotable-filter-pill__input {
@@ -40,6 +48,15 @@
   color: inherit;
   width: var(--flotable-pill-input-width, 120px);
   min-width: 60px;
+}
+
+@supports (field-sizing: content) {
+  .flotable-filter-pill__input {
+    field-sizing: content;
+    width: auto;
+    min-width: var(--flotable-pill-input-width, 120px);
+    max-width: 16rem;
+  }
 }
 
 .flotable-filter-pill__input::placeholder {

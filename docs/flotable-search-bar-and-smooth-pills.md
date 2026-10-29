@@ -136,11 +136,12 @@ New hooks for consumers: `classNames.search` / `styles.search` (wrapper) and
 
 ### Phase 2: Implementation [DEV]
 
-#### Task 2.1: SearchInput component [45m] — ⬜ TODO
+#### Task 2.1: SearchInput component [45m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/filters/SearchInput/SearchInput.tsx` — new component.
 - `packages/flotable/src/FloTable/filters/SearchInput/SearchInput.css` — new styles.
+- `packages/flotable/src/FloTable/FloTable.css` — add `.flotable-search` to the token host selector lists (base, `--inherit`, dark) so the component is themed when used standalone.
 - `packages/flotable/src/FloTable/FloTable.types.ts` — add `search` / `searchInput` to `FloTableClassNames` and `FloTableStyles`, with JSDoc; update `labels.search` JSDoc ("search input" instead of "search pill").
 
 **References:**
@@ -158,7 +159,7 @@ New hooks for consumers: `classNames.search` / `styles.search` (wrapper) and
 - [ ] Markup: `div.flotable-search` > `svg.flotable-search__icon` + `input.flotable-search__input[type=search]` (`aria-label`, `placeholder`) + optional `button.flotable-search__clear`.
 - [ ] CSS: wrapper `inline-flex`, `width: var(--flotable-search-width, 14rem)`, `min-height: var(--flotable-pill-height, 2rem)`, border `1px solid var(--_flotable-pill-border-color)`, bg `var(--_flotable-pill-bg)`, colour `var(--_flotable-pill-color)`, radius `var(--flotable-search-radius, var(--flotable-pill-radius, 6px))`; `:focus-within` → border `var(--_flotable-pill-open-border-color)` + `box-shadow: 0 0 0 3px var(--_flotable-focus-ring)`; hide the native `::-webkit-search-cancel-button`; placeholder `var(--_flotable-pill-placeholder-color)`. On narrow toolbars it shrinks (`min-width: 8rem; flex: 0 1 auto`).
 
-#### Task 2.2: Move search into the toolbar end group [30m] — ⬜ TODO
+#### Task 2.2: Move search into the toolbar end group [30m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/FloTable.tsx` — render `SearchInput` first inside `.flotable-toolbar__end-group`; update the toolbar/end-group render conditions to include `showSearch`.
@@ -176,7 +177,7 @@ New hooks for consumers: `classNames.search` / `styles.search` (wrapper) and
 - [ ] `FilterBar`: since search is no longer handled here, `handleValueChange` only has the live/commit branches, and `closeKey` drops the `key !== SEARCH_KEY` check.
 - [ ] Run Phase 1 search tests (Tasks 1.1, 1.2) → green.
 
-#### Task 2.3: Smooth pill open/close [45m] — ⬜ TODO
+#### Task 2.3: Smooth pill open/close [45m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `packages/flotable/src/FloTable/filters/FilterBar/FilterBar.tsx` — remove `closingKey` + timeout; synchronous close; switching commits the previous pill.
@@ -199,8 +200,9 @@ New hooks for consumers: `classNames.search` / `styles.search` (wrapper) and
 - [ ] `.flotable-filter-pill__input`: `field-sizing: content; min-width: var(--flotable-pill-input-width, 120px); max-width: 16rem;`.
 - [ ] `FilterPill.css`: `:hover:not(.flotable-filter-pill--open)` → border `var(--_flotable-pill-open-border-color)`; add `box-shadow 0.12s ease` to the transition list.
 - [ ] Run Phase 1 pill tests (Task 1.3) + whole suite → green.
+- [x] **Revision (user feedback: the 120ms fade felt abrupt, width still jumped):** the field is now always mounted inside `.flotable-filter-pill__field-wrap` (`aria-hidden` + `inert` while closed; focus moved via ref on open). Width animates with `grid-template-columns: 0fr → 1fr` (open 220ms, close 160ms; tokens `--flotable-pill-open-duration` / `--flotable-pill-close-duration`) plus an opacity fade. Open state toggles instantly, so there is no timer and clicks are never blocked. The pill's flex `gap` was removed (spacing moved to the field's `padding-inline-start` and the clear button's margin) so a collapsed field leaves no gap.
 
-#### Task 2.4: Demo cleanup [15m] — ⬜ TODO
+#### Task 2.4: Demo cleanup [15m] — ✅ COMPLETE
 
 **Files to create or modify:**
 - `apps/demo/src/components/FilterPillDemo/useFilterPill.ts` — drop `isClosing` state and the 400ms timeout; `close()` sets `isOpen=false` right away.
@@ -226,3 +228,32 @@ New hooks for consumers: `classNames.search` / `styles.search` (wrapper) and
 - [ ] Document `classNames.search`, `classNames.searchInput`, the matching `styles` keys and the `--flotable-search-width` / `--flotable-search-radius` tokens.
 - [ ] Note the breaking change: `SearchPill` export removed → use `SearchInput`; `FilterPill.isClosing` deprecated / ignored.
 - [ ] After the PR: create the `[Skill] Update flotable skill — toolbar SearchInput + smooth pills` ticket (parent ET-1, label `flotable-skill`) and record it in `MEMORY.md`.
+
+### Phase 4: Pill field styling (added on user feedback) [TEST] + [DEV]
+
+#### Task 4.1: Themed select / number / date fields inside pills [1h30] — ⬜ TODO
+
+**Problem:** the controls inside an open pill are raw browser widgets. The `select` shows the native
+arrow and an unstyled option list, which stays light in dark mode. The `number` input shows the native
+spin buttons, and the `date` input shows the native calendar icon in the wrong colour scheme.
+
+**Open decision (ask the user before starting):**
+- **A — Styled native controls:** `appearance: none` + our own chevron on the `select`, `color-scheme`
+  driven by the theme so the native option list and date picker follow light/dark, hidden number
+  spinners. Small and accessible for free, but the open option list is still drawn by the OS.
+- **B — Custom listbox for `select`:** replace the `<select>` with a button plus a themed `role="listbox"`
+  popover (keyboard navigation, type-ahead, `aria-activedescendant`). Fully on-brand in every theme, but
+  more code and more accessibility work. Number/date are handled as in A.
+
+**Files to create or modify:**
+- `packages/flotable/src/FloTable/filters/FilterPill/FilterPillField/FilterPillField.tsx` / `.css` — field markup and styles.
+- `packages/flotable/src/FloTable/FloTable.css` — `color-scheme` on the token hosts (light / dark blocks), and any new colour tokens (e.g. option hover bg) with light + dark defaults.
+- (B only) new `FilterPillSelect/FilterPillSelect.tsx` + `.css` under `FilterPill/`.
+- `packages/flotable/src/FloTable/filters/FilterBar/FilterBar.test.tsx` — tests.
+
+**Subtasks:** detailed once the decision is made. They will cover at least:
+- [ ] Tests first: choosing a select option still filters on the value and shows the label; the "All" option still clears; number/date still commit on Enter.
+- [ ] Select: themed chevron, colours from `--_flotable-pill-*`, works in dark mode and with `inheritTheme`.
+- [ ] Number: no native spinners, `inputMode="decimal"`, right width.
+- [ ] Date: calendar icon and picker follow the light/dark theme.
+- [ ] Check the demo `/toolbar-search/` and `/theming` pages in light and dark mode.
