@@ -5,37 +5,9 @@
   padding: 0 0.125rem;
 }
 
-.flotable-filter-pill__field-wrap {
-  display: inline-grid;
-  grid-template-columns: 0fr;
-  opacity: 0;
-  transition:
-    grid-template-columns var(--flotable-pill-close-duration, 160ms) cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 100ms ease;
-}
-
-.flotable-filter-pill__field-wrap--open {
-  grid-template-columns: 1fr;
-  opacity: 1;
-  transition:
-    grid-template-columns var(--flotable-pill-open-duration, 220ms) cubic-bezier(0.2, 0, 0, 1),
-    opacity 160ms ease 40ms;
-}
-
 .flotable-filter-pill__field {
-  display: inline-flex;
-  align-items: center;
   gap: 0.25rem;
-  min-width: 0;
-  overflow: hidden;
   padding-inline-start: 0.25rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .flotable-filter-pill__field-wrap,
-  .flotable-filter-pill__field-wrap--open {
-    transition: none;
-  }
 }
 
 .flotable-filter-pill__input {
@@ -57,6 +29,27 @@
     min-width: var(--flotable-pill-input-width, 120px);
     max-width: 16rem;
   }
+}
+
+.flotable-filter-pill__input--number {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.flotable-filter-pill__input--number::-webkit-inner-spin-button,
+.flotable-filter-pill__input--number::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.flotable-filter-pill__input--date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.12s ease;
+}
+
+.flotable-filter-pill__input--date::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 .flotable-filter-pill__input::placeholder {

@@ -1,0 +1,33 @@
+@layer flotable {
+.flotable-filter-pill__reveal {
+  display: inline-grid;
+  grid-template-columns: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-columns var(--flotable-pill-close-duration, 160ms) cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 100ms ease;
+}
+
+.flotable-filter-pill__reveal--shown {
+  grid-template-columns: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-columns var(--flotable-pill-open-duration, 220ms) cubic-bezier(0.2, 0, 0, 1),
+    opacity 160ms ease 40ms;
+}
+
+.flotable-filter-pill__reveal-inner {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flotable-filter-pill__reveal,
+  .flotable-filter-pill__reveal--shown {
+    transition: none;
+  }
+}
+}

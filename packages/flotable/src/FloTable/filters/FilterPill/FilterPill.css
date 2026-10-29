@@ -1,5 +1,6 @@
 @layer flotable {
 .flotable-filter-pill {
+  position: relative;
   cursor: pointer;
   display: inline-flex;
   align-items: center;

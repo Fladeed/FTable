@@ -80,20 +80,64 @@ describe('FilterBar boolean pill — toggle button', () => {
   });
 });
 
-describe('FilterBar select pill — option labels', () => {
-  it('shows option labels and the translated "All" option', () => {
-    renderBar([status], {}, { labels: { filterAll: 'Tous' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
-    const select = screen.getByRole('combobox');
-    const options = within(select).getAllByRole('option').map((o) => o.textContent);
-    expect(options).toEqual(['Tous', 'Payé', 'Remboursé']);
+describe('FilterBar select pill — themed option list', () => {
+  function optionLabels() {
+    return within(screen.getByRole('listbox')).getAllByRole('option').map((o) => o.textContent);
+  }
+
+  it('exposes no listbox while the pill is closed', () => {
+    renderBar([status]);
+    expect(screen.queryByRole('listbox')).toBeNull();
   });
 
-  it('filters on the option value, not the label', () => {
+  it('opens the option list with the pill and shows translated labels', () => {
+    renderBar([status], {}, { labels: { filterAll: 'Tous' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
+    expect(screen.getByRole('combobox')).toBeTruthy();
+    expect(optionLabels()).toEqual(['Tous', 'Payé', 'Remboursé']);
+  });
+
+  it('filters on the option value and closes the pill when an option is clicked', () => {
     const { onFilterChange } = renderBar([status]);
     fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'refunded' } });
+    fireEvent.click(screen.getByRole('option', { name: 'Remboursé' }));
     expect(onFilterChange).toHaveBeenCalledWith({ status: 'refunded' });
+    expect(screen.queryByRole('listbox')).toBeNull();
+  });
+
+  it('marks the current value as selected', () => {
+    renderBar([status], { status: 'paid' });
+    fireEvent.click(screen.getByRole('button', { name: /^Statut/ }));
+    expect(screen.getByRole('option', { name: 'Payé' }).getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('option', { name: 'Remboursé' }).getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('clears the filter when "All" is chosen', () => {
+    const { onFilterChange } = renderBar([status], { status: 'paid' });
+    fireEvent.click(screen.getByRole('button', { name: /^Statut/ }));
+    fireEvent.click(screen.getByRole('option', { name: 'All' }));
+    expect(onFilterChange).toHaveBeenCalledWith({});
+  });
+
+  it('supports arrow keys and Enter', () => {
+    const { onFilterChange } = renderBar([status]);
+    fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
+    const combobox = screen.getByRole('combobox');
+    fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+    const activeId = combobox.getAttribute('aria-activedescendant');
+    expect(activeId).toBe(screen.getByRole('option', { name: 'Payé' }).id);
+    fireEvent.keyDown(combobox, { key: 'Enter' });
+    expect(onFilterChange).toHaveBeenCalledWith({ status: 'paid' });
+  });
+
+  it('supports type-ahead', () => {
+    renderBar([status]);
+    fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
+    const combobox = screen.getByRole('combobox');
+    fireEvent.keyDown(combobox, { key: 'r' });
+    expect(combobox.getAttribute('aria-activedescendant')).toBe(
+      screen.getByRole('option', { name: 'Remboursé' }).id,
+    );
   });
 
   it('shows the option label as the active value when closed', () => {
@@ -107,10 +151,23 @@ describe('FilterBar select pill — option labels', () => {
     const plain: FilterDef = { key: 'cat', label: 'Category', type: 'select', options: ['A', 'B'] };
     const { onFilterChange } = renderBar([plain]);
     fireEvent.click(screen.getByRole('button', { name: 'Category' }));
-    const select = screen.getByRole('combobox');
-    expect(within(select).getAllByRole('option').map((o) => o.textContent)).toEqual(['All', 'A', 'B']);
-    fireEvent.change(select, { target: { value: 'B' } });
+    expect(optionLabels()).toEqual(['All', 'A', 'B']);
+    fireEvent.click(screen.getByRole('option', { name: 'B' }));
     expect(onFilterChange).toHaveBeenCalledWith({ cat: 'B' });
+  });
+});
+
+describe('FilterBar number pill', () => {
+  const price: FilterDef = { key: 'price', label: 'Price', type: 'number' };
+
+  it('uses a decimal keyboard and commits on Enter', () => {
+    const { onFilterChange } = renderBar([price], {}, { filterMode: 'commit' });
+    fireEvent.click(screen.getByRole('button', { name: 'Price' }));
+    const input = screen.getByRole('spinbutton');
+    expect(input.getAttribute('inputmode')).toBe('decimal');
+    fireEvent.change(input, { target: { value: '42' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onFilterChange).toHaveBeenCalledWith({ price: '42' });
   });
 });
 
@@ -151,12 +208,20 @@ describe('FilterBar pill open/close', () => {
     expect(screen.getByRole('textbox')).toBeTruthy();
   });
 
+  it('hides the active value and clear button while the pill is open', () => {
+    renderBar([name], { name: 'bob' });
+    expect(screen.getByRole('button', { name: 'Clear Name' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /^Name/ }));
+    expect(screen.queryByRole('button', { name: 'Clear Name' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Name' })).toBeTruthy();
+  });
+
   it('keeps only one pill open when switching', () => {
     renderBar([name, status]);
     fireEvent.click(screen.getByRole('button', { name: 'Name' }));
     fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.getAllByRole('combobox')).toHaveLength(1);
+    expect(screen.getAllByRole('listbox')).toHaveLength(1);
   });
 
   it('commits the previous pill when switching in commit mode', () => {

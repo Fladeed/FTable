@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
-import { toFilterOption } from '../../../tableUtils';
+import { FilterPillSelect } from '../FilterPillSelect/FilterPillSelect';
+import { FilterPillReveal } from '../FilterPillReveal/FilterPillReveal';
 import './FilterPillField.css';
 
 interface FilterPillFieldProps {
@@ -29,49 +30,43 @@ export function FilterPillField({
   styles,
   labels,
 }: FilterPillFieldProps) {
-  const allLabel = labels?.filterAll ?? 'All';
-  const controlRef = useRef<HTMLInputElement & HTMLSelectElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const selectRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen) controlRef.current?.focus({ preventScroll: true });
+    if (isOpen) (inputRef.current ?? selectRef.current)?.focus({ preventScroll: true });
   }, [isOpen]);
 
   return (
-    <span
-      className={cx('flotable-filter-pill__field-wrap', isOpen && 'flotable-filter-pill__field-wrap--open')}
-      aria-hidden={!isOpen}
-      inert={!isOpen}
-    >
-    <span className="flotable-filter-pill__field">
+    <FilterPillReveal shown={isOpen} className="flotable-filter-pill__field">
       {!hideSeparator && (
         <span className="flotable-filter-pill__separator" aria-hidden="true">:</span>
       )}
 
       {def.type === 'select' && (
-        <select
-          className={cx('flotable-filter-pill__input', classNames?.filterPillInput)}
-          style={styles?.filterPillInput}
+        <FilterPillSelect
+          def={def}
           value={value}
-          onChange={(e) => { onValueChange(def.key, e.target.value); onClose(def.key); }}
-          ref={controlRef}
-        >
-          <option value="">{allLabel}</option>
-          {(def.options ?? []).map(toFilterOption).map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          isOpen={isOpen}
+          onSelect={(v) => { onValueChange(def.key, v); onClose(def.key); }}
+          controlRef={selectRef}
+          classNames={classNames}
+          styles={styles}
+          labels={labels}
+        />
       )}
 
       {(def.type === 'text' || def.type === 'number' || def.type === 'date') && (
         <input
-          className={cx('flotable-filter-pill__input', classNames?.filterPillInput)}
+          className={cx('flotable-filter-pill__input', `flotable-filter-pill__input--${def.type}`, classNames?.filterPillInput)}
           style={styles?.filterPillInput}
           type={def.type}
+          inputMode={def.type === 'number' ? 'decimal' : undefined}
           value={value}
           onChange={(e) => onValueChange(def.key, e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') onClose(def.key); }}
           placeholder={placeholder}
-          ref={controlRef}
+          ref={inputRef}
         />
       )}
 
@@ -83,7 +78,6 @@ export function FilterPillField({
       >
         ×
       </button>
-    </span>
-    </span>
+    </FilterPillReveal>
   );
 }

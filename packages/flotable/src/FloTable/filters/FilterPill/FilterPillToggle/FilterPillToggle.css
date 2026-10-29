@@ -1,4 +1,8 @@
 @layer flotable {
+.flotable-filter-pill__toggle {
+  gap: 0.25rem;
+}
+
 .flotable-filter-pill__toggle:focus-visible {
   outline: 2px solid var(--_flotable-accent-color);
   outline-offset: 2px;

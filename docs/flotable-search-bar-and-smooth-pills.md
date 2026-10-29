@@ -229,31 +229,58 @@ New hooks for consumers: `classNames.search` / `styles.search` (wrapper) and
 - [ ] Note the breaking change: `SearchPill` export removed → use `SearchInput`; `FilterPill.isClosing` deprecated / ignored.
 - [ ] After the PR: create the `[Skill] Update flotable skill — toolbar SearchInput + smooth pills` ticket (parent ET-1, label `flotable-skill`) and record it in `MEMORY.md`.
 
-### Phase 4: Pill field styling (added on user feedback) [TEST] + [DEV]
-
-#### Task 4.1: Themed select / number / date fields inside pills [1h30] — ⬜ TODO
+### Phase 4: Pill field styling (added on user feedback)
 
 **Problem:** the controls inside an open pill are raw browser widgets. The `select` shows the native
-arrow and an unstyled option list, which stays light in dark mode. The `number` input shows the native
-spin buttons, and the `date` input shows the native calendar icon in the wrong colour scheme.
+arrow and an unstyled option list that stays light in dark mode. The `number` input shows native spin
+buttons, and the `date` picker icon ignores the theme.
 
-**Open decision (ask the user before starting):**
-- **A — Styled native controls:** `appearance: none` + our own chevron on the `select`, `color-scheme`
-  driven by the theme so the native option list and date picker follow light/dark, hidden number
-  spinners. Small and accessible for free, but the open option list is still drawn by the OS.
-- **B — Custom listbox for `select`:** replace the `<select>` with a button plus a themed `role="listbox"`
-  popover (keyboard navigation, type-ahead, `aria-activedescendant`). Fully on-brand in every theme, but
-  more code and more accessibility work. Number/date are handled as in A.
+**Decision (user):** custom option list for `select` (option B). Number/date are styled native inputs.
+
+**Design:**
+- New `FilterPill/FilterPillSelect/FilterPillSelect.tsx` + `.css`, following the WAI-ARIA *select-only
+  combobox* pattern: a focusable `role="combobox"` showing the current label + chevron, and a
+  `role="listbox"` of `role="option"` items (`aria-selected`, `aria-activedescendant`).
+- The list opens together with the pill (one click instead of two), and picking an option applies it and
+  closes the pill, as the native select did.
+- The listbox is rendered **outside** the animated `field-wrap` (which clips with `overflow: hidden`),
+  absolutely positioned under the pill (`.flotable-filter-pill` becomes `position: relative`). It stays
+  mounted with `aria-hidden` + `inert` when closed, so it can fade out.
+- Keyboard: ↑/↓ move, Home/End, Enter/Space select, type-ahead (500ms buffer), Escape closes (existing
+  FilterBar handler). Mouse: hover highlights, click selects (`mousedown` default prevented to keep focus).
+- Colours: reuse `--_flotable-dropdown-bg / -border-color / -shadow`. New token
+  `--_flotable-pill-option-hover-bg` (light `#f3f4f6`, dark `color-mix` from `--_flotable-color`). The
+  selected option shows a check in `--_flotable-pill-active-color`.
+- Number: `inputMode="decimal"`, native spinners hidden. Date/number: `color-scheme: light` on the token
+  hosts and `dark` in the dark blocks, so the date picker and its icon follow the theme.
+
+#### Task 4.1: Tests for themed pill fields [TEST] [30m] — ✅ COMPLETE
 
 **Files to create or modify:**
-- `packages/flotable/src/FloTable/filters/FilterPill/FilterPillField/FilterPillField.tsx` / `.css` — field markup and styles.
-- `packages/flotable/src/FloTable/FloTable.css` — `color-scheme` on the token hosts (light / dark blocks), and any new colour tokens (e.g. option hover bg) with light + dark defaults.
-- (B only) new `FilterPillSelect/FilterPillSelect.tsx` + `.css` under `FilterPill/`.
-- `packages/flotable/src/FloTable/filters/FilterBar/FilterBar.test.tsx` — tests.
+- `packages/flotable/src/FloTable/filters/FilterBar/FilterBar.test.tsx` — rewrite the "select pill — option labels" block for the listbox, add a "pill fields" block.
 
-**Subtasks:** detailed once the decision is made. They will cover at least:
-- [ ] Tests first: choosing a select option still filters on the value and shows the label; the "All" option still clears; number/date still commit on Enter.
-- [ ] Select: themed chevron, colours from `--_flotable-pill-*`, works in dark mode and with `inheritTheme`.
-- [ ] Number: no native spinners, `inputMode="decimal"`, right width.
-- [ ] Date: calendar icon and picker follow the light/dark theme.
-- [ ] Check the demo `/toolbar-search/` and `/theming` pages in light and dark mode.
+**Subtasks:**
+- [ ] Select pill closed: no `listbox` is exposed.
+- [ ] Clicking "Statut": a `combobox` and a `listbox` appear; options are `['Tous', 'Payé', 'Remboursé']` with `labels.filterAll = 'Tous'`.
+- [ ] Clicking option "Remboursé" calls `onFilterChange({ status: 'refunded' })` and closes the pill (no listbox).
+- [ ] With `status: 'paid'` active, the "Payé" option has `aria-selected="true"`.
+- [ ] With `status: 'paid'`, choosing "All" calls `onFilterChange({})`.
+- [ ] Keyboard: open, ArrowDown → `aria-activedescendant` points at "Payé"; Enter → `onFilterChange({ status: 'paid' })`.
+- [ ] Type-ahead: open, type "r" → active option is "Remboursé".
+- [ ] Plain string options still work (`['A', 'B']` → options `['All', 'A', 'B']`, choosing B filters on `'B'`).
+- [ ] Number pill: the input has `inputmode="decimal"`; typing "42" + Enter commits `{ price: '42' }`.
+
+#### Task 4.2: FilterPillSelect + number/date styling [DEV] [1h] — ✅ COMPLETE
+
+**Files to create or modify:**
+- `packages/flotable/src/FloTable/filters/FilterPill/FilterPillSelect/FilterPillSelect.tsx` / `.css` — new component.
+- `packages/flotable/src/FloTable/filters/FilterPill/FilterPillField/FilterPillField.tsx` / `.css` — use `FilterPillSelect`; number `inputMode`; hide spinners; date icon styling.
+- `packages/flotable/src/FloTable/filters/FilterPill/FilterPill.css` — `position: relative`.
+- `packages/flotable/src/FloTable/FloTable.css` — `--_flotable-pill-option-hover-bg` (light, resolved, dark) and `color-scheme`.
+
+**Subtasks:**
+- [ ] `FilterPillSelect` props: `def`, `value`, `isOpen`, `onSelect(value)`, `controlRef`, `classNames`, `styles`, `labels`; the combobox keeps `classNames.filterPillInput` / `styles.filterPillInput`.
+- [ ] Active index state, reset to the selected option each time the pill opens; ids via `useId()`.
+- [ ] Keyboard and type-ahead as described above; the active option scrolls into view.
+- [ ] Listbox: `top: calc(100% + 4px)`, `inset-inline-start: 0`, `min-width: 100%`, `max-height: 16rem`, scroll; fade + 4px slide in 140ms; `prefers-reduced-motion` → none; `z-index: var(--flotable-pill-menu-z, 30)`.
+- [ ] Run the whole suite → green; check `/toolbar-search/` and `/theming` in light and dark.

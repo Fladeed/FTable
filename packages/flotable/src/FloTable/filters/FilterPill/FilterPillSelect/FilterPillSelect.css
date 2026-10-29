@@ -1,0 +1,88 @@
+@layer flotable {
+.flotable-filter-pill__select {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+}
+
+.flotable-filter-pill__select-value {
+  font-weight: 400;
+  color: var(--_flotable-pill-active-color);
+}
+
+.flotable-filter-pill__select-chevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  color: var(--_flotable-pill-placeholder-color);
+}
+
+/* Absolutely positioned against .flotable-filter-pill, so the field's overflow clip does not apply. */
+.flotable-filter-pill__listbox {
+  position: absolute;
+  top: calc(100% + 4px);
+  inset-inline-start: 0;
+  z-index: var(--flotable-pill-menu-z, 30);
+  min-width: 100%;
+  max-height: var(--flotable-pill-menu-max-height, 16rem);
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--_flotable-dropdown-bg);
+  border: 1px solid var(--_flotable-dropdown-border-color);
+  border-radius: var(--flotable-dropdown-radius, 6px);
+  box-shadow: var(--_flotable-dropdown-shadow);
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(-4px);
+  visibility: hidden;
+  transition: opacity 120ms ease, transform 120ms ease, visibility 0s linear 120ms;
+}
+
+.flotable-filter-pill__listbox--open {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition: opacity 140ms ease, transform 140ms cubic-bezier(0.2, 0, 0, 1), visibility 0s;
+}
+
+.flotable-filter-pill__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 4px;
+  color: var(--_flotable-pill-color);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.flotable-filter-pill__option--active {
+  background: var(--_flotable-pill-option-hover-bg);
+}
+
+.flotable-filter-pill__option--selected {
+  color: var(--_flotable-pill-active-color);
+  font-weight: 500;
+}
+
+.flotable-filter-pill__option-check {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flotable-filter-pill__listbox,
+  .flotable-filter-pill__listbox--open {
+    transform: none;
+    transition: none;
+  }
+}
+}

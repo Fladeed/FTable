@@ -2,7 +2,6 @@
 .flotable-filter-pill__trigger {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
   background: none;
   border: none;
   padding: 0;
@@ -20,5 +19,9 @@
 .flotable-filter-pill__active-value {
   font-weight: 400;
   color: var(--_flotable-pill-active-color);
+}
+
+.flotable-filter-pill__active-value-wrap {
+  padding-inline-start: 0.25rem;
 }
 }

@@ -5,6 +5,7 @@ import { FilterPillTrigger } from './FilterPillTrigger/FilterPillTrigger';
 import { FilterPillField } from './FilterPillField/FilterPillField';
 import { FilterPillClear } from './FilterPillClear/FilterPillClear';
 import { FilterPillToggle } from './FilterPillToggle/FilterPillToggle';
+import { FilterPillReveal } from './FilterPillReveal/FilterPillReveal';
 import './FilterPill.css';
 
 export interface FilterPillProps {
@@ -121,14 +122,14 @@ export function FilterPill({
         labels={labels}
       />
 
-      {isActive && !isOpen && (
+      <FilterPillReveal shown={isActive && !isOpen}>
         <FilterPillClear
           filterKey={def.key}
           label={def.label}
           onClear={onClear}
           ariaLabel={labels?.clearFilter}
         />
-      )}
+      </FilterPillReveal>
     </div>
   );
 }
