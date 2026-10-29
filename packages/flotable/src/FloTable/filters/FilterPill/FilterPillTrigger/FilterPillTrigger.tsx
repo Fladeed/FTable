@@ -58,7 +58,7 @@ export function FilterPillTrigger({
     >
       {renderTriggerLabel ?? <span className="flotable-filter-pill__label">{def.label}</span>}
       {shownValue !== '' && (
-        <FilterPillReveal shown={isActive && !isOpen} className="flotable-filter-pill__active-value-wrap">
+        <FilterPillReveal shown={isActive && (!isOpen || def.type === 'select')} className="flotable-filter-pill__active-value-wrap">
           {renderActiveValue
             ? renderActiveValue(shownValue)
             : <span className="flotable-filter-pill__active-value">: {formatActiveValue(def, shownValue, labels)}</span>}

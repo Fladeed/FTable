@@ -261,13 +261,13 @@ buttons, and the `date` picker icon ignores the theme.
 
 **Subtasks:**
 - [ ] Select pill closed: no `listbox` is exposed.
-- [ ] Clicking "Statut": a `combobox` and a `listbox` appear; options are `['Tous', 'Payé', 'Remboursé']` with `labels.filterAll = 'Tous'`.
+- [ ] Clicking "Statut": a `combobox` and a `listbox` appear; options are `['Payé', 'Remboursé']` (the "All" entry was later removed; the × clears).
 - [ ] Clicking option "Remboursé" calls `onFilterChange({ status: 'refunded' })` and closes the pill (no listbox).
 - [ ] With `status: 'paid'` active, the "Payé" option has `aria-selected="true"`.
-- [ ] With `status: 'paid'`, choosing "All" calls `onFilterChange({})`.
-- [ ] Keyboard: open, ArrowDown → `aria-activedescendant` points at "Payé"; Enter → `onFilterChange({ status: 'paid' })`.
+- [ ] ~~Choosing "All" clears~~ — removed: the open pill's × clears instead.
+- [ ] Keyboard: open (first option highlighted), ArrowDown → `aria-activedescendant` points at "Remboursé"; Enter → `onFilterChange({ status: 'refunded' })`.
 - [ ] Type-ahead: open, type "r" → active option is "Remboursé".
-- [ ] Plain string options still work (`['A', 'B']` → options `['All', 'A', 'B']`, choosing B filters on `'B'`).
+- [ ] Plain string options still work (`['A', 'B']` → options `['A', 'B']`, choosing B filters on `'B'`).
 - [ ] Number pill: the input has `inputmode="decimal"`; typing "42" + Enter commits `{ price: '42' }`.
 
 #### Task 4.2: FilterPillSelect + number/date styling [DEV] [1h] — ✅ COMPLETE

@@ -127,7 +127,7 @@ Any column can use a custom `render` function to override the default renderer.
 | `FilterDef.type` | Pill behaviour |
 |------------------|----------------|
 | `text` / `number` / `date` | Expands into an inline input. Number inputs have no spin buttons and use a decimal keyboard on mobile |
-| `select` | Expands and opens a themed option list: an "All" option (`labels.filterAll`), then `options`. Keyboard: ↑/↓, Home/End, Enter/Space, type-ahead |
+| `select` | Expands and opens a themed option list: the `options` (no "All" entry: the × clears the filter). Keyboard: ↑/↓, Home/End, Enter/Space, type-ahead |
 | `boolean` | A **toggle**: one click filters on `'true'`, a second click clears it. No dropdown. |
 
 Boolean pills apply right away, even when `filterMode` is `'commit'`. A `'false'` value set from code (for example through `initialQuickFilters`) still shows as active, with `labels.booleanFalse`, and a click clears it.
@@ -140,7 +140,6 @@ For a translated select, give each option a `{ value, label }`. The pill shows t
     key: 'status', label: 'Statut', type: 'select',
     options: [{ value: 'paid', label: 'Payé' }, { value: 'refunded', label: 'Remboursé' }],
   }]}
-  labels={{ filterAll: 'Tous' }}
   …
 />
 ```
@@ -517,7 +516,7 @@ If your app uses Tailwind, declare the `flotable` layer before your Tailwind imp
 | `onExpandedChange` | `(expandedKeys: string[]) => void` | Called with expanded parent keys on toggle |
 | `expandOn` | `'chevron' \| 'row'` | What toggles expansion (default `'chevron'`) |
 | `childRowsLabels` | `ChildRowsLabels` | Expandable-rows text: `expand` (`'Expand row'`), `collapse` (`'Collapse row'`), `empty` (`'No items'`), `retry` (`'Retry'`), `loading` (`'Loading…'`) |
-| `labels` | `FloTableLabels` | Built-in text: `empty` (`'No data'`), `retry` (`'Retry'`), `searchPlaceholder` (`'Search…'`), `search` (`'Search'`), `selectRow` (`'Select row'`), `selectAllRows` (`'Select all rows'`), `moreActions` (`'More actions'`), `closeFilter` (`'Close filter'`), `clearFilter` (`(label) => 'Clear ' + label`), `filterAll` (`'All'`), `booleanTrue` (`'Yes'`), `booleanFalse` (`'No'`) |
+| `labels` | `FloTableLabels` | Built-in text: `empty` (`'No data'`), `retry` (`'Retry'`), `searchPlaceholder` (`'Search…'`), `search` (`'Search'`), `selectRow` (`'Select row'`), `selectAllRows` (`'Select all rows'`), `moreActions` (`'More actions'`), `closeFilter` (`'Close filter'`), `clearFilter` (`(label) => 'Clear ' + label`), `booleanTrue` (`'Yes'`), `booleanFalse` (`'No'`) |
 | `tableActions` | `TableAction[]` | Selection-independent buttons at the end of the toolbar (see [Table Actions](#table-actions)) |
 | `toolbarEnd` | `ReactNode` | Custom controls at the end of the toolbar, before `tableActions` (see [`toolbarEnd`](#toolbarend-custom-controls)) |
 | `renderInlineBulkActions` | `(ctx: BulkActionBarContext<T>) => ReactNode` | Custom bulk-action content inline in the toolbar; always receives the selection context. For selection-independent actions use `tableActions` |

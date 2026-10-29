@@ -9,11 +9,6 @@
   border-radius: 4px;
 }
 
-.flotable-filter-pill__select-value {
-  font-weight: 400;
-  color: var(--_flotable-pill-active-color);
-}
-
 .flotable-filter-pill__select-chevron {
   width: 0.875rem;
   height: 0.875rem;

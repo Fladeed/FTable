@@ -32,7 +32,7 @@ export interface FilterPillProps {
   variant?: string;
   /** aria-label for the trigger button. Defaults to undefined (no aria-label). */
   triggerAriaLabel?: string;
-  /** Built-in text (boolean values, "All" option, close / clear button labels). */
+  /** Built-in text (boolean values, close / clear button labels). */
   labels?: FloTableLabels;
 }
 
@@ -114,8 +114,9 @@ export function FilterPill({
         value={value}
         isOpen={isOpen}
         onValueChange={onValueChange}
+        onClear={onClear}
         onClose={onClose}
-        hideSeparator={hideSeparator}
+        hideSeparator={hideSeparator || def.type === 'select'}
         placeholder={placeholder}
         classNames={classNames}
         styles={styles}

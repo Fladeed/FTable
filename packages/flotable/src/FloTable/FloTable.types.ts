@@ -170,14 +170,14 @@ export interface FloTableLabels {
   selectAllRows?: string;
   /** Accessible label of the row-actions overflow (⋯) button. Defaults to `'More actions'`. */
   moreActions?: string;
-  /** Accessible label of the button closing an open filter. Defaults to `'Close filter'`. */
+  /** Accessible label of the × closing an open, empty filter (with a value, that × clears and uses `clearFilter`). Defaults to `'Close filter'`. */
   closeFilter?: string;
   /**
    * Accessible label of the button clearing an active filter, given the filter's label.
    * Defaults to `` (label) => `Clear ${label || 'filter'}` ``.
    */
   clearFilter?: (label: string) => string;
-  /** "No filter" option of select / boolean filters. Defaults to `'All'`. */
+  /** @deprecated Ignored. Select pills no longer list an "All" option; the pill's × clears the filter. */
   filterAll?: string;
   /** Text for a `true` boolean (cells and filters). Defaults to `'Yes'`. */
   booleanTrue?: string;

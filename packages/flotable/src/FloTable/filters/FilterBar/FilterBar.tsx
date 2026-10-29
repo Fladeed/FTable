@@ -102,7 +102,16 @@ export function FilterBar({ filterDefs, activeFilters, onFilterChange, filterMod
   }
 
   function handleClear(key: string) {
-    applyNow(key, '');
+    if (liveDebounceRef.current !== null) {
+      clearTimeout(liveDebounceRef.current);
+      liveDebounceRef.current = null;
+    }
+    const next = { ...localFiltersRef.current };
+    delete next[key];
+    localFiltersRef.current = next;
+    setLocalFilters(next);
+    if ((activeFilters[key] ?? '') !== '') onFilterChange(next);
+    if (openKey === key) setOpenKey(null);
   }
 
   if (filterDefs.length === 0) return null;

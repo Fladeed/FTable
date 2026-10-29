@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { KeyboardEvent, Ref } from 'react';
-import type { FilterDef, FloTableClassNames, FloTableLabels, FloTableStyles } from '../../../FloTable.types';
+import type { FilterDef, FloTableClassNames, FloTableStyles } from '../../../FloTable.types';
 import { cx } from '../../../../utils/cx';
 import { toFilterOption } from '../../../tableUtils';
 import './FilterPillSelect.css';
@@ -13,7 +13,6 @@ interface FilterPillSelectProps {
   controlRef?: Ref<HTMLDivElement>;
   classNames?: FloTableClassNames;
   styles?: FloTableStyles;
-  labels?: FloTableLabels;
 }
 
 const TYPE_AHEAD_RESET_MS = 500;
@@ -42,27 +41,34 @@ export function FilterPillSelect({
   controlRef,
   classNames,
   styles,
-  labels,
 }: FilterPillSelectProps) {
   const baseId = useId();
   const listboxId = `${baseId}-listbox`;
-  const options = [{ value: '', label: labels?.filterAll ?? 'All' }, ...(def.options ?? []).map(toFilterOption)];
-  const currentIndex = Math.max(0, options.findIndex((opt) => opt.value === value));
+  const options = (def.options ?? []).map(toFilterOption);
+  const currentIndex = options.findIndex((opt) => opt.value === value);
   const frozenIndexRef = useRef(currentIndex);
   if (isOpen) frozenIndexRef.current = currentIndex;
   const selectedIndex = frozenIndexRef.current;
-  const [activeIndex, setActiveIndex] = useState(selectedIndex);
+  const [activeIndex, setActiveIndex] = useState(Math.max(0, selectedIndex));
+  const [wasOpen, setWasOpen] = useState(isOpen);
   const listRef = useRef<HTMLUListElement>(null);
   const typeAheadRef = useRef({ buffer: '', timer: null as ReturnType<typeof setTimeout> | null });
 
-  useEffect(() => {
-    if (isOpen) setActiveIndex(selectedIndex);
-  }, [isOpen]);
+  if (wasOpen !== isOpen) {
+    setWasOpen(isOpen);
+    if (isOpen) setActiveIndex(Math.max(0, selectedIndex));
+  }
 
   useEffect(() => {
-    const item = listRef.current?.children[activeIndex] as HTMLElement | undefined;
-    item?.scrollIntoView?.({ block: 'nearest' });
-  }, [activeIndex]);
+    const list = listRef.current;
+    const item = list?.children[activeIndex] as HTMLElement | undefined;
+    if (!isOpen || !list || !item) return;
+    if (item.offsetTop < list.scrollTop) {
+      list.scrollTop = item.offsetTop;
+    } else if (item.offsetTop + item.offsetHeight > list.scrollTop + list.clientHeight) {
+      list.scrollTop = item.offsetTop + item.offsetHeight - list.clientHeight;
+    }
+  }, [activeIndex, isOpen]);
 
   useEffect(() => () => {
     if (typeAheadRef.current.timer !== null) clearTimeout(typeAheadRef.current.timer);
@@ -104,7 +110,7 @@ export function FilterPillSelect({
       case 'Enter':
       case ' ':
         e.preventDefault();
-        onSelect(options[activeIndex].value);
+        if (options[activeIndex]) onSelect(options[activeIndex].value);
         return;
     }
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) typeAhead(e.key);
@@ -125,7 +131,6 @@ export function FilterPillSelect({
         style={styles?.filterPillInput}
         onKeyDown={handleKeyDown}
       >
-        <span className="flotable-filter-pill__select-value">{options[selectedIndex].label}</span>
         <ChevronIcon />
       </div>
       <ul

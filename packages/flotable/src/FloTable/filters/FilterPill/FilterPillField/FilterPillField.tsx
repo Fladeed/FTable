@@ -5,11 +5,14 @@ import { FilterPillSelect } from '../FilterPillSelect/FilterPillSelect';
 import { FilterPillReveal } from '../FilterPillReveal/FilterPillReveal';
 import './FilterPillField.css';
 
+const defaultClearLabel = (label: string) => `Clear ${label || 'filter'}`;
+
 interface FilterPillFieldProps {
   def: FilterDef;
   value: string;
   isOpen: boolean;
   onValueChange: (key: string, value: string) => void;
+  onClear: (key: string) => void;
   onClose: (key: string) => void;
   hideSeparator?: boolean;
   placeholder?: string;
@@ -23,6 +26,7 @@ export function FilterPillField({
   value,
   isOpen,
   onValueChange,
+  onClear,
   onClose,
   hideSeparator = false,
   placeholder = '…',
@@ -32,6 +36,7 @@ export function FilterPillField({
 }: FilterPillFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLDivElement>(null);
+  const hasValue = value !== '';
 
   useEffect(() => {
     if (isOpen) (inputRef.current ?? selectRef.current)?.focus({ preventScroll: true });
@@ -52,7 +57,6 @@ export function FilterPillField({
           controlRef={selectRef}
           classNames={classNames}
           styles={styles}
-          labels={labels}
         />
       )}
 
@@ -73,8 +77,8 @@ export function FilterPillField({
       <button
         type="button"
         className="flotable-filter-pill__close"
-        onClick={() => onClose(def.key)}
-        aria-label={labels?.closeFilter ?? 'Close filter'}
+        onClick={() => (hasValue ? onClear(def.key) : onClose(def.key))}
+        aria-label={hasValue ? (labels?.clearFilter ?? defaultClearLabel)(def.label) : labels?.closeFilter ?? 'Close filter'}
       >
         ×
       </button>

@@ -90,11 +90,19 @@ describe('FilterBar select pill — themed option list', () => {
     expect(screen.queryByRole('listbox')).toBeNull();
   });
 
-  it('opens the option list with the pill and shows translated labels', () => {
-    renderBar([status], {}, { labels: { filterAll: 'Tous' } });
+  it('opens the option list with the pill and shows only the defined options', () => {
+    renderBar([status]);
     fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
     expect(screen.getByRole('combobox')).toBeTruthy();
-    expect(optionLabels()).toEqual(['Tous', 'Payé', 'Remboursé']);
+    expect(optionLabels()).toEqual(['Payé', 'Remboursé']);
+  });
+
+  it('marks no option as selected and highlights the first one when empty', () => {
+    renderBar([status]);
+    fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
+    const options = screen.getAllByRole('option');
+    expect(options.map((o) => o.getAttribute('aria-selected'))).toEqual(['false', 'false']);
+    expect(screen.getByRole('combobox').getAttribute('aria-activedescendant')).toBe(options[0].id);
   });
 
   it('filters on the option value and closes the pill when an option is clicked', () => {
@@ -112,22 +120,15 @@ describe('FilterBar select pill — themed option list', () => {
     expect(screen.getByRole('option', { name: 'Remboursé' }).getAttribute('aria-selected')).toBe('false');
   });
 
-  it('clears the filter when "All" is chosen', () => {
-    const { onFilterChange } = renderBar([status], { status: 'paid' });
-    fireEvent.click(screen.getByRole('button', { name: /^Statut/ }));
-    fireEvent.click(screen.getByRole('option', { name: 'All' }));
-    expect(onFilterChange).toHaveBeenCalledWith({});
-  });
-
   it('supports arrow keys and Enter', () => {
     const { onFilterChange } = renderBar([status]);
     fireEvent.click(screen.getByRole('button', { name: 'Statut' }));
     const combobox = screen.getByRole('combobox');
     fireEvent.keyDown(combobox, { key: 'ArrowDown' });
     const activeId = combobox.getAttribute('aria-activedescendant');
-    expect(activeId).toBe(screen.getByRole('option', { name: 'Payé' }).id);
+    expect(activeId).toBe(screen.getByRole('option', { name: 'Remboursé' }).id);
     fireEvent.keyDown(combobox, { key: 'Enter' });
-    expect(onFilterChange).toHaveBeenCalledWith({ status: 'paid' });
+    expect(onFilterChange).toHaveBeenCalledWith({ status: 'refunded' });
   });
 
   it('supports type-ahead', () => {
@@ -147,11 +148,36 @@ describe('FilterBar select pill — themed option list', () => {
     expect(trigger.textContent).not.toContain('refunded');
   });
 
+  it('keeps the active value in place while the pill is open', () => {
+    const { container } = renderBar([status], { status: 'paid' });
+    fireEvent.click(screen.getByRole('button', { name: /^Statut/ }));
+    const valueWrap = container.querySelector('.flotable-filter-pill__active-value-wrap')!.parentElement!;
+    expect(valueWrap.classList.contains('flotable-filter-pill__reveal--shown')).toBe(true);
+    expect(screen.getByRole('combobox').textContent).not.toContain('Payé');
+  });
+
+  it('highlights the selected option as soon as the pill opens', () => {
+    renderBar([status], { status: 'refunded' });
+    fireEvent.click(screen.getByRole('button', { name: /^Statut/ }));
+    expect(screen.getByRole('combobox').getAttribute('aria-activedescendant')).toBe(
+      screen.getByRole('option', { name: 'Remboursé' }).id,
+    );
+  });
+
+  it('clears the filter and closes when × is clicked while open', () => {
+    const { onFilterChange } = renderBar([status], { status: 'paid' });
+    fireEvent.click(screen.getByRole('button', { name: /^Statut/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear Statut' }));
+    expect(onFilterChange).toHaveBeenCalledTimes(1);
+    expect(onFilterChange).toHaveBeenCalledWith({});
+    expect(screen.queryByRole('listbox')).toBeNull();
+  });
+
   it('still accepts plain string options', () => {
     const plain: FilterDef = { key: 'cat', label: 'Category', type: 'select', options: ['A', 'B'] };
     const { onFilterChange } = renderBar([plain]);
     fireEvent.click(screen.getByRole('button', { name: 'Category' }));
-    expect(optionLabels()).toEqual(['All', 'A', 'B']);
+    expect(optionLabels()).toEqual(['A', 'B']);
     fireEvent.click(screen.getByRole('option', { name: 'B' }));
     expect(onFilterChange).toHaveBeenCalledWith({ cat: 'B' });
   });
@@ -212,8 +238,28 @@ describe('FilterBar pill open/close', () => {
     renderBar([name], { name: 'bob' });
     expect(screen.getByRole('button', { name: 'Clear Name' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /^Name/ }));
-    expect(screen.queryByRole('button', { name: 'Clear Name' })).toBeNull();
+    expect(screen.getAllByRole('button', { name: 'Clear Name' })).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'Clear Name' }).classList.contains('flotable-filter-pill__close')).toBe(true);
     expect(screen.getByRole('button', { name: 'Name' })).toBeTruthy();
+  });
+
+  it('discards an uncommitted draft when × is clicked in commit mode', () => {
+    const { onFilterChange } = renderBar([name], {}, { filterMode: 'commit' });
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'bob' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Clear Name' }));
+    expect(onFilterChange).not.toHaveBeenCalled();
+    expect(screen.queryByRole('textbox')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('');
+  });
+
+  it('only closes when × is clicked on an empty open pill', () => {
+    const { onFilterChange } = renderBar([name]);
+    fireEvent.click(screen.getByRole('button', { name: 'Name' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close filter' }));
+    expect(onFilterChange).not.toHaveBeenCalled();
+    expect(screen.queryByRole('textbox')).toBeNull();
   });
 
   it('keeps only one pill open when switching', () => {
